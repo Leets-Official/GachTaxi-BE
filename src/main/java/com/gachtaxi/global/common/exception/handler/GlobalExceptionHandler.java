@@ -26,4 +26,15 @@ public class GlobalExceptionHandler {
                 .status(e.getErrorCode())
                 .body(response);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+
+        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), SERVER_ERROR.getCode(), e.getMessage());
+        ApiResponse<Void> response = ApiResponse.fail(SERVER_ERROR.getCode(), e.getMessage());
+
+        return ResponseEntity
+                .status(SERVER_ERROR.getCode())
+                .body(response);
+    }
 }
