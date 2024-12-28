@@ -19,22 +19,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleException(BaseException e) {
 
-        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getMessage());
-        ApiResponse<Void> response = ApiResponse.fail(e.getErrorCode(), e.getMessage());
-
-        return ResponseEntity
-                .status(e.getErrorCode())
-                .body(response);
+        return exceptionHandle(e, e.getErrorCode());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
 
-        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), SERVER_ERROR.getCode(), e.getMessage());
-        ApiResponse<Void> response = ApiResponse.fail(SERVER_ERROR.getCode(), e.getMessage());
+        return exceptionHandle(e, SERVER_ERROR.getCode());
+    }
+
+
+    // 실제 예외 처리 (log + 응답)
+    private ResponseEntity<ApiResponse<Void>> exceptionHandle(Exception e, int errorCode) {
+        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), errorCode, e.getMessage());
+        ApiResponse<Void> response = ApiResponse.fail(errorCode, e.getMessage());
 
         return ResponseEntity
-                .status(SERVER_ERROR.getCode())
+                .status(errorCode)
                 .body(response);
     }
 }
