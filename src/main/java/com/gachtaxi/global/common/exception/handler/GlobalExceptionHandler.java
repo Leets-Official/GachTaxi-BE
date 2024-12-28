@@ -7,14 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.gachtaxi.global.common.exception.BaseErrorMessage.*;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // response format
     private static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
+    private static final int SERVER_ERROR = 500;
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleException(BaseException e) {
@@ -25,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
 
-        return exceptionHandle(e, SERVER_ERROR.getCode());
+        return exceptionHandle(e, SERVER_ERROR);
     }
 
 
