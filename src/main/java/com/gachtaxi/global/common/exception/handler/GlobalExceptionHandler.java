@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> exceptionHandle(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<Void>> handleException(MethodArgumentNotValidException e) {
 
         return exceptionHandle(e, BAD_REQUEST);
     }
