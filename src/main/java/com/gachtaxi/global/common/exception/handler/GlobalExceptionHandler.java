@@ -4,6 +4,7 @@ import com.gachtaxi.global.common.exception.BaseException;
 import com.gachtaxi.global.common.exception.ValidErrorResponse;
 import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,18 +13,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.*;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // response format
     private static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
-    private static final int BAD_REQUEST = 400;
-    private static final int SERVER_ERROR = 500;
+    private static final String VALID_EXCEPTION = "Validation failed";
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleException(BaseException e) {
-        return exceptionResponse(e, e.getErrorCode());
+        return exceptionResponse(e, e.getStatus(), e.getMessage(), null);
     }
 
     // BindException 처리
@@ -37,27 +39,21 @@ public class GlobalExceptionHandler {
                         .build()
                 ).toList();
 
-        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), BAD_REQUEST, validErrorResponses);
-        ApiResponse<List<ValidErrorResponse>> response = ApiResponse.response(BAD_REQUEST, "Validation failed", validErrorResponses);
-
-        return ResponseEntity
-                .status(BAD_REQUEST)
-                .body(response);
+        return exceptionResponse(e, BAD_REQUEST, VALID_EXCEPTION ,validErrorResponses);
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
-        return exceptionResponse(e, SERVER_ERROR);
+        return exceptionResponse(e, INTERNAL_SERVER_ERROR, e.getMessage(), null);
     }
 
     // 실제 예외 처리 (log + 응답)
-    private ResponseEntity<ApiResponse<Void>> exceptionResponse(Exception e, int errorCode) {
-        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), errorCode, e.getMessage());
-        ApiResponse<Void> response = ApiResponse.response(errorCode, e.getMessage());
+    private <T> ResponseEntity<ApiResponse<T>> exceptionResponse(Exception e, HttpStatus status, String message, T data) {
+        log.warn(LOG_FORMAT, e.getClass().getSimpleName(), status, message);
+        ApiResponse<T> response = ApiResponse.response(status, message, data);
 
         return ResponseEntity
-                .status(errorCode)
+                .status(status)
                 .body(response);
     }
 }
