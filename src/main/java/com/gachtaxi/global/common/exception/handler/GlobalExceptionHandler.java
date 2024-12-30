@@ -21,24 +21,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleException(BaseException e) {
 
-        return exceptionHandle(e, e.getErrorCode());
+        return exceptionResponse(e, e.getErrorCode());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleException(MethodArgumentNotValidException e) {
 
-        return exceptionHandle(e, BAD_REQUEST);
+        return exceptionResponse(e, BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
 
-        return exceptionHandle(e, SERVER_ERROR);
+        return exceptionResponse(e, SERVER_ERROR);
     }
 
 
     // 실제 예외 처리 (log + 응답)
-    private ResponseEntity<ApiResponse<Void>> exceptionHandle(Exception e, int errorCode) {
+    private ResponseEntity<ApiResponse<Void>> exceptionResponse(Exception e, int errorCode) {
         log.warn(LOG_FORMAT, e.getClass().getSimpleName(), errorCode, e.getMessage());
         ApiResponse<Void> response = ApiResponse.fail(errorCode, e.getMessage());
 
