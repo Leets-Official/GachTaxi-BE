@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 
     // BindException 처리
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ApiResponse<List<ValidErrorResponse>>> handleValidationException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<List<ValidErrorResponse>>> handleException(MethodArgumentNotValidException e) {
         List<ValidErrorResponse> validErrorResponses = e.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> ValidErrorResponse.builder()
                         .errorField(fieldError.getField())
