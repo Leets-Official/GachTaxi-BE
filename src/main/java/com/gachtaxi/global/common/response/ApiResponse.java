@@ -9,19 +9,11 @@ public class ApiResponse<T> {
     private final String message;
     private final T data;
 
-    public static <T> ApiResponse<T> fail(int code, String message, T data){
+    public static <T> ApiResponse<T> response(int code, String message, T data){
         return new ApiResponse<>(code, message, data);
     }
 
-    public static <T> ApiResponse<T> fail(int code, String message){
-        return new ApiResponse<>(code, message, null);
-    }
-
-    public static <T> ApiResponse<T> success(int code, String message, T data) {
-        return new ApiResponse<>(code, message, data);
-    }
-
-    public static <T> ApiResponse<T> success(int code, String message) {
+    public static <T> ApiResponse<T> response(int code, String message){
         return new ApiResponse<>(code, message, null);
     }
 
@@ -30,5 +22,4 @@ public class ApiResponse<T> {
         this.message = message;
         this.data = data;
     }
-
 }

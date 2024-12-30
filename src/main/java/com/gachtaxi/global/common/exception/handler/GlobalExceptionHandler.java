@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     // 실제 예외 처리 (log + 응답)
     private ResponseEntity<ApiResponse<Void>> exceptionResponse(Exception e, int errorCode) {
         log.warn(LOG_FORMAT, e.getClass().getSimpleName(), errorCode, e.getMessage());
-        ApiResponse<Void> response = ApiResponse.fail(errorCode, e.getMessage());
+        ApiResponse<Void> response = ApiResponse.response(errorCode, e.getMessage());
 
         return ResponseEntity
                 .status(errorCode)
