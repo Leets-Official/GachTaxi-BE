@@ -46,4 +46,12 @@ public class KakaoUtil {
                 .retrieve()
                 .body(KakaoAccessToken.class);
     }
+
+    public KakaoUserInfoResponse requestKakaoProfile(String Token){
+        return restClient.get()
+                .uri(kakaoUserProfileUri)
+                .header("Authorization", "Bearer " + Token)
+                .retrieve()
+                .body(KakaoUserInfoResponse.class);
+    }
 }
