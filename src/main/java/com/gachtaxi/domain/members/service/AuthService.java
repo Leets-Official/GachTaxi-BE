@@ -27,6 +27,13 @@ public class AuthService {
         // 토큰으로 사용자 정보(email) 가져오기
         KakaoUserInfoResponse kakaoUserInfoResponse = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
 
+        // 회원가입 여부로 분기 처리
+        String email = kakaoUserInfoResponse.kakao_account().email();
+        if(memberService.checkByEmail(email)){
+            log.info("회원가입 한 사용자");
+        }{
+            log.info("회원가입 하지 않은 사용자");
+        }
 
         return kakaoAccessToken.access_token();
     }
