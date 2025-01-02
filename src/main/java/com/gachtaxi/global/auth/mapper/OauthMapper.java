@@ -17,8 +17,9 @@ public class OauthMapper {
     }
 
     // jwt 토큰 추가 할 것.
-    public kakaoLoginResponse toKakaoLoginResponse(KakaoUserInfoResponse userInfo) {
+    public kakaoLoginResponse toKakaoLoginResponse(KakaoUserInfoResponse userInfo, Long userId) {
         return kakaoLoginResponse.builder()
+                .userId(userId)
                 .kakaoId(userInfo.id())
                 .status(LOGIN)
                 .build();
