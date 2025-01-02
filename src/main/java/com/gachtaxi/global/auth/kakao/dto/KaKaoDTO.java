@@ -10,4 +10,22 @@ public class KaKaoDTO {
             String scope,
             int refresh_token_expires_in
     ) {}
+
+    public record KakaoUserInfoResponse(
+            Long id,
+            KakaoAccount kakao_account
+    ) {}
+
+    public record KakaoAccount(
+            Boolean is_email_valid,
+            Boolean is_email_verified,
+            String email,
+            Profile profile
+    ) {}
+
+    public record Profile(
+            String nickname,
+            Boolean is_default_nickname
+    ) {}
+
 }
