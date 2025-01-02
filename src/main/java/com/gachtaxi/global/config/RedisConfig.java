@@ -1,5 +1,7 @@
 package com.gachtaxi.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import com.gachtaxi.domain.chat.redis.RedisChatSubscriber;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,8 @@ import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.text.SimpleDateFormat;
 
 @Configuration
 public class RedisConfig {
@@ -46,9 +50,16 @@ public class RedisConfig {
     public RedisTemplate<String, ChatMessage> chatRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, ChatMessage> redisTemplate = new RedisTemplate<>();
 
+        ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
+        Jackson2JsonRedisSerializer<ChatMessage> serializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, ChatMessage.class);
+
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+        redisTemplate.setValueSerializer(serializer);
 
         return redisTemplate;
     }
