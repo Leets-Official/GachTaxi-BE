@@ -24,6 +24,10 @@ public class AuthService {
         // 인가 코드로 토큰 발급
         KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
 
+        // 토큰으로 사용자 정보(email) 가져오기
+        KakaoUserInfoResponse kakaoUserInfoResponse = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
+
+
         return kakaoAccessToken.access_token();
     }
 }
