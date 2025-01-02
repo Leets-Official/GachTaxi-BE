@@ -20,4 +20,10 @@ public class AuthService {
     private final KakaoUtil kakaoUtil;
     private final MemberService memberService;
 
+    public String kakaoLogin(String authCode, HttpServletResponse response) {
+        // 인가 코드로 토큰 발급
+        KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
+
+        return kakaoAccessToken.access_token();
+    }
 }
