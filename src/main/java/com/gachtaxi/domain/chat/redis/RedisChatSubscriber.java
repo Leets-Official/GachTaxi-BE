@@ -1,10 +1,11 @@
 package com.gachtaxi.domain.chat.redis;
 
+import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import com.gachtaxi.domain.chat.exception.CustomMessagingException;
 import com.gachtaxi.domain.chat.exception.CustomSerializationException;
 import com.gachtaxi.domain.chat.exception.RedisSubscribeException;
-import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,6 +14,7 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisChatSubscriber implements MessageListener {
@@ -33,7 +35,7 @@ public class RedisChatSubscriber implements MessageListener {
         } catch (SerializationException e) {
             throw new CustomSerializationException(e.getMessage());
         } catch (Exception e) {
-            throw new RedisSubscribeException();
+            throw new RedisSubscribeException(e.getMessage());
         }
     }
 }
