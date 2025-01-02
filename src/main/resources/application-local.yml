@@ -11,11 +11,11 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
-#  data:
-#    redis:
-#      host: ${REDIS_HOST}
-#      port: ${REDIS_PORT}
-#      password: ${REDIS_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 #    mongodb:
 #      uri: ${MONGODB_URI}
 
@@ -26,3 +26,8 @@ gachtaxi:
       redirect: ${KAKAO_REDIRECT_URL}
       token_uri: ${KAKAO_TOKEN_URI}
       user_profile: ${KAKAO_USER_PROFILE}
+
+logging:
+  level:
+    org.springframework.messaging: debug
+    org.springframework.web.socket: debug

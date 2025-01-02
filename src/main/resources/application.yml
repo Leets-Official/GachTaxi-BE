@@ -9,3 +9,6 @@ springdoc:
   swagger-ui:
     operations-sorter: method
     tags-sorter: alpha
+
+chat:
+  topic: ${CHAT_TOPIC}
