@@ -10,12 +10,10 @@ import lombok.Builder;
 public class OauthLoginResponse {
 
     @Builder
-    public record kakaoLoginResponse(
+    public record oauthKakaoResponse(
             Long userId,
             Long kakaoId,
-            OauthLoginStatus status,
-            String accessToken,
-            String refreshToken
+            OauthLoginStatus status
     ){}
 
     /*
