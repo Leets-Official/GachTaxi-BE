@@ -9,4 +9,9 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    public Boolean checkByEmail(String email) {
+        return memberRepository.findByEmail(email).isPresent();
+    }
+
 }
