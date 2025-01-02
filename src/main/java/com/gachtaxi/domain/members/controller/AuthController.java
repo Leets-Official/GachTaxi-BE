@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import static com.gachtaxi.domain.members.controller.SuccessMessage.*;
-import static com.gachtaxi.global.auth.dto.OauthLoginResponse.*;
+import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.*;
 
 @Slf4j
 @RequestMapping("/auth")

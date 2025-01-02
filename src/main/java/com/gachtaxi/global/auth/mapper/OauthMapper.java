@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import static com.gachtaxi.global.auth.enums.OauthLoginStatus.*;
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.*;
-import static com.gachtaxi.global.auth.dto.OauthLoginResponse.*;
 
 @Component
 public class OauthMapper {

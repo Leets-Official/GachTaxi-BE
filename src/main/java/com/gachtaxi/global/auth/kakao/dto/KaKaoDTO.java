@@ -1,5 +1,8 @@
 package com.gachtaxi.global.auth.kakao.dto;
 
+import com.gachtaxi.global.auth.enums.OauthLoginStatus;
+import lombok.Builder;
+
 public class KaKaoDTO {
 
     public record KakaoAccessToken(
@@ -27,5 +30,12 @@ public class KaKaoDTO {
             String nickname,
             Boolean is_default_nickname
     ) {}
+
+    @Builder
+    public record oauthKakaoResponse(
+            Long userId,
+            Long kakaoId,
+            OauthLoginStatus status
+    ){}
 
 }

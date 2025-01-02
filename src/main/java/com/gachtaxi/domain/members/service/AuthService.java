@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.*;
-import static com.gachtaxi.global.auth.dto.OauthLoginResponse.*;
 
 
 /*
