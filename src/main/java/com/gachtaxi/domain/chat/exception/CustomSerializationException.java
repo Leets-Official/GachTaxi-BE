@@ -1,8 +1,8 @@
-package com.gachtaxi.domain.chat.Exception;
+package com.gachtaxi.domain.chat.exception;
 
 import com.gachtaxi.global.common.exception.BaseException;
 
-import static com.gachtaxi.domain.chat.Exception.ErrorMessage.SERIALIZATION_ERROR;
+import static com.gachtaxi.domain.chat.exception.ErrorMessage.SERIALIZATION_ERROR;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class CustomSerializationException extends BaseException {

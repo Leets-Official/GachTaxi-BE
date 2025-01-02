@@ -1,8 +1,8 @@
 package com.gachtaxi.domain.chat.redis;
 
-import com.gachtaxi.domain.chat.Exception.CustomMessagingException;
-import com.gachtaxi.domain.chat.Exception.CustomSerializationException;
-import com.gachtaxi.domain.chat.Exception.RedisSubscriberException;
+import com.gachtaxi.domain.chat.exception.CustomMessagingException;
+import com.gachtaxi.domain.chat.exception.CustomSerializationException;
+import com.gachtaxi.domain.chat.exception.RedisSubscribeException;
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
@@ -31,7 +31,7 @@ public class RedisChatSubscriber implements MessageListener {
         } catch (SerializationException e) {
             throw new CustomSerializationException(e.getMessage());
         } catch (Exception e) {
-            throw new RedisSubscriberException();
+            throw new RedisSubscribeException();
         }
     }
 }

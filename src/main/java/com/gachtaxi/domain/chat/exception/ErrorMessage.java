@@ -1,4 +1,4 @@
-package com.gachtaxi.domain.chat.Exception;
+package com.gachtaxi.domain.chat.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
