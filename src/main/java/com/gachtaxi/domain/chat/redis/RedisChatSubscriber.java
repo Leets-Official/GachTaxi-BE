@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RedisChatSubscriber implements MessageListener {
 
+    private static final String CHAT_ROOM_PREFIX = "/sub/chat/room/";
+
     private final RedisTemplate<String, ChatMessage> chatRedisTemplate;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
 
@@ -25,7 +27,7 @@ public class RedisChatSubscriber implements MessageListener {
         try {
             ChatMessage chatMessage = (ChatMessage) chatRedisTemplate.getValueSerializer().deserialize(message.getBody());
 
-            simpMessageSendingOperations.convertAndSend("/sub/chat/room/" + chatMessage.roomId(), chatMessage);
+            simpMessageSendingOperations.convertAndSend(CHAT_ROOM_PREFIX + chatMessage.roomId(), chatMessage);
         } catch (MessagingException e) {
             throw new CustomMessagingException(e.getMessage());
         } catch (SerializationException e) {
