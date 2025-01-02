@@ -5,6 +5,7 @@ import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.util.CookieUtil;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
 import com.gachtaxi.global.auth.jwt.util.JwtProvider;
+import com.gachtaxi.global.auth.jwt.util.JwtRedisUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ public class JwtService {
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 
     private final CookieUtil cookieUtil;
+    private final JwtRedisUtil redisUtil;
     private final JwtProvider jwtProvider;
     private final JwtExtractor jwtExtractor;
 
@@ -30,10 +32,12 @@ public class JwtService {
         log.info(jwtToken.toString());
     }
 
-    // AccessToken과 RefreshToken 만들기
+    // JwtToken 생성 + Redis 저장
     private JwtTokenDto generateJwtToken(Long id, String email, Role role) {
         String accessToken = jwtProvider.generateAccessToken(id, email, role);
         String refreshToken = jwtProvider.generateRefreshToken(id);
+
+        redisUtil.set(id, refreshToken);
         return JwtTokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
