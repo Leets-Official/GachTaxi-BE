@@ -18,3 +18,11 @@ spring:
 #      password: ${REDIS_PASSWORD}
 #    mongodb:
 #      uri: ${MONGODB_URI}
+
+gachtaxi:
+  auth:
+    kakao:
+      client: ${KAKAO_CLIENT_API_KEY}
+      redirect: ${KAKAO_REDIRECT_URL}
+      token_uri: ${KAKAO_TOKEN_URI}
+      user_profile: ${KAKAO_USER_PROFILE}
