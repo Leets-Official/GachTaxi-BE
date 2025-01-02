@@ -31,4 +31,12 @@ public class JwtService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    private void setHeader(String accessToken, HttpServletResponse response) {
+        response.setHeader(ACCESS_TOKEN_SUBJECT, accessToken);
+    }
+
+    private void setCookie(String refreshToken, HttpServletResponse response) {
+        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, refreshToken, response);
+    }
 }
