@@ -1,0 +1,34 @@
+package com.gachtaxi.global.auth.jwt.service;
+
+import com.gachtaxi.domain.members.entity.enums.Role;
+import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
+import com.gachtaxi.global.auth.jwt.util.CookieUtil;
+import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
+import com.gachtaxi.global.auth.jwt.util.JwtProvider;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class JwtService {
+
+    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
+    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+
+    private final CookieUtil cookieUtil;
+    private final JwtProvider jwtProvider;
+    private final JwtExtractor jwtExtractor;
+
+    // AccessToken과 RefreshToken 만들기
+    private JwtTokenDto generateJwtToken(Long id, String email, Role role) {
+        String accessToken = jwtProvider.generateAccessToken(id, email, role);
+        String refreshToken = jwtProvider.generateRefreshToken(id);
+        return JwtTokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+}
