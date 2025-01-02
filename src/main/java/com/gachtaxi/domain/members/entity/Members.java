@@ -1,8 +1,13 @@
 package com.gachtaxi.domain.members.entity;
 
+import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Members extends BaseEntity {
 
@@ -21,6 +26,9 @@ public class Members extends BaseEntity {
     private Long kakaoId;
 
     private Long googleId;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     boolean marketing_agreement;
 
