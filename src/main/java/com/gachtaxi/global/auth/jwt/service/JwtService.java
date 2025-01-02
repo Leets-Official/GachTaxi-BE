@@ -22,6 +22,14 @@ public class JwtService {
     private final JwtProvider jwtProvider;
     private final JwtExtractor jwtExtractor;
 
+    public void responseJwtToken(Long id, String email, Role role, HttpServletResponse response) {
+        JwtTokenDto jwtToken = generateJwtToken(id, email, role);
+        setHeader(jwtToken.accessToken(), response);
+        setCookie(jwtToken.refreshToken(), response);
+
+        log.info(jwtToken.toString());
+    }
+
     // AccessToken과 RefreshToken 만들기
     private JwtTokenDto generateJwtToken(Long id, String email, Role role) {
         String accessToken = jwtProvider.generateAccessToken(id, email, role);
