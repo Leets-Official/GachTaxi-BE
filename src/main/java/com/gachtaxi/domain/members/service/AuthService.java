@@ -1,11 +1,14 @@
 package com.gachtaxi.domain.members.service;
 
+import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.auth.kakao.util.KakaoUtil;
 import com.gachtaxi.global.auth.mapper.OauthMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.*;
 import static com.gachtaxi.global.auth.dto.OauthLoginResponse.*;
@@ -22,25 +25,23 @@ public class AuthService {
 
     private final KakaoUtil kakaoUtil;
     private final OauthMapper oauthMapper;
+    private final JwtService jwtService;
     private final MemberService memberService;
 
-    public kakaoLoginResponse kakaoLogin(String authCode, HttpServletResponse response) {
-        // 인가 코드로 토큰 발급
+    public oauthKakaoResponse kakaoLogin(String authCode, HttpServletResponse response) {
         KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
-
-        // 토큰으로 사용자 정보(email) 가져오기
         KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
 
-        // 회원가입 여부로 분기 처리
         String email = userInfo.kakao_account().email();
-        if(memberService.checkByEmail(email)){
-            log.info("회원가입 한 사용자");
-            // jwt 토큰 발급 (추후 추가)
+        Optional<Members> optionalMember = memberService.findByEmail(email);
 
-            // 응답
-            return oauthMapper.toKakaoLoginResponse(userInfo);
-        }else{
+        if(optionalMember.isEmpty()) {
             return oauthMapper.toKakaoUnRegisterResponse(userInfo);
         }
+
+        Members member = optionalMember.get();
+        jwtService.responseJwtToken(member.getId(), email, member.getRole(), response);
+
+        return oauthMapper.toKakaoLoginResponse(userInfo, member.getId());
     }
 }
