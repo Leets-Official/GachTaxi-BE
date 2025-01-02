@@ -7,6 +7,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class CustomMessagingException extends BaseException {
     public CustomMessagingException(String message) {
-        super(MESSAGING_ERROR.getMessage() + message, INTERNAL_SERVER_ERROR);
+        super(INTERNAL_SERVER_ERROR, MESSAGING_ERROR.getMessage() + message);
     }
 }
