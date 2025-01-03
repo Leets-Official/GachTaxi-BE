@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SuccessMessage {
     // MemberController
+    REGISTER_SUCCESS("회원가입에 성공했습니다."),
 
     // AuthController
     LOGIN_SUCCESS("로그인 성공에 성공했습니다."),
