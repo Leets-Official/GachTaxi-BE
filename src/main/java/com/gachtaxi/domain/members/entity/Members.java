@@ -17,7 +17,6 @@ import org.hibernate.annotations.ColumnDefault;
 @SuperBuilder
 @Table(name="members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Members extends BaseEntity {
 
     @Column(name = "email", nullable = false, unique = true)
