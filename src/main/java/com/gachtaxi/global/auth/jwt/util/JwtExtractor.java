@@ -26,8 +26,8 @@ public class JwtExtractor {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes()); // 키 변환
     }
 
-    public String getId(String token){
-        return getClaimFromToken(token, ID_CLAIM);
+    public Long getId(String token){
+        return getIdFromToken(token, ID_CLAIM);
     }
 
     public String getEmail(String token){
@@ -46,6 +46,11 @@ public class JwtExtractor {
     private String getClaimFromToken(String token, String claimName) {
         Claims claims = parseClaims(token);
         return claims.get(claimName, String.class);
+    }
+
+    private Long getIdFromToken(String token, String claimName) {
+        Claims claims = parseClaims(token);
+        return claims.get(claimName, Long.class);
     }
 
     private Claims parseClaims(String token) {
