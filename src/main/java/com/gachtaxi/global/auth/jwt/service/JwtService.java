@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
+    private static final String ACCESS_TOKEN_SUBJECT = "Authorization";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 
     private final CookieUtil cookieUtil;

@@ -13,7 +13,7 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
+    private static final String ACCESS_TOKEN_SUBJECT = "Authorization";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String ID_CLAIM = "id";
     private static final String EMAIL_CLAIM = "email";
