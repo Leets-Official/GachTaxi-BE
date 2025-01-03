@@ -19,8 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/login/kakao")
-    public ApiResponse<oauthKakaoResponse> kakaoLogin(@RequestParam("code") String authcode, HttpServletResponse response) {
-        oauthKakaoResponse res = authService.kakaoLogin(authcode, response);
+    public ApiResponse<OauthKakaoResponse> kakaoLogin(@RequestParam("code") String authcode, HttpServletResponse response) {
+        OauthKakaoResponse res = authService.kakaoLogin(authcode, response);
         ResponseMessage OAUTH_STATUS = (res.status() == OauthLoginStatus.LOGIN)
                 ? LOGIN_SUCCESS
                 : UN_REGISTER;

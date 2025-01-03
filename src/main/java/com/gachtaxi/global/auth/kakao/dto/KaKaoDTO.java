@@ -32,7 +32,7 @@ public class KaKaoDTO {
     ) {}
 
     @Builder
-    public record oauthKakaoResponse(
+    public record OauthKakaoResponse(
             Long userId,
             Long kakaoId,
             OauthLoginStatus status

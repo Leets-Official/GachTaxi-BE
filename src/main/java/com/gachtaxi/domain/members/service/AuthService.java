@@ -6,7 +6,6 @@ import com.gachtaxi.global.auth.kakao.util.KakaoUtil;
 import com.gachtaxi.global.auth.mapper.OauthMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -27,7 +26,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final MemberService memberService;
 
-    public oauthKakaoResponse kakaoLogin(String authCode, HttpServletResponse response) {
+    public OauthKakaoResponse kakaoLogin(String authCode, HttpServletResponse response) {
         KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
         KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
 
