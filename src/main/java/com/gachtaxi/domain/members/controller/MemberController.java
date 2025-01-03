@@ -15,7 +15,6 @@ import static com.gachtaxi.domain.members.dto.request.UserRequestDto.*;
 import static com.gachtaxi.domain.members.controller.SuccessMessage.*;
 import static org.springframework.http.HttpStatus.*;
 
-@Slf4j
 @RequestMapping("/api/members")
 @RestController
 @RequiredArgsConstructor
