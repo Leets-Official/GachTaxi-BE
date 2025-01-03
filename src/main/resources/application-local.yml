@@ -36,3 +36,4 @@ gachtaxi:
       accessTokenExpiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
       refreshTokenExpiration: ${JWT_REFRESH_TOKEN_EXPIRATION}
       cookieMaxAge: ${JWT_COOKIE_MAX_AGE}
+      secureOption: ${COOKIE_SECURE_OPTION}

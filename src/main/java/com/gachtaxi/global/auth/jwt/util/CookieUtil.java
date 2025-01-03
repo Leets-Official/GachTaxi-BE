@@ -11,11 +11,14 @@ public class CookieUtil {
     @Value("${gachtaxi.auth.jwt.cookieMaxAge}")
     private Long cookieMaxAge;
 
+    @Value("${gachtaxi.auth.jwt.secureOption}")
+    private boolean secureOption;
+
     public void setCookie( String name, String value, HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(cookieMaxAge)
                 .path("/")
-                .secure(false) //https 적용 시 true
+                .secure(secureOption) //https 적용 시 true
                 .httpOnly(true)
                 .sameSite("None")
                 .build();
