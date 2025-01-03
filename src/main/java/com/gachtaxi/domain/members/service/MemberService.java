@@ -23,7 +23,7 @@ public class MemberService {
 
     @Transactional
     public void saveMember(SignUpDto dto, HttpServletResponse response) {
-        validStudentNumber(dto);
+        checkDuplicatedStudentNumber(dto);
         Members newMember = Members.of(dto);
         memberRepository.save(newMember);
         jwtService.responseJwtToken(newMember.getId(), newMember.getEmail(), newMember.getRole(), response);
@@ -37,7 +37,7 @@ public class MemberService {
     * refactor
     * */
 
-    private void validStudentNumber(SignUpDto dto) {
+    private void checkDuplicatedStudentNumber(SignUpDto dto) {
         Long studentNumber = dto.studentNumber();
         memberRepository.findByStudentNumber(studentNumber).ifPresent(m -> {
             throw new DuplicatedStudentNumberException();
