@@ -24,8 +24,8 @@ public class JwtService {
     private final JwtProvider jwtProvider;
     private final JwtExtractor jwtExtractor;
 
-    public void responseJwtToken(Long id, String email, Role role, HttpServletResponse response) {
-        JwtTokenDto jwtToken = generateJwtToken(id, email, role);
+    public void responseJwtToken(Long userId, String email, Role role, HttpServletResponse response) {
+        JwtTokenDto jwtToken = generateJwtToken(userId, email, role);
         setHeader(jwtToken.accessToken(), response);
         setCookie(jwtToken.refreshToken(), response);
 
@@ -33,11 +33,11 @@ public class JwtService {
     }
 
     // JwtToken 생성 + Redis 저장
-    private JwtTokenDto generateJwtToken(Long id, String email, Role role) {
-        String accessToken = jwtProvider.generateAccessToken(id, email, role);
-        String refreshToken = jwtProvider.generateRefreshToken(id);
+    private JwtTokenDto generateJwtToken(Long userId, String email, Role role) {
+        String accessToken = jwtProvider.generateAccessToken(userId, email, role);
+        String refreshToken = jwtProvider.generateRefreshToken(userId);
 
-        redisUtil.set(id, refreshToken);
+        redisUtil.set(userId, refreshToken);
         return JwtTokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
