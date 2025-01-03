@@ -44,7 +44,7 @@ jobs:
       - name: Docker build & push
         run: |
           docker login -u ${{ secrets.DEV_DOCKER_USER_NAME }} -p ${{ secrets.DEV_DOCKER_USER_TOKEN }}
-          docker build -t ${{ secrets.DOCKER_USER_NAME }}/gachtaxi .
+          docker build -t ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi .
           docker push ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
 
   deploy:
