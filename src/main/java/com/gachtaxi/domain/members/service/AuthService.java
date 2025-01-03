@@ -31,16 +31,15 @@ public class AuthService {
         KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
         KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
 
-        String email = userInfo.kakao_account().email();
-        Optional<Members> optionalMember = memberService.findByEmail(email);
+        Long kakaoId = userInfo.id();
+        Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
 
         if(optionalMember.isEmpty()) {
             return oauthMapper.toKakaoUnRegisterResponse(userInfo);
         }
 
         Members member = optionalMember.get();
-        jwtService.responseJwtToken(member.getId(), email, member.getRole(), response);
-
+        jwtService.responseJwtToken(member.getId(), member.getEmail(), member.getRole(), response);
         return oauthMapper.toKakaoLoginResponse(userInfo, member.getId());
     }
 }
