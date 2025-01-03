@@ -1,17 +1,23 @@
 package com.gachtaxi.domain.members.entity;
 
+import com.gachtaxi.domain.members.dto.request.UserRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.common.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Entity
+@SuperBuilder
+@Table(name="members")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Members extends BaseEntity {
 
     @Column(name = "email", nullable = false, unique = true)
@@ -29,7 +35,7 @@ public class Members extends BaseEntity {
     @Column(name = "student_number", nullable = false, unique = true)
     private String studentNumber;
 
-    @Column(name = "phone_number", unique = true) // 피그마 참고하여 일단 null 허용
+    @Column(name = "phone_number", unique = true) // 피그마 참고, 일단 null 허용
     private String phoneNumber;
 
     @Column(name = "kakao_id", unique = true)
@@ -71,4 +77,22 @@ public class Members extends BaseEntity {
     * friend_info
     * */
 
+    public static Members of(UserRequestDto.registerDto dto){
+        return Members.builder()
+                //.profilePicture(dto.profilePicture())
+                .email(dto.email())
+                .nickname(dto.nickName())
+                .realName(dto.realName())
+                .studentNumber(dto.studentNumber())
+                //.phoneNumber(dto.phoneNumber())
+                .kakaoId(dto.kakaoId())
+                .googleId(dto.googleId())
+                .role(Role.MEMBER)
+                .gender(dto.gender())
+                .termsAgreement(dto.termsAgreement())
+                .privacyAgreement(dto.privacyAgreement())
+                .marketingAgreement(dto.marketingAgreement())
+                .twoFactorAuthentication(dto.twoFactorAuthentication())
+                .build();
+    }
 }
