@@ -5,14 +5,13 @@ import com.gachtaxi.global.common.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.gachtaxi.domain.members.dto.request.UserRequestDto.*;
-import static com.gachtaxi.domain.members.controller.SuccessMessage.*;
+import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RequestMapping("/api/members")
