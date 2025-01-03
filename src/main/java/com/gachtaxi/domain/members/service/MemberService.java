@@ -7,6 +7,7 @@ import com.gachtaxi.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,11 +21,12 @@ public class MemberService {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void saveMember(SignUpDto dto, HttpServletResponse response) {
         validStudentNumber(dto);
         Members newMember = Members.of(dto);
-        jwtService.responseJwtToken(newMember.getId(), newMember.getEmail(), newMember.getRole(), response);
         memberRepository.save(newMember);
+        jwtService.responseJwtToken(newMember.getId(), newMember.getEmail(), newMember.getRole(), response);
     }
 
     public Optional<Members> findByKakaoId(Long kakaoId) {
