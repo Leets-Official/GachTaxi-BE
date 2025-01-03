@@ -11,7 +11,7 @@ public class UserRequestDto {
             @NotBlank String email,
             @NotBlank String nickName,
             @NotBlank String realName,
-            @NotBlank String studentNumber,
+            @NotBlank Long studentNumber,
             @NotBlank Gender gender,
             @NotNull Boolean termsAgreement,
             @NotNull Boolean privacyAgreement,

@@ -38,7 +38,7 @@ public class MemberService {
     * */
 
     private void validStudentNumber(SignUpDto dto) {
-        String studentNumber = dto.studentNumber();
+        Long studentNumber = dto.studentNumber();
         memberRepository.findByStudentNumber(studentNumber).ifPresent(m -> {
             throw new DuplicatedStudentNumberException();
         });

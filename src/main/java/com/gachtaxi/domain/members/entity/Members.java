@@ -33,7 +33,7 @@ public class Members extends BaseEntity {
     private String realName;
 
     @Column(name = "student_number", nullable = false, unique = true)
-    private String studentNumber;
+    private Long studentNumber;
 
     @Column(name = "phone_number", unique = true) // 피그마 참고, 일단 null 허용
     private String phoneNumber;
