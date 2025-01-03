@@ -35,10 +35,7 @@ public class JwtService {
         String refreshToken = jwtProvider.generateRefreshToken(userId);
 
         redisUtil.set(userId, refreshToken);
-        return JwtTokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return JwtTokenDto.of(accessToken, refreshToken);
     }
 
     private void setHeader(String accessToken, HttpServletResponse response) {
