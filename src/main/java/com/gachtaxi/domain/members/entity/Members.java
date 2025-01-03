@@ -77,7 +77,7 @@ public class Members extends BaseEntity {
     * friend_info
     * */
 
-    public static Members of(UserRequestDto.registerDto dto){
+    public static Members of(UserRequestDto.SignUpDto dto){
         return Members.builder()
                 //.profilePicture(dto.profilePicture())
                 .email(dto.email())

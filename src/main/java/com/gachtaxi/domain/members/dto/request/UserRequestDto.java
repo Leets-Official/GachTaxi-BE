@@ -2,17 +2,18 @@ package com.gachtaxi.domain.members.dto.request;
 
 
 import com.gachtaxi.domain.members.entity.enums.Gender;
+import jakarta.validation.constraints.NotBlank;
 
 public class UserRequestDto {
 
-    public record registerDto(
+    public record SignUpDto(
             //String profilePicture,
-            String email,
-            String nickName,
-            String realName,
-            String studentNumber,
+            @NotBlank String email,
+            @NotBlank String nickName,
+            @NotBlank String realName,
+            @NotBlank String studentNumber,
             //String phoneNumber,
-            Gender gender,
+            @NotBlank Gender gender,
             Boolean termsAgreement,
             Boolean privacyAgreement,
             Boolean marketingAgreement,

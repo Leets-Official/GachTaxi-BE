@@ -1,6 +1,5 @@
 package com.gachtaxi.domain.members.service;
 
-import com.gachtaxi.domain.members.dto.request.UserRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
@@ -11,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.gachtaxi.domain.members.dto.request.UserRequestDto.*;
+
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -18,7 +20,7 @@ public class MemberService {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
 
-    public void saveMember(UserRequestDto.registerDto dto, HttpServletResponse response) {
+    public void saveMember(SignUpDto dto, HttpServletResponse response) {
         validStudentNumber(dto);
         Members newMember = Members.of(dto);
         jwtService.responseJwtToken(newMember.getId(), newMember.getEmail(), newMember.getRole(), response);
@@ -33,7 +35,7 @@ public class MemberService {
     * refactor
     * */
 
-    private void validStudentNumber(UserRequestDto.registerDto dto) {
+    private void validStudentNumber(SignUpDto dto) {
         String studentNumber = dto.studentNumber();
         memberRepository.findByStudentNumber(studentNumber).ifPresent(m -> {
             throw new DuplicatedStudentNumberException();
