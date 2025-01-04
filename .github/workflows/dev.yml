@@ -94,3 +94,7 @@ jobs:
             echo "** 이전 컨테이너(${BEFORE_NAME}) 종료 및 삭제"
             sudo docker stop $BEFORE_NAME || true
             sudo docker rm $BEFORE_NAME || true
+            
+            # 사용하지 않는 이미지 정리
+            echo "** 사용하지 않는 Docker 이미지 정리"
+            sudo docker image prune -a -f
