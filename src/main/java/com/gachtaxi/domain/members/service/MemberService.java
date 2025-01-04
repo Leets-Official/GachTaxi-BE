@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
+import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
@@ -11,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.gachtaxi.domain.members.dto.request.UserRequestDto.*;
-
-
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -22,7 +20,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void saveMember(SignUpDto dto, HttpServletResponse response) {
+    public void saveMember(UserSignUpRequestDto dto, HttpServletResponse response) {
         checkDuplicatedStudentNumber(dto);
         Members newMember = Members.of(dto);
         memberRepository.save(newMember);
@@ -37,7 +35,7 @@ public class MemberService {
     * refactor
     * */
 
-    private void checkDuplicatedStudentNumber(SignUpDto dto) {
+    private void checkDuplicatedStudentNumber(UserSignUpRequestDto dto) {
         Long studentNumber = dto.studentNumber();
         memberRepository.findByStudentNumber(studentNumber).ifPresent(m -> {
             throw new DuplicatedStudentNumberException();

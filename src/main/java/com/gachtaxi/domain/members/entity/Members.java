@@ -1,12 +1,11 @@
 package com.gachtaxi.domain.members.entity;
 
-import com.gachtaxi.domain.members.dto.request.UserRequestDto;
+import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -76,7 +75,7 @@ public class Members extends BaseEntity {
     * friend_info
     * */
 
-    public static Members of(UserRequestDto.SignUpDto dto){
+    public static Members of(UserSignUpRequestDto dto){
         return Members.builder()
                 //.profilePicture(dto.profilePicture())
                 .email(dto.email())
