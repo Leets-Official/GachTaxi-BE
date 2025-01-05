@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Document(collection = "chatting_messages")
 public class ChattingMessage {
 
@@ -19,7 +17,7 @@ public class ChattingMessage {
 
     private Long senderId;
 
-    private String nickName;
+    private String nickname;
 
     private Long roomId;
 
