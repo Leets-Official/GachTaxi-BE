@@ -21,5 +21,6 @@ public class ChattingParticipant extends BaseEntity {
     private ChattingRoom chattingRoom;
 
     @ManyToOne
+    @JoinColumn(name = "members_id")
     private Members members;
 }
