@@ -1,24 +1,25 @@
 package com.gachtaxi.domain.chat.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.global.common.entity.BaseEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Entity
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class ChattingParticipant {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatting_participant_id")
-    private Long id;
+public class ChattingParticipant extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "chatting_room_id")
     private ChattingRoom chattingRoom;
 
-//    @ManyToOne
-//    @JoinColumn(name = "member_id")
-//    private Members members;
+    @ManyToOne
+    private Members members;
 }

@@ -1,16 +1,15 @@
 package com.gachtaxi.domain.chat.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.gachtaxi.global.common.entity.BaseEntity;
+import jakarta.persistence.Entity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Entity
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class ChattingRoom {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatting_room_id")
-    private Long id;
+public class ChattingRoom extends BaseEntity {
 }
