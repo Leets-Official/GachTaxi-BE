@@ -1,5 +1,6 @@
 package com.gachtaxi.global.auth.jwt.util;
 
+import com.gachtaxi.global.auth.jwt.exception.RefreshTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,7 +24,11 @@ public class JwtRedisUtil {
     }
 
     public Object get(Long key){
-        return redisTemplate.opsForValue().get(PREFIX +key);
+        Object getObjecet = redisTemplate.opsForValue().get(PREFIX +key);
+        if(getObjecet == null){
+            throw new RefreshTokenNotFoundException();
+        }
+        return getObjecet;
     }
 
     public boolean hasKey(Long key){
