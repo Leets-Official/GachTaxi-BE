@@ -12,12 +12,10 @@ import java.util.List;
 public class JwtUserDetails extends User {
 
     private final Long id;
-    private final String email;
 
     public JwtUserDetails(Long id, String email, List<GrantedAuthority> authorities) {
         super(email, "", authorities);
         this.id = id;
-        this.email = email;
     }
 
     public static JwtUserDetails of(Long id, String email, String role) {
