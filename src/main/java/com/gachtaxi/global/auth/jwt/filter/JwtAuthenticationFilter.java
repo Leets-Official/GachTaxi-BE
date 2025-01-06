@@ -1,6 +1,6 @@
 package com.gachtaxi.global.auth.jwt.filter;
 
-import com.gachtaxi.global.auth.jwt.user.JwtUserDetailsService;
+import com.gachtaxi.global.auth.jwt.user.JwtUserDetails;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,7 +23,6 @@ import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.JWT_TOKEN_N
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtExtractor jwtExtractor;
-    private final JwtUserDetailsService jwtUserDetailsService;
 
     private final static String JWT_ERROR = "jwtError";
 
@@ -50,9 +49,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void saveAuthentcation(String token) {
+        Long id = jwtExtractor.getId(token);
         String email = jwtExtractor.getEmail(token);
+        String role = jwtExtractor.getRole(token);
 
-        UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = JwtUserDetails.of(id, email, role);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }

@@ -5,7 +5,6 @@ import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.auth.jwt.authentication.CustomAccessDeniedHandler;
 import com.gachtaxi.global.auth.jwt.authentication.CustomAuthenticationEntryPoint;
 import com.gachtaxi.global.auth.jwt.filter.JwtAuthenticationFilter;
-import com.gachtaxi.global.auth.jwt.user.JwtUserDetailsService;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +33,6 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final JwtExtractor jwtExtractor;
-    private final JwtUserDetailsService jwtUserDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,7 +52,7 @@ public class SecurityConfig {
         http.exceptionHandling(e -> e
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler));
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtExtractor, jwtUserDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtExtractor), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
