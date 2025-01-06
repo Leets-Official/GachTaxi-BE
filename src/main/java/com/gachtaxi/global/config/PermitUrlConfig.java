@@ -6,28 +6,25 @@ import org.springframework.stereotype.Component;
 public class PermitUrlConfig {
 
     public String[] getPublicUrl(){
-        String[] publicUrls = {
+        return new String[]{
                 "/auth/login/kakao",
                 "/login",
                 "/uri/test",
                 "/swagger-ui/**",
                 "/v3/api-docs/**"
         };
-        return publicUrls;
     }
 
     public String[] getMemberUrl(){
-        String[] memberUrls = {
+        return new String[]{
 
         };
-        return memberUrls;
     }
 
     public String[] getAdminUrl(){
-        String[] adminUrls = {
+        return new String[]{
 
         };
-        return adminUrls;
     }
 
 
