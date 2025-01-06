@@ -3,6 +3,7 @@ package com.gachtaxi.domain.members.service;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
+import com.gachtaxi.domain.members.exception.NoSuchMemberException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,5 +41,9 @@ public class MemberService {
         memberRepository.findByStudentNumber(studentNumber).ifPresent(m -> {
             throw new DuplicatedStudentNumberException();
         });
+    }
+
+    public Members findById(Long id) {
+        return memberRepository.findById(id).orElseThrow(NoSuchMemberException::new);
     }
 }
