@@ -52,12 +52,16 @@ public class AutoMatchingService {
 
   private void sendMatchRoomCreatedEvent(Long memberId,
       AutoMatchingPostRequest autoMatchingPostRequest) {
-    Long newRoomId = this.matchingAlgorithmService.createRoom(memberId,
-        autoMatchingPostRequest.getCriteria());
-
     MatchRoomCreatedEvent createdEvent = MatchRoomCreatedEvent.builder()
-        .roomId(newRoomId)
         .hostMemberId(memberId)
+        .startPoint(autoMatchingPostRequest.startPoint())
+        .startName(autoMatchingPostRequest.startName())
+        .destinationPoint(autoMatchingPostRequest.destinationPoint())
+        .destinationName(autoMatchingPostRequest.destinationName())
+        .maxCapacity(autoMatchingPostRequest.maxCapacity())
+        .title(autoMatchingPostRequest.title())
+        .description(autoMatchingPostRequest.description())
+        .totalCharge(autoMatchingPostRequest.totalCharge())
         .createdAt(LocalDateTime.now())
         .build();
 
@@ -66,8 +70,6 @@ public class AutoMatchingService {
 
   private void sendMatchMemberJoinedEvent(Long memberId, FindRoomResult roomResult) {
     Long roomId = roomResult.roomId();
-
-    this.matchingAlgorithmService.joinRoom(roomId, memberId);
 
     MatchMemberJoinedEvent joinedEvent = MatchMemberJoinedEvent.builder()
         .roomId(roomId)
