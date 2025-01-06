@@ -58,17 +58,22 @@ public class JwtService {
     * */
 
     private String extractRefreshToken(HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies == null) {
-            throw new CookieNotFoundException();
-        }
+        Cookie[] cookies = getCookie(request);
 
         return Arrays.stream(cookies)
                 .filter(cookie -> REFRESH_TOKEN_SUBJECT.equals(cookie.getName()))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElseThrow(TokenInvalidException::new);
+    }
+
+    private static Cookie[] getCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            throw new CookieNotFoundException();
+        }
+        return cookies;
     }
 
     // JwtToken 생성 + Redis 저장
