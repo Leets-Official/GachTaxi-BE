@@ -73,16 +73,16 @@ jobs:
 
             if [ -n "$IS_BLUE_ON" ]; then
               echo "** ${GREEN_PORT} 포트에서 GREEN 컨테이너 실행"
-              sudo docker run --name $GREEN_NAME -d -p $GREEN_PORT:$GREEN_PORT \
-                --env-file ./gachtaxi-dev.env -e TZ=Asia/Seoul ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
+              sudo docker run --platform linux/arm64 --name $GREEN_NAME -d -p $GREEN_PORT:$GREEN_PORT \
+                --env-file ./gachtaxi-dev.env --network gachtaxi -e SPRING_PROFILES_ACTIVE=dev -e TZ=Asia/Seoul ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
               BEFORE_NAME=$BLUE_NAME
               AFTER_NAME=$GREEN_NAME
               BEFORE_PORT=$BLUE_PORT
               AFTER_PORT=$GREEN_PORT
             else
               echo "** ${BLUE_PORT} 포트에서 BLUE 컨테이너 실행"
-              sudo docker run --name $BLUE_NAME -d -p $BLUE_PORT:$BLUE_PORT \
-                --env-file ./gachtaxi-dev.env -e TZ=Asia/Seoul ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
+              sudo docker run --platform linux/arm64 --name $BLUE_NAME -d -p $BLUE_PORT:$BLUE_PORT \
+                --env-file ./gachtaxi-dev.env --network gachtaxi -e SPRING_PROFILES_ACTIVE=dev -e TZ=Asia/Seoul ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
               BEFORE_NAME=$GREEN_NAME
               AFTER_NAME=$BLUE_NAME
               BEFORE_PORT=$GREEN_PORT
@@ -98,4 +98,4 @@ jobs:
             
             # 사용하지 않는 이미지 정리
             echo "** 사용하지 않는 Docker 이미지 정리"
-            sudo docker image prune -a -f
+            sudo docker image prune -f
