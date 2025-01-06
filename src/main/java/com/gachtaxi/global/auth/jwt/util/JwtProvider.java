@@ -1,7 +1,7 @@
 package com.gachtaxi.global.auth.jwt.util;
 
-import com.gachtaxi.domain.members.entity.enums.Role;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class JwtProvider {
     @Value("${gachtaxi.auth.jwt.refreshTokenExpiration}")
     private Long refreshTokenExpiration;
 
-    public String generateAccessToken(Long id, String email, Role role) {
+    public String generateAccessToken(Long id, String email, String role) {
         return Jwts.builder()
                 .claim(ID_CLAIM, id)
                 .claim(EMAIL_CLAIM, email)
@@ -42,9 +42,11 @@ public class JwtProvider {
                 .compact(); // 최종 문자열 생성
     }
 
-    public String generateRefreshToken(Long id) {
+    public String generateRefreshToken(Long id, String email, String role) {
         return Jwts.builder()
                 .claim(ID_CLAIM, id)
+                .claim(EMAIL_CLAIM, email)
+                .claim(ROLE_CLAIM, role)
                 .setSubject(REFRESH_TOKEN_SUBJECT) // 사용자 정보(고유 식별자)
                 .setIssuedAt(new Date()) // 발행 시간
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration)) // 만료 시간
