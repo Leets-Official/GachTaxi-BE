@@ -17,7 +17,7 @@ public class ChattingMessage {
 
     private Long senderId;
 
-    private String nickname;
+    private String senderName;
 
     private Long roomId;
 

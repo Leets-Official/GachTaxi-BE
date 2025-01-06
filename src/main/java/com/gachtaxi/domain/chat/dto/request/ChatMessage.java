@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record ChatMessage(
         Long roomId,
         Long senderId,
-        String nickname,
+        String senderName,
         String message,
         LocalDateTime timeStamp
 ) {
@@ -16,7 +16,7 @@ public record ChatMessage(
         return ChatMessage.builder()
                 .roomId(request.roomId())
                 .senderId(senderId)
-                .nickname(request.nickname())
+                .senderName(request.senderName())
                 .message(request.message())
                 .timeStamp(timeStamp)
                 .build();
