@@ -10,7 +10,7 @@ public record UserSignUpRequestDto(
         @NotBlank String nickName,
         @NotBlank String realName,
         @NotBlank Long studentNumber,
-        @NotBlank Gender gender,
+        @NotNull Gender gender,
         @NotNull Boolean termsAgreement,
         @NotNull Boolean privacyAgreement,
         @NotNull Boolean marketingAgreement,
