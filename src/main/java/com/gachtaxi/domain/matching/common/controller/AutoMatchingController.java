@@ -2,12 +2,11 @@ package com.gachtaxi.domain.matching.common.controller;
 
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingPostRequest;
 import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingPostResponse;
-import com.gachtaxi.domain.matching.common.service.MatchingService;
+import com.gachtaxi.domain.matching.common.service.AutoMatchingService;
 import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/api/matching/auto")
 public class AutoMatchingController {
 
-  private final MatchingService matchingService;
+  private final AutoMatchingService autoMatchingService;
 
   @GetMapping("/subscribe")
   public ApiResponse<SseEmitter> subscribeSse(@RequestParam Long memberId) {
@@ -29,7 +28,7 @@ public class AutoMatchingController {
     return ApiResponse.response(
         HttpStatus.OK,
         ResponseMessage.SUBSCRIBE_SUCCESS.getMessage(),
-        this.matchingService.handleSubscribe(memberId)
+        this.autoMatchingService.handleSubscribe(memberId)
     );
   }
 
@@ -40,7 +39,7 @@ public class AutoMatchingController {
   ) {
     // TODO: 인가 로직 완성되면 해당 멤버의 아이디를 가져오도록 변경
 //    Long memberId = 1L;
-    if (!this.matchingService.isSseSubscribed(memberId)) {
+    if (!this.autoMatchingService.isSseSubscribed(memberId)) {
       return ApiResponse.response(
           HttpStatus.BAD_REQUEST,
           ResponseMessage.NOT_SUBSCRIBED_SSE.getMessage()
@@ -50,7 +49,7 @@ public class AutoMatchingController {
     return ApiResponse.response(
         HttpStatus.OK,
         ResponseMessage.AUTO_MATCHING_REQUEST_ACCEPTED.getMessage(),
-        this.matchingService.handlerAutoRequestMatching(memberId, autoMatchingPostRequest)
+        this.autoMatchingService.handlerAutoRequestMatching(memberId, autoMatchingPostRequest)
     );
   }
 }

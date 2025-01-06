@@ -8,9 +8,8 @@ import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingPostResponse
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
-import com.gachtaxi.domain.matching.event.service.kafka.ProducerService;
+import com.gachtaxi.domain.matching.event.service.kafka.AutoMatchingProducer;
 import com.gachtaxi.domain.matching.event.service.sse.SseService;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +19,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
 @RequiredArgsConstructor
-public class MatchingService {
+public class AutoMatchingService {
 
   private final SseService sseService;
-  private final ProducerService producerService;
+  private final AutoMatchingProducer autoMatchingProducer;
   private final MatchingAlgorithmService matchingAlgorithmService;
 
   public SseEmitter handleSubscribe(Long userId) {
@@ -62,7 +61,7 @@ public class MatchingService {
         .createdAt(LocalDateTime.now())
         .build();
 
-    this.producerService.sendMatchRoomCreatedEvent(createdEvent);
+    this.autoMatchingProducer.sendMatchRoomCreatedEvent(createdEvent);
   }
 
   private void sendMatchMemberJoinedEvent(Long memberId, FindRoomResult roomResult) {
@@ -76,6 +75,6 @@ public class MatchingService {
         .joinedAt(LocalDateTime.now())
         .build();
 
-    this.producerService.sendMatchMemberJoinedEvent(joinedEvent);
+    this.autoMatchingProducer.sendMatchMemberJoinedEvent(joinedEvent);
   }
 }

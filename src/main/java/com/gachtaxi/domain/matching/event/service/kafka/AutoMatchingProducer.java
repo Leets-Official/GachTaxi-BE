@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProducerService {
+public class AutoMatchingProducer {
 
   private final KafkaTemplate<String, MatchRoomCreatedEvent> matchRoomCreatedEventKafkaTemplate;
   private final KafkaTemplate<String, MatchMemberJoinedEvent> matchMemberJoinedEventKafkaTemplate;
