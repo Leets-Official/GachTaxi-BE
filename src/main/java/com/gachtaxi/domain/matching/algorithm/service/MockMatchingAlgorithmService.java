@@ -21,14 +21,4 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
     }
     return Optional.empty();
   }
-
-  @Override
-  public Long createRoom(Long userId, List<Tags> criteria) {
-    return 1L;
-  }
-
-  @Override
-  public void joinRoom(Long roomId, Long userId) {
-
-  }
 }
