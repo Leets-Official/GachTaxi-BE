@@ -24,6 +24,7 @@ import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.*;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtExtractor jwtExtractor;
+    private final JwtUserDetailsService jwtUserDetailsService;
 
     private final static String JWT_ERROR = "jwtError";
 
@@ -37,10 +38,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String accessToken = token.get();
 
-        if (jwtExtractor.isExpired(accessToken)) {
+        if(jwtExtractor.isExpired(accessToken)){
             request.setAttribute(JWT_ERROR, JWT_TOKEN_EXPIRED);
             filterChain.doFilter(request, response);
             return;
         }
+
+        saveAuthentcation(accessToken);
+        filterChain.doFilter(request, response);
+    }
+
+    private void saveAuthentcation(String token) {
+        String email = jwtExtractor.getEmail(token);
+
+        UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(email);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
