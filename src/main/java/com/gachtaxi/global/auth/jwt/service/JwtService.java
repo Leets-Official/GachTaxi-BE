@@ -3,6 +3,7 @@ package com.gachtaxi.global.auth.jwt.service;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.exception.CookieNotFoundException;
+import com.gachtaxi.global.auth.jwt.exception.TokenExpiredException;
 import com.gachtaxi.global.auth.jwt.exception.TokenInvalidException;
 import com.gachtaxi.global.auth.jwt.util.CookieUtil;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
@@ -37,6 +38,9 @@ public class JwtService {
 
     public JwtTokenDto reissueJwtToken(HttpServletRequest request) {
         String refreshToken = extractRefreshToken(request);
+        if(jwtExtractor.isExpired(refreshToken)){
+            throw new TokenExpiredException();
+        }
         Long userId = jwtExtractor.getId(refreshToken);
 
         String redisToken = (String) redisUtil.get(userId);
