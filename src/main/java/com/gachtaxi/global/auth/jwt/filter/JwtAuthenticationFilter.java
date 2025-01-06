@@ -30,11 +30,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Optional<String> token = jwtExtractor.extractJwtToken(request);
+
         if (token.isEmpty()) {
             request.setAttribute(JWT_ERROR, JWT_TOKEN_NOT_FOUND);
             filterChain.doFilter(request, response);
             return;
         }
+
         String accessToken = token.get();
 
         if(jwtExtractor.isExpired(accessToken)){
