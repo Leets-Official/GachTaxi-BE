@@ -23,3 +23,17 @@ logging:
   level:
     org.springframework.messaging: debug
     org.springframework.web.socket: debug
+
+gachtaxi:
+  auth:
+    kakao:
+      client: ${KAKAO_CLIENT_API_KEY}
+      redirect: ${KAKAO_REDIRECT_URL}
+      token_uri: ${KAKAO_TOKEN_URI}
+      user_profile: ${KAKAO_USER_PROFILE}
+    jwt:
+      key: ${JWT_SECRET_KEY}
+      accessTokenExpiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+      refreshTokenExpiration: ${JWT_REFRESH_TOKEN_EXPIRATION}
+      cookieMaxAge: ${JWT_COOKIE_MAX_AGE}
+      secureOption: ${COOKIE_SECURE_OPTION}
