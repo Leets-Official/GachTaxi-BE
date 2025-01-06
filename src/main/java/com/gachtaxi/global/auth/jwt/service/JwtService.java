@@ -35,6 +35,19 @@ public class JwtService {
         setCookie(jwtToken.refreshToken(), response);
     }
 
+    public JwtTokenDto reissueJwtToken(HttpServletRequest request) {
+        String refreshToken = extractRefreshToken(request);
+        Long userId = jwtExtractor.getId(refreshToken);
+
+        String redisToken = (String) redisUtil.get(userId);
+        if(!redisToken.equals(refreshToken)) {
+            throw new TokenInvalidException();
+        }
+
+        String email = jwtExtractor.getEmail(refreshToken);
+        String role = jwtExtractor.getRole(refreshToken);
+        return generateJwtToken(userId, email, role);
+    }
 
     /*
     * refactoring
