@@ -12,7 +12,7 @@ public record AutoMatchingPostRequest(
     Integer maxCapacity,
     String title,
     String description,
-    Integer totalCharge
+    Integer expectedTotalCharge
 ) {
 
   public List<Tags> getCriteria() {
