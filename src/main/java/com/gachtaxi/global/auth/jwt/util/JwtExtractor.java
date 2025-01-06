@@ -19,7 +19,7 @@ import java.util.Optional;
 public class JwtExtractor {
 
     private static final String ACCESS_TOKEN_SUBJECT = "Authorization";
-    private static final String BEARER = "Bearer";
+    private static final String BEARER = "Bearer ";
     private static final String ID_CLAIM = "id";
     private static final String EMAIL_CLAIM = "email";
     private static final String ROLE_CLAIM = "role";
