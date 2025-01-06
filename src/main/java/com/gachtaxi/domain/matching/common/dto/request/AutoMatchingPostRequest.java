@@ -5,8 +5,14 @@ import java.util.List;
 
 public record AutoMatchingPostRequest(
     String startPoint,
+    String startName,
     String destinationPoint,
-    List<String> criteria
+    String destinationName,
+    List<String> criteria,
+    Integer maxCapacity,
+    String title,
+    String description,
+    Integer totalCharge
 ) {
 
   public List<Tags> getCriteria() {
