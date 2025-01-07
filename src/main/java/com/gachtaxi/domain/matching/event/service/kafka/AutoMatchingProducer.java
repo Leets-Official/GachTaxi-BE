@@ -28,7 +28,7 @@ public class AutoMatchingProducer {
    * 방 생성 이벤트를 발행
    */
   public void sendMatchRoomCreatedEvent(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    String key = String.valueOf(matchRoomCreatedEvent.roomId());
+    String key = matchRoomCreatedEvent.title();
 
     CompletableFuture<?> future = this.matchRoomCreatedEventKafkaTemplate.send(matchRoomCreatedTopic, key, matchRoomCreatedEvent);
 
