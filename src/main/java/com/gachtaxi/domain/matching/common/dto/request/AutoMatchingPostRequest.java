@@ -9,9 +9,6 @@ public record AutoMatchingPostRequest(
     String destinationPoint,
     String destinationName,
     List<String> criteria,
-    Integer maxCapacity,
-    String title,
-    String description,
     Integer expectedTotalCharge
 ) {
 
