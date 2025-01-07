@@ -62,6 +62,8 @@ jobs:
           port: 30922
           key: ${{ secrets.DEV_SSH_SECRET_PRIVATE_KEY }}
           script: |
+            docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:latest
+            
             # Blue-Green Deployment 포트 및 컨테이너 이름 설정
             BLUE_PORT=8080
             GREEN_PORT=8081
