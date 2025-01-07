@@ -13,6 +13,7 @@ import com.gachtaxi.domain.matching.event.service.sse.SseService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -20,6 +21,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Service
 @RequiredArgsConstructor
 public class AutoMatchingService {
+
+  private static final int AUTO_MAX_CAPACITY = 4;
+  private static final String AUTO_DESCRIPTION = "AUTO_MATCHING";
 
   private final SseService sseService;
   private final AutoMatchingProducer autoMatchingProducer;
@@ -58,11 +62,11 @@ public class AutoMatchingService {
         .startName(autoMatchingPostRequest.startName())
         .destinationPoint(autoMatchingPostRequest.destinationPoint())
         .destinationName(autoMatchingPostRequest.destinationName())
-        .maxCapacity(autoMatchingPostRequest.maxCapacity())
-        .title(autoMatchingPostRequest.title())
-        .description(autoMatchingPostRequest.description())
-        .totalCharge(autoMatchingPostRequest.totalCharge())
-        .createdAt(LocalDateTime.now())
+        .maxCapacity(AUTO_MAX_CAPACITY)
+        .title(UUID.randomUUID().toString())
+        .description(AUTO_DESCRIPTION)
+        .expectedTotalCharge(autoMatchingPostRequest.expectedTotalCharge())
+        .criteria(autoMatchingPostRequest.getCriteria())
         .build();
 
     this.autoMatchingProducer.sendMatchRoomCreatedEvent(createdEvent);
