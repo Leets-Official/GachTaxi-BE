@@ -76,13 +76,13 @@ public class RedisConfig {
         return container;
     }
 
-    @Bean
-    @Qualifier("jwtRedisTemplate")
-    public RedisTemplate<String, String> jwtRedisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(factory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        return redisTemplate;
-    }
+    // @Bean
+    // @Qualifier("jwtRedisTemplate")
+    // public RedisTemplate<String, String> jwtRedisTemplate(RedisConnectionFactory factory) {
+    //     RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+    //     redisTemplate.setConnectionFactory(factory);
+    //     redisTemplate.setKeySerializer(new StringRedisSerializer());
+    //     redisTemplate.setValueSerializer(new StringRedisSerializer());
+    //     return redisTemplate;
+    // }
 }
