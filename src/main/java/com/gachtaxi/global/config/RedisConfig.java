@@ -83,7 +83,6 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(factory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-        // 필요한 경우, 다른 Serializer 설정
         return redisTemplate;
     }
 }
