@@ -6,10 +6,13 @@ import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo
 import com.gachtaxi.domain.matching.common.entity.Route;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
+import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
+import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomTagInfoRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.matching.common.repository.RouteRepository;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -43,16 +46,17 @@ public class MatchingRoomService {
         .title(matchRoomCreatedEvent.title())
         .description(matchRoomCreatedEvent.description())
         .route(route)
-        .totalCharge(matchRoomCreatedEvent.totalCharge())
+        .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
         .build();
 
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
+    this.saveHostMemberChargingInfo(matchingRoom, members);
 
     return this.matchingRoomRepository.save(matchingRoom);
   }
 
-  public Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
+  private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Route route = Route.builder()
         .startLocationCoordinate(matchRoomCreatedEvent.startPoint())
         .startLocationName(matchRoomCreatedEvent.startName())
@@ -72,5 +76,49 @@ public class MatchingRoomService {
 
       this.matchingRoomTagInfoRepository.save(matchingRoomTagInfo);
     }
+  }
+
+  private void saveHostMemberChargingInfo(MatchingRoom matchingRoom, Members members) {
+    MemberMatchingRoomChargingInfo matchingRoomChargingInfo = MemberMatchingRoomChargingInfo.builder()
+        .matchingRoom(matchingRoom)
+        .members(members)
+        .charge(matchingRoom.getTotalCharge())
+        .build();
+
+    this.memberMatchingRoomChargingInfoRepository.save(matchingRoomChargingInfo);
+  }
+
+  public void joinMemberToMatchingRoom(MatchMemberJoinedEvent matchMemberJoinedEvent) {
+    Members members = this.memberService.findById(matchMemberJoinedEvent.memberId());
+    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(
+        matchMemberJoinedEvent.roomId()).orElseThrow(
+        NoSuchMatchingRoomException::new);
+
+    if (!matchingRoom.isActiveMatchingRoom()) {
+      throw new NotActiveMatchingRoomException();
+    }
+
+    List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoom(
+        matchingRoom);
+
+    // TODO: 딱 떨어지지 않는 금액은 어떻게 해야할지?
+    int distributedCharge = matchingRoom.getTotalCharge() / (existMembers.size() + 1);
+
+    this.memberMatchingRoomChargingInfoRepository.save(
+        MemberMatchingRoomChargingInfo.builder()
+            .matchingRoom(matchingRoom)
+            .members(members)
+            .charge(distributedCharge)
+            .build()
+    );
+
+    this.updateExistMembersCharge(existMembers, distributedCharge);
+  }
+
+  private void updateExistMembersCharge(List<MemberMatchingRoomChargingInfo> existMembers, int charge) {
+    for (MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo : existMembers) {
+      memberMatchingRoomChargingInfo.setCharge(charge);
+    }
+    this.memberMatchingRoomChargingInfoRepository.saveAll(existMembers);
   }
 }
