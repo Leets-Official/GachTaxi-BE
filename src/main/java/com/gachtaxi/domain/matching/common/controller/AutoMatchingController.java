@@ -6,6 +6,7 @@ import com.gachtaxi.domain.matching.common.service.AutoMatchingService;
 import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,15 +22,12 @@ public class AutoMatchingController {
 
   private final AutoMatchingService autoMatchingService;
 
-  @GetMapping("/subscribe")
-  public ApiResponse<SseEmitter> subscribeSse(@RequestParam Long memberId) {
+  @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+  public SseEmitter subscribeSse(@RequestParam Long memberId) {
     // TODO: 인가 로직 완성되면 해당 멤버의 아이디를 가져오도록 변경
 //    Long memberId = 1L;
-    return ApiResponse.response(
-        HttpStatus.OK,
-        ResponseMessage.SUBSCRIBE_SUCCESS.getMessage(),
-        this.autoMatchingService.handleSubscribe(memberId)
-    );
+
+    return this.autoMatchingService.handleSubscribe(memberId);
   }
 
   @PostMapping("/request")
