@@ -12,12 +12,12 @@ public record MatchRoomCreatedEvent(
     Integer maxCapacity,
     String title,
     String description,
-    Integer totalCharge,
     String startPoint,
     String startName,
     String destinationPoint,
     String destinationName,
     List<Tags> criteria,
+    Integer expectedTotalCharge,
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt
