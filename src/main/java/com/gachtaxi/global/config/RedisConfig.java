@@ -23,13 +23,13 @@ public class RedisConfig {
 
     public static final String WILD_CARD = "*";
 
-    @Value("${redis.host}")
+    @Value("${redis.host:localhost}")
     private String host;
 
-    @Value("${redis.port}")
+    @Value("${redis.port:6379}")
     private int port;
 
-    @Value("${redis.password}")
+    @Value("${redis.password:}")
     private String password;
 
     @Value("${chat.topic}")
