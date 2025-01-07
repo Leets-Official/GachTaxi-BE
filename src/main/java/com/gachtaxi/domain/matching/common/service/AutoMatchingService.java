@@ -43,7 +43,8 @@ public class AutoMatchingService {
   ) {
     List<Tags> criteria = autoMatchingPostRequest.getCriteria();
     Optional<FindRoomResult> optionalRoom =
-        this.matchingAlgorithmService.findRoom(memberId, criteria);
+        this.matchingAlgorithmService.findRoom(memberId, autoMatchingPostRequest.startPoint(),
+            autoMatchingPostRequest.destinationPoint(), criteria);
 
     optionalRoom
         .ifPresentOrElse(

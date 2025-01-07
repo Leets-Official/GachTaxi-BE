@@ -16,7 +16,7 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
   private final MatchingRoomRepository matchingRoomRepository;
 
   @Override
-  public Optional<FindRoomResult> findRoom(Long userId, List<Tags> criteria) {
+  public Optional<FindRoomResult> findRoom(Long userId, String startPoint, String destinationPoint, List<Tags> criteria) {
     List<MatchingRoom> matchingRoomList = this.matchingRoomRepository.findAll();
     if (!matchingRoomList.isEmpty()) {
       MatchingRoom matchingRoom = matchingRoomList.get(0);
