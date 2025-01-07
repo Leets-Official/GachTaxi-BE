@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -29,6 +30,7 @@ public class MatchingRoom extends BaseEntity {
   private List<MatchingRoomTagInfo> matchingRoomTagInfo;
 
   @Column(name = "capacity", nullable = false, columnDefinition = "INT CHECK (capacity BETWEEN 1 AND 4)")
+  @Getter
   private Integer capacity;
 
   // 팀원들 정보
@@ -48,8 +50,13 @@ public class MatchingRoom extends BaseEntity {
   private Route route;
 
   @Column(name = "total_charge")
+  @Getter
   private Integer totalCharge;
 
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
+
+  public boolean isActiveMatchingRoom() {
+    return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
+  }
 }

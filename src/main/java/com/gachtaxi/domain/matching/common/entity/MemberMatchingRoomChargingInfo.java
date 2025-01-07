@@ -13,7 +13,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class MemberMatchingRoomChargingInfo extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -33,6 +36,7 @@ public class MemberMatchingRoomChargingInfo extends BaseEntity {
   private MatchingRoom matchingRoom;
 
   @Column(name = "charge")
+  @Setter
   private Integer charge;
 
   @Enumerated(EnumType.STRING)
