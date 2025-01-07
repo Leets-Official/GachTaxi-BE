@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.event.service.kafka;
 
+import com.gachtaxi.domain.matching.common.service.MatchingRoomService;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.event.service.sse.SseService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class AutoMatchingConsumer {
 
   private final SseService sseService;
+  private final MatchingRoomService matchingRoomService;
 
   /**
    * 방 생성 이벤트 구독
@@ -27,7 +29,7 @@ public class AutoMatchingConsumer {
     try {
       log.info("[KAFKA CONSUMER] Received MatchRoomCreatedEvent: {}", event);
 
-      // TODO: 매칭 방 생성 후 save
+      this.matchingRoomService.save(event);
 
       this.sseService.sendToClient(event.hostMemberId(), "MATCH_ROOM_CREATED", event);
 
@@ -48,7 +50,7 @@ public class AutoMatchingConsumer {
     try {
       log.info("[KAFKA CONSUMER] Received MatchMemberJoinedEvent: {}", event);
 
-      // TODO: 매칭 방 멤버 참가 후 DB 상태 업데이트
+      this.matchingRoomService.joinMemberToMatchingRoom(event);
 
       this.sseService.sendToClient(event.memberId(), "MATCH_MEMBER_JOINED", event);
       this.sseService.broadcast("MATCH_MEMBER_JOINED", event);
