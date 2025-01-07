@@ -13,24 +13,24 @@ public class JwtRedisUtil {
 
     private final static String PREFIX = "refresh_";
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> jwtRedisTemplate;
 
     @Value("${gachtaxi.auth.jwt.refreshTokenExpiration}")
     private Long refreshTokenExpiration;
 
     public void set(Long key, String value) {
-        redisTemplate.opsForValue().set(PREFIX + key, value, refreshTokenExpiration, TimeUnit.MILLISECONDS);
+        jwtRedisTemplate.opsForValue().set(PREFIX + key, value, refreshTokenExpiration, TimeUnit.MILLISECONDS);
     }
 
     public Object get(Long key){
-        return redisTemplate.opsForValue().get(PREFIX +key);
+        return jwtRedisTemplate.opsForValue().get(PREFIX +key);
     }
 
     public boolean hasKey(Long key){
-        return Boolean.TRUE.equals(redisTemplate.hasKey(PREFIX + key));
+        return Boolean.TRUE.equals(jwtRedisTemplate.hasKey(PREFIX + key));
     }
 
     public boolean delete(Long key){
-        return Boolean.TRUE.equals(redisTemplate.delete(PREFIX + key));
+        return Boolean.TRUE.equals(jwtRedisTemplate.delete(PREFIX + key));
     }
 }
