@@ -16,7 +16,7 @@ import static com.gachtaxi.global.auth.jwt.util.JwtProvider.ACCESS_TOKEN_SUBJECT
 public class StompConnectStrategy implements StompCommandStrategy{
 
     private static final String TOKEN_PREFIX = "Bearer ";
-    private static final String USER_ID_KEY = "USER_ID";
+    private static final String CHAT_USER_ID = "CHAT_USER_ID";
 
     private final JwtExtractor jwtExtractor;
 
@@ -38,7 +38,7 @@ public class StompConnectStrategy implements StompCommandStrategy{
          */
 
         Long userId = jwtExtractor.getId(jwtToken);
-        accessor.getSessionAttributes().put(USER_ID_KEY, userId);
+        accessor.getSessionAttributes().put(CHAT_USER_ID, userId);
 
         return message;
     }

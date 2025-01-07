@@ -14,6 +14,7 @@ import java.util.List;
 public class ChatStrategyHandler {
 
     private final List<StompCommandStrategy> stompCommandStrategies;
+    private final DefaultCommandStrategy defaultCommandStrategy;
 
     public Message<?> handle(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel) {
         StompCommand command = accessor.getCommand();
@@ -21,7 +22,7 @@ public class ChatStrategyHandler {
         return stompCommandStrategies.stream()
                 .filter(strategy -> strategy.supports(command))
                 .findFirst()
-                .orElse(new DefaultCommandStrategy())
+                .orElse(defaultCommandStrategy)
                 .preSend(message, accessor, channel);
     }
 }
