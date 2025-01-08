@@ -5,6 +5,7 @@ import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.mail.dto.request.EmailAddressDto;
 import com.gachtaxi.global.common.mail.service.EmailService;
 import com.gachtaxi.global.common.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class InactiveMemberController {
 
     @PostMapping("/tmp-members/mail-authcode")
     public ApiResponse sendEmail(
-            @RequestBody EmailAddressDto emailDto,
+            @RequestBody @Valid EmailAddressDto emailDto,
             @CurrentMemberId Long userId
     ) {
         emailService.sendEmail(emailDto.email());
