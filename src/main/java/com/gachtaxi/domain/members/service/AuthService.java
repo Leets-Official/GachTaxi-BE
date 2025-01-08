@@ -35,10 +35,18 @@ public class AuthService {
 
         Long kakaoId = userInfo.id();
         Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
+//        System.out.println(optionalMember.get().getKakaoId());
 
-        if(optionalMember.isEmpty() || optionalMember.get().getRole() == TEMPORARY) {
+        if(optionalMember.isEmpty()) {
             TmpMemberDto tmpDto = memberService.saveTmpMember(kakaoId);
 
+            jwtService.responseTmpAccessToken(tmpDto, response);
+            return oauthMapper.toKakaoUnRegisterResponse(tmpDto.userId());
+        }
+
+        // 회원 가입 진행 중 중단된 유저 또한 다시 임시 토큰을 재발급해준다.
+        if(optionalMember.get().getRole() == TEMPORARY){
+            TmpMemberDto tmpDto = TmpMemberDto.of(optionalMember.get());
             jwtService.responseTmpAccessToken(tmpDto, response);
             return oauthMapper.toKakaoUnRegisterResponse(tmpDto.userId());
         }
