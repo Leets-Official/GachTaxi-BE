@@ -7,6 +7,7 @@ import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.common.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login/kakao")
-    public ApiResponse<OauthKakaoResponse> kakaoLogin(@RequestBody KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
+    public ApiResponse<OauthKakaoResponse> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
         OauthKakaoResponse res = authService.kakaoLogin(kakaoAuthCode.authCode(), response);
         ResponseMessage OAUTH_STATUS = (res.status() == OauthLoginStatus.LOGIN)
                 ? LOGIN_SUCCESS
