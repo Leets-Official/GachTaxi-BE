@@ -15,7 +15,9 @@ public enum ResponseMessage {
     UN_REGISTER("회원가입을 진행해주세요"),
 
     //InactiveMemberController
-    EMAIL_SEND_SUCCESS("이메일을 성공적으로 전송했습니다");
+    EMAIL_SEND_SUCCESS("이메일을 성공적으로 전송했습니다"),
+    EMAIL_AUTHENTICATION_SUCESS("이메일 인증에 성공했습니다!"),
+    AUTH_CODE_NOT_MATCH("인증 코드가 일치하지 않습니다");
 
     private final String message;
 }
