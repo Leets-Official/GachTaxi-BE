@@ -1,12 +1,12 @@
 package com.gachtaxi.global.auth.jwt.util;
 
-import com.gachtaxi.global.auth.jwt.exception.TokenInvalidException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Optional;
 
 // 토큰 추출 및 검증
+@Slf4j
 @Component
 public class JwtExtractor {
 
@@ -50,6 +51,7 @@ public class JwtExtractor {
 
     public Boolean isExpired(String token) {
         Claims claims = parseClaims(token);
+        if(claims == null) return true;
         return claims.getExpiration().before(new Date());
     }
 
@@ -64,13 +66,15 @@ public class JwtExtractor {
     }
 
     private Claims parseClaims(String token) {
+        JwtParser parser = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build();
+        Claims claims = null;
         try{
-            JwtParser parser = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build();
-            return parser.parseClaimsJws(token).getBody();
+            claims = parser.parseClaimsJws(token).getBody();
         }catch (JwtException e){
-            throw new TokenInvalidException();
+            log.error(e.getMessage());
         }
+        return claims;
     }
 }
