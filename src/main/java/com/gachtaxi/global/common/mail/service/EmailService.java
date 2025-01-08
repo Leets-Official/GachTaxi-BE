@@ -2,6 +2,7 @@ package com.gachtaxi.global.common.mail.service;
 
 import com.gachtaxi.global.common.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.ses.SesClient;
@@ -10,6 +11,7 @@ import software.amazon.awssdk.services.ses.model.SendTemplatedEmailRequest;
 
 import java.security.SecureRandom;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -33,6 +35,7 @@ public class EmailService {
         redisUtil.setEmailAuthCode(recipientEmail, code);
 
         sendAuthCodeEmail(recipientEmail, code);
+        log.info(" Email: " + recipientEmail + "\n Code: " + code + "\n 전달");
     }
 
     // 인증 코드 검증
