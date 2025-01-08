@@ -1,5 +1,6 @@
 package com.gachtaxi.global.auth.jwt.service;
 
+import com.gachtaxi.domain.members.dto.request.TmpMemberDto;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.exception.CookieNotFoundException;
@@ -34,6 +35,11 @@ public class JwtService {
         JwtTokenDto jwtToken = generateJwtToken(userId, email, role.name());
         setHeader(jwtToken.accessToken(), response);
         setCookie(jwtToken.refreshToken(), response);
+    }
+
+    public void responseTmpAccessToken(TmpMemberDto tmpMemberDto, HttpServletResponse response) {
+        String tmpAccessToken = jwtProvider.generateTmpAccessToken(tmpMemberDto.userId(), tmpMemberDto.role().name());
+        setHeader(tmpAccessToken, response);
     }
 
     public JwtTokenDto reissueJwtToken(HttpServletRequest request) {
