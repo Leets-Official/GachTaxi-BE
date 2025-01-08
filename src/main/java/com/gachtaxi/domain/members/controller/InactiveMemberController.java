@@ -11,8 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.gachtaxi.domain.members.controller.ResponseMessage.EMAIL_AUTHENTICATION_SUCESS;
-import static com.gachtaxi.domain.members.controller.ResponseMessage.EMAIL_SEND_SUCCESS;
+import static com.gachtaxi.global.common.mail.message.ResponseMessage.EMAIL_AUTHENTICATION_SUCESS;
+import static com.gachtaxi.global.common.mail.message.ResponseMessage.EMAIL_SEND_SUCCESS;
 import static org.springframework.http.HttpStatus.OK;
 
 @RequestMapping("/api")
