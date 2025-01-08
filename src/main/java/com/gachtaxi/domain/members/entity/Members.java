@@ -18,6 +18,10 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Members extends BaseEntity {
 
+    // UserDetails를 만드는 과정에서 null 방지를 위해 임시로 저장하는 이메일
+    // 추후 로직 개선하겠습니다.
+    private final static String TMP_EMAIL = "tmpEmail@gmail.com";
+
     @Column(name = "email", unique = true)
     private String email;
 
@@ -94,10 +98,10 @@ public class Members extends BaseEntity {
                 .build();
     }
 
-    public static Members ofKakaoId(Long kakaoId, String tmpEmail){
+    public static Members ofKakaoId(Long kakaoId){
         return Members.builder()
                 .kakaoId(kakaoId)
-                .email(tmpEmail)
+                .email(TMP_EMAIL)
                 .role(Role.TEMPORARY)
                 .build();
     }
