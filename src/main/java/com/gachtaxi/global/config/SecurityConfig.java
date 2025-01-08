@@ -1,7 +1,6 @@
 package com.gachtaxi.global.config;
 
 
-import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.auth.jwt.authentication.CustomAccessDeniedHandler;
 import com.gachtaxi.global.auth.jwt.authentication.CustomAuthenticationEntryPoint;
 import com.gachtaxi.global.auth.jwt.filter.JwtAuthenticationFilter;
@@ -23,6 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.gachtaxi.domain.members.entity.enums.Role.*;
 
 @Configuration
 @EnableWebSecurity
@@ -46,8 +47,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers(permitUrlConfig.getPublicUrl()).permitAll()
-                .requestMatchers(permitUrlConfig.getMemberUrl()).hasRole(Role.MEMBER.name())
-                .requestMatchers(permitUrlConfig.getAdminUrl()).hasRole(Role.ADMIN.name())
+                .requestMatchers(permitUrlConfig.getMemberUrl()).hasAnyRole(MEMBER.name(), ADMIN.name())
+                .requestMatchers(permitUrlConfig.getAdminUrl()).hasRole(ADMIN.name())
                 .anyRequest().authenticated());
 
         http.exceptionHandling(e -> e

@@ -7,11 +7,13 @@ import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.common.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
+import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.KakaoAuthCode;
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.OauthKakaoResponse;
 
 @RequestMapping("/auth")
@@ -22,9 +24,9 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
 
-    @GetMapping("/login/kakao")
-    public ApiResponse<OauthKakaoResponse> kakaoLogin(@RequestParam("code") String authcode, HttpServletResponse response) {
-        OauthKakaoResponse res = authService.kakaoLogin(authcode, response);
+    @PostMapping("/login/kakao")
+    public ApiResponse<OauthKakaoResponse> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
+        OauthKakaoResponse res = authService.kakaoLogin(kakaoAuthCode.authCode(), response);
         ResponseMessage OAUTH_STATUS = (res.status() == OauthLoginStatus.LOGIN)
                 ? LOGIN_SUCCESS
                 : UN_REGISTER;

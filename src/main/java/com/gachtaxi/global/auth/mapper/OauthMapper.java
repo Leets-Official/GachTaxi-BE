@@ -8,18 +8,17 @@ import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.*;
 @Component
 public class OauthMapper {
 
-    public OauthKakaoResponse toKakaoUnRegisterResponse(KakaoUserInfoResponse userInfo) {
+    public OauthKakaoResponse toKakaoUnRegisterResponse(Long userId) {
         return OauthKakaoResponse.builder()
-                .kakaoId(userInfo.id())
+                .userId(userId)
                 .status(UN_REGISTER)
                 .build();
     }
 
     // jwt 토큰 추가 할 것.
-    public OauthKakaoResponse toKakaoLoginResponse(KakaoUserInfoResponse userInfo, Long userId) {
+    public OauthKakaoResponse toKakaoLoginResponse(Long userId) {
         return OauthKakaoResponse.builder()
                 .userId(userId)
-                .kakaoId(userInfo.id())
                 .status(LOGIN)
                 .build();
     }
