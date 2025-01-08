@@ -1,5 +1,6 @@
 package com.gachtaxi.global.common.mail.service;
 
+import com.gachtaxi.domain.members.exception.AuthCodeNotMatchException;
 import com.gachtaxi.global.common.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,14 @@ public class EmailService {
 
         sendAuthCodeEmail(recipientEmail, code);
         log.info(" Email: " + recipientEmail + "\n Code: " + code + "\n 전달");
+    }
+
+    public void checkEmailAuthCode(String recipientEmail, String inputCode) {
+        String redisAuthCode = (String) redisUtil.getEmailAuthCode(recipientEmail);
+
+        if(!redisAuthCode.equals(inputCode)) {
+            throw new AuthCodeNotMatchException();
+        }
     }
 
     // 인증 코드 검증
