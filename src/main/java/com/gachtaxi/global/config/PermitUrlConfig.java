@@ -16,6 +16,12 @@ public class PermitUrlConfig {
         };
     }
 
+    public String[] getTmpMemberUrl(){
+        return new String[]{
+                "/api/tmp-members/**"
+        };
+    }
+
     public String[] getMemberUrl(){
         return new String[]{
 
