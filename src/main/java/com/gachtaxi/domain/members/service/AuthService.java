@@ -35,7 +35,6 @@ public class AuthService {
 
         Long kakaoId = userInfo.id();
         Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
-//        System.out.println(optionalMember.get().getKakaoId());
 
         if(optionalMember.isEmpty()) {
             TmpMemberDto tmpDto = memberService.saveTmpMember(kakaoId);
