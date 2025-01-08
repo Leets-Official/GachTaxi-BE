@@ -80,7 +80,7 @@ public class Members extends BaseEntity {
     * */
 
     public static Members of(UserSignUpRequestDto dto){
-        return com.gachtaxi.domain.members.entity.Members.builder()
+        return Members.builder()
                 //.profilePicture(dto.profilePicture())
                 .email(dto.email())
                 .nickname(dto.nickName())
