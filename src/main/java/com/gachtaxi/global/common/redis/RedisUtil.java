@@ -39,7 +39,7 @@ public class RedisUtil {
         return getObjecet;
     }
 
-    public Object getEmailAuthCode(Long key){
+    public Object getEmailAuthCode(String key){
         Object getObjecet = redisTemplate.opsForValue().get(PREFIX_EMAIL_CODE+key);
         if(getObjecet == null){
             // EmailAuthCode 만료됨
