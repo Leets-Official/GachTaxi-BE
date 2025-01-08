@@ -3,6 +3,7 @@ package com.gachtaxi.domain.members.entity;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
+import com.gachtaxi.domain.members.entity.enums.UserStatus;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -52,6 +53,9 @@ public class Members extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
     // 이용 약관 동의
     @Column(name = "terms_agreement")
     @ColumnDefault("true")
@@ -90,6 +94,7 @@ public class Members extends BaseEntity {
                 .kakaoId(dto.kakaoId())
                 .googleId(dto.googleId())
                 .role(Role.MEMBER)
+                .status(UserStatus.ACTIVE)
                 .gender(dto.gender())
                 .termsAgreement(dto.termsAgreement())
                 .privacyAgreement(dto.privacyAgreement())
@@ -101,7 +106,8 @@ public class Members extends BaseEntity {
     public static Members ofKakaoId(Long kakaoId){
         return Members.builder()
                 .kakaoId(kakaoId)
-                .role(Role.TEMPORARY)
+                .status(UserStatus.INACTIVE)
+                .role(Role.MEMBER)
                 .build();
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.gachtaxi.domain.members.entity.enums.Role.TEMPORARY;
+import static com.gachtaxi.domain.members.entity.enums.UserStatus.INACTIVE;
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.*;
 
 
@@ -44,7 +44,7 @@ public class AuthService {
         }
 
         // 회원 가입 진행 중 중단된 유저 또한 다시 임시 토큰을 재발급해준다.
-        if(optionalMember.get().getRole() == TEMPORARY){
+        if(optionalMember.get().getStatus() == INACTIVE){
             TmpMemberDto tmpDto = TmpMemberDto.of(optionalMember.get());
             jwtService.responseTmpAccessToken(tmpDto, response);
             return oauthMapper.toKakaoUnRegisterResponse(tmpDto.userId());
