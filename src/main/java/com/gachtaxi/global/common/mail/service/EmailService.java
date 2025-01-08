@@ -1,6 +1,7 @@
 package com.gachtaxi.global.common.mail.service;
 
 import com.gachtaxi.domain.members.exception.AuthCodeNotMatchException;
+import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.global.common.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +33,13 @@ public class EmailService {
     private String senderEmail;
 
     public void sendEmail(String recipientEmail) {
+        checkGachonEmail(recipientEmail);
+
         String code = generateCode();
         redisUtil.setEmailAuthCode(recipientEmail, code);
 
         sendAuthCodeEmail(recipientEmail, code);
-        log.info(" Email: " + recipientEmail + "\n Code: " + code + "\n 전달");
+        log.info("\n Email: " + recipientEmail + "\n Code: " + code + "\n 전달");
     }
 
     public void checkEmailAuthCode(String recipientEmail, String inputCode) {
@@ -52,6 +55,12 @@ public class EmailService {
     /*
     * refactoring
     * */
+
+    private void checkGachonEmail(String email){
+        if(!email.endsWith("@gachon.ac.kr")){
+            throw new EmailFormInvalidException();
+        }
+    }
 
     private String generateCode() {
         return String.format(CODE_LENGTH, secureRandom.nextInt(BOUND) + OFFSET);
