@@ -1,4 +1,4 @@
-package com.gachtaxi.domain.chat.interceptor.strategy;
+package com.gachtaxi.domain.chat.stomp.strategy;
 
 import com.gachtaxi.global.auth.jwt.exception.TokenNotExistException;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;

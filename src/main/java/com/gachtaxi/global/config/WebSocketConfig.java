@@ -1,6 +1,6 @@
 package com.gachtaxi.global.config;
 
-import com.gachtaxi.domain.chat.interceptor.CustomChannelInterceptor;
+import com.gachtaxi.domain.chat.stomp.CustomChannelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
