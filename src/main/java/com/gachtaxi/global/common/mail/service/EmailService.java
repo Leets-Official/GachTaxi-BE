@@ -20,6 +20,7 @@ public class EmailService {
 
     private static final String CODE_LENGTH = "%06d";
     private static final String CODE_FORMAT = "{\"code\":\"%s\"}";
+    private static final String GACHON_EMAIL_FORM = "@gachon.ac.kr";
     private static final int BOUND = 888888;
     private static final int OFFSET = 111111;
 
@@ -57,7 +58,7 @@ public class EmailService {
     * */
 
     private void checkGachonEmail(String email){
-        if(!email.endsWith("@gachon.ac.kr")){
+        if(!email.endsWith(GACHON_EMAIL_FORM)){
             throw new EmailFormInvalidException();
         }
     }
