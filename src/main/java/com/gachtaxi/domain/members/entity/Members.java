@@ -101,7 +101,6 @@ public class Members extends BaseEntity {
     public static Members ofKakaoId(Long kakaoId){
         return Members.builder()
                 .kakaoId(kakaoId)
-                .email(TMP_EMAIL)
                 .role(Role.TEMPORARY)
                 .build();
     }
