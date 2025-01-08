@@ -1,6 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
-import com.gachtaxi.domain.members.dto.request.TmpMemberDto;
+import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
@@ -31,10 +31,10 @@ public class MemberService {
 
     // 임시 유저 저장
     @Transactional
-    public TmpMemberDto saveTmpMember(Long kakaoId){
+    public InactiveMemberDto saveTmpMember(Long kakaoId){
         Members tmpMember = Members.ofKakaoId(kakaoId);
         memberRepository.save(tmpMember);
-        return TmpMemberDto.of(tmpMember);
+        return InactiveMemberDto.of(tmpMember);
     }
 
     public Optional<Members> findByKakaoId(Long kakaoId) {
