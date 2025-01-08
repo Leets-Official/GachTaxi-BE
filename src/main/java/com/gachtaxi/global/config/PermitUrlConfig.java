@@ -18,7 +18,7 @@ public class PermitUrlConfig {
 
     public String[] getMemberUrl(){
         return new String[]{
-
+                "/api/tmp-members/**",
         };
     }
 
