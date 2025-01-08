@@ -38,7 +38,7 @@ public class JwtService {
     }
 
     public void responseTmpAccessToken(TmpMemberDto tmpMemberDto, HttpServletResponse response) {
-        String tmpAccessToken = jwtProvider.generateTmpAccessToken(tmpMemberDto.userId(), tmpMemberDto.email(), tmpMemberDto.role().name());
+        String tmpAccessToken = jwtProvider.generateTmpAccessToken(tmpMemberDto.userId(), tmpMemberDto.role().name());
         setHeader(tmpAccessToken, response);
     }
 
