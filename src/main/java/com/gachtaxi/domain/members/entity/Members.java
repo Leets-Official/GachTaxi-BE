@@ -18,19 +18,19 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Members extends BaseEntity {
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     private String nickname;
 
-    @Column(name = "real_name", nullable = false)
+    @Column(name = "real_name")
     private String realName;
 
-    @Column(name = "student_number", nullable = false, unique = true)
+    @Column(name = "student_number", unique = true)
     private Long studentNumber;
 
     @Column(name = "phone_number", unique = true) // 피그마 참고, 일단 null 허용
@@ -49,22 +49,22 @@ public class Members extends BaseEntity {
     private Gender gender;
 
     // 이용 약관 동의
-    @Column(name = "terms_agreement", nullable = false)
+    @Column(name = "terms_agreement")
     @ColumnDefault("true")
     private Boolean termsAgreement;
 
     // 개인정보 수집 동의
-    @Column(name = "privacy_agreement", nullable = false)
+    @Column(name = "privacy_agreement")
     @ColumnDefault("true")
     private Boolean privacyAgreement;
 
     // 광고성 정보 수신 동의
-    @Column(name = "marketing_agreement", nullable = false)
+    @Column(name = "marketing_agreement")
     @ColumnDefault("false")
     private Boolean marketingAgreement;
 
     // 2차 인증 (전화번호)
-    @Column(name = "two_factor_authentication", nullable = false)
+    @Column(name = "two_factor_authentication")
     @ColumnDefault("false")
     private Boolean twoFactorAuthentication;
 
@@ -76,7 +76,7 @@ public class Members extends BaseEntity {
     * */
 
     public static Members of(UserSignUpRequestDto dto){
-        return Members.builder()
+        return com.gachtaxi.domain.members.entity.Members.builder()
                 //.profilePicture(dto.profilePicture())
                 .email(dto.email())
                 .nickname(dto.nickName())
@@ -91,6 +91,14 @@ public class Members extends BaseEntity {
                 .privacyAgreement(dto.privacyAgreement())
                 .marketingAgreement(dto.marketingAgreement())
                 .twoFactorAuthentication(dto.twoFactorAuthentication())
+                .build();
+    }
+
+    public static Members ofKakaoId(Long kakaoId, String tmpEmail){
+        return Members.builder()
+                .kakaoId(kakaoId)
+                .email(tmpEmail)
+                .role(Role.TEMPORARY)
                 .build();
     }
 }
