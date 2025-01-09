@@ -16,7 +16,7 @@ import static com.gachtaxi.global.auth.jwt.util.JwtProvider.ACCESS_TOKEN_SUBJECT
 public class StompConnectStrategy implements StompCommandStrategy{
 
     private static final String TOKEN_PREFIX = "Bearer ";
-    private static final String CHAT_USER_ID = "CHAT_USER_ID";
+    public static final String CHAT_USER_ID = "CHAT_USER_ID";
 
     private final JwtExtractor jwtExtractor;
 
@@ -33,11 +33,13 @@ public class StompConnectStrategy implements StompCommandStrategy{
             throw new TokenNotExistException();
         }
 
+        String token = jwtToken.replace(TOKEN_PREFIX, "").trim();
+
         /*
         todo 인증 객체 생성 후 설정하기
          */
 
-        Long userId = jwtExtractor.getId(jwtToken);
+        Long userId = jwtExtractor.getId(token);
         accessor.getSessionAttributes().put(CHAT_USER_ID, userId);
 
         return message;
