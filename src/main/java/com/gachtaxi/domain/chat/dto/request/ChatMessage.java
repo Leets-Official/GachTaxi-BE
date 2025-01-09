@@ -14,9 +14,9 @@ public record ChatMessage(
         LocalDateTime timeStamp,
         MessageType messageType
 ) {
-    public static ChatMessage of(ChatMessageRequest request, long senderId) {
+    public static ChatMessage of(ChatMessageRequest request, long roomId, long senderId) {
         return ChatMessage.builder()
-                .roomId(request.roomId())
+                .roomId(roomId)
                 .senderId(senderId)
                 .senderName(request.senderName())
                 .message(request.message())

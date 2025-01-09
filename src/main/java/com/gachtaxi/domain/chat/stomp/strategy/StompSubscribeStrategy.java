@@ -17,6 +17,8 @@ import static com.gachtaxi.domain.chat.stomp.strategy.StompConnectStrategy.CHAT_
 public class StompSubscribeStrategy implements StompCommandStrategy {
 
     private static final String SUB_END_POINT = "/sub/chat/room/";
+    public static final String CHAT_ROOM_ID = "CHAT_ROOM_ID";
+
 
     private final ChattingRoomService chattingRoomService;
 
@@ -41,6 +43,7 @@ public class StompSubscribeStrategy implements StompCommandStrategy {
         String senderName = accessor.getFirstNativeHeader("senderName");
 
         chattingRoomService.subscribeChatRoom(roomId, senderId, senderName);
+        accessor.getSessionAttributes().put(CHAT_ROOM_ID, roomId);
 
         return message;
     }
