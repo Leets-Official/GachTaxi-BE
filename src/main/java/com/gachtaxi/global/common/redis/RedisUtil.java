@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisUtil {
 
-    private final static String PREFIX_TOKEN = "refresh_";
-    private final static String PREFIX_EMAIL_CODE = "email_";
+    private final static String TOKEN_FORMAT = "refreshToken:%s";
+    private final static String EMAIL_CODE_FORMAT = "emailAuthCode:%s";
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -24,16 +24,19 @@ public class RedisUtil {
     @Value("${gachtaxi.auth.redis.emailAuthCodeExpiration}")
     private Long emailAuthCodeExpiration;
 
-    public void setRefreshToken(Long key, String value) {
-        redisTemplate.opsForValue().set(PREFIX_TOKEN + key, value, refreshTokenExpiration, TimeUnit.MILLISECONDS);
+    public void setRefreshToken(Long id, String value) {
+        String key = String.format(TOKEN_FORMAT, id);
+        redisTemplate.opsForValue().set(key, value, refreshTokenExpiration, TimeUnit.MILLISECONDS);
     }
 
-    public void setEmailAuthCode(String key, String value) {
-        redisTemplate.opsForValue().set(PREFIX_EMAIL_CODE+key, value, emailAuthCodeExpiration, TimeUnit.MILLISECONDS);
+    public void setEmailAuthCode(String email, String value) {
+        String key = String.format(EMAIL_CODE_FORMAT, email);
+        redisTemplate.opsForValue().set(key, value, emailAuthCodeExpiration, TimeUnit.MILLISECONDS);
     }
 
-    public Object getRefreshToken(Long key){
-        Object getObjecet = redisTemplate.opsForValue().get(PREFIX_TOKEN +key);
+    public Object getRefreshToken(Long id){
+        String key = String.format(TOKEN_FORMAT, id);
+        Object getObjecet = redisTemplate.opsForValue().get(key);
 
         if(getObjecet == null){
             throw new RefreshTokenNotFoundException();
@@ -42,8 +45,9 @@ public class RedisUtil {
         return getObjecet;
     }
 
-    public Object getEmailAuthCode(String key){
-        Object getObjecet = redisTemplate.opsForValue().get(PREFIX_EMAIL_CODE+key);
+    public Object getEmailAuthCode(String email){
+        String key = String.format(EMAIL_CODE_FORMAT, email);
+        Object getObjecet = redisTemplate.opsForValue().get(key);
 
         if(getObjecet == null){
             throw new AuthCodeExpirationException();
@@ -53,10 +57,10 @@ public class RedisUtil {
     }
 
     public boolean hasKey(Long key){
-        return Boolean.TRUE.equals(redisTemplate.hasKey(PREFIX_TOKEN + key));
+        return Boolean.TRUE.equals(redisTemplate.hasKey(TOKEN_FORMAT + key));
     }
 
     public boolean delete(Long key){
-        return Boolean.TRUE.equals(redisTemplate.delete(PREFIX_TOKEN + key));
+        return Boolean.TRUE.equals(redisTemplate.delete(TOKEN_FORMAT + key));
     }
 }
