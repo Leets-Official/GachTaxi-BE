@@ -1,6 +1,6 @@
 package com.gachtaxi.global.common.mail.service;
 
-import com.gachtaxi.domain.members.exception.AuthCodeNotMatchException;
+import com.gachtaxi.global.common.mail.exception.AuthCodeNotMatchException;
 import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.global.common.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
@@ -77,7 +77,6 @@ public class EmailService {
                 .templateData(templateData)
                 .source(senderEmail)
                 .build();
-
         sesClient.sendTemplatedEmail(request);
     }
 

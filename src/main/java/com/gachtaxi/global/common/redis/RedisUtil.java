@@ -1,6 +1,7 @@
 package com.gachtaxi.global.common.redis;
 
 import com.gachtaxi.global.auth.jwt.exception.RefreshTokenNotFoundException;
+import com.gachtaxi.global.common.mail.exception.AuthCodeExpirationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,7 +44,7 @@ public class RedisUtil {
         Object getObjecet = redisTemplate.opsForValue().get(PREFIX_EMAIL_CODE+key);
         if(getObjecet == null){
             // EmailAuthCode 만료됨
-            throw new RefreshTokenNotFoundException();
+            throw new AuthCodeExpirationException();
         }
         return getObjecet;
     }
