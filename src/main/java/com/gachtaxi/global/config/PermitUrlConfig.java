@@ -9,7 +9,7 @@ public class PermitUrlConfig {
         return new String[]{
                 "/auth/login/kakao",
                 "/auth/refersh",
-                "/api/members/signup",
+                "/api/members",
 
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
@@ -18,14 +18,13 @@ public class PermitUrlConfig {
 
     public String[] getMemberUrl(){
         return new String[]{
-                "/api/tmp-members/**",
-                "/api/admin/email/template",
+                "/auth/code/**",
         };
     }
 
     public String[] getAdminUrl(){
         return new String[]{
-
+                "/api/admin/email/template",
         };
     }
 
