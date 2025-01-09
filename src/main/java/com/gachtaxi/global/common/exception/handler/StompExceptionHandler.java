@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gachtaxi.global.common.exception.BaseException;
 import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -23,7 +22,9 @@ public class StompExceptionHandler extends StompSubProtocolErrorHandler {
 
     @Override
     public Message<byte[]> handleClientMessageProcessingError(Message<byte[]> clientMessage, Throwable ex) {
-        if (ex instanceof BaseException baseException) {
+        Throwable cause = ex.getCause();
+
+        if (cause instanceof BaseException baseException) {
             return sendErrorMessage(baseException);
         }
 
