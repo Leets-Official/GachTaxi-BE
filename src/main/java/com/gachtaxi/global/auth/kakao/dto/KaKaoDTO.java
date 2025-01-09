@@ -1,9 +1,14 @@
 package com.gachtaxi.global.auth.kakao.dto;
 
 import com.gachtaxi.global.auth.enums.OauthLoginStatus;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 public class KaKaoDTO {
+
+    public record KakaoAuthCode(
+            @NotBlank String authCode
+    ){}
 
     public record KakaoAccessToken(
             String access_token,
@@ -34,7 +39,6 @@ public class KaKaoDTO {
     @Builder
     public record OauthKakaoResponse(
             Long userId,
-            Long kakaoId,
             OauthLoginStatus status
     ){}
 
