@@ -34,18 +34,21 @@ public class RedisUtil {
 
     public Object getRefreshToken(Long key){
         Object getObjecet = redisTemplate.opsForValue().get(PREFIX_TOKEN +key);
+
         if(getObjecet == null){
             throw new RefreshTokenNotFoundException();
         }
+
         return getObjecet;
     }
 
     public Object getEmailAuthCode(String key){
         Object getObjecet = redisTemplate.opsForValue().get(PREFIX_EMAIL_CODE+key);
+
         if(getObjecet == null){
-            // EmailAuthCode 만료됨
             throw new AuthCodeExpirationException();
         }
+
         return getObjecet;
     }
 
