@@ -1,6 +1,7 @@
 package com.gachtaxi.global.config;
 
 import com.gachtaxi.domain.chat.stomp.CustomChannelInterceptor;
+import com.gachtaxi.global.common.exception.handler.StompExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -17,10 +18,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final CustomChannelInterceptor customChannelInterceptor;
+    private final StompExceptionHandler stompExceptionHandler;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
+                .setErrorHandler(stompExceptionHandler)
                 .addEndpoint("/ws")
                 .setAllowedOriginPatterns("http://localhost:3001");
     }
