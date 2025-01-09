@@ -56,11 +56,23 @@ public class RedisUtil {
         return getObjecet;
     }
 
-    public boolean hasKey(Long key){
-        return Boolean.TRUE.equals(redisTemplate.hasKey(TOKEN_FORMAT + key));
+    public boolean hasRefreshTokenKey(Long id){
+        String key = String.format(TOKEN_FORMAT, id);
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
-    public boolean delete(Long key){
-        return Boolean.TRUE.equals(redisTemplate.delete(TOKEN_FORMAT + key));
+    public boolean hasAuthCodeKey(Long email){
+        String key = String.format(EMAIL_CODE_FORMAT, email);
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
+    public boolean deleteRefreshToken(Long id){
+        String key = String.format(TOKEN_FORMAT, id);
+        return Boolean.TRUE.equals(redisTemplate.delete(key));
+    }
+
+    public boolean deleteAuthCode(Long email){
+        String key = String.format(EMAIL_CODE_FORMAT, email);
+        return Boolean.TRUE.equals(redisTemplate.delete( key));
     }
 }
