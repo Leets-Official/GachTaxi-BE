@@ -31,7 +31,7 @@ public class ChattingMessage {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public static ChattingMessage of(ChatMessage chatMessage) {
+    public static ChattingMessage from(ChatMessage chatMessage) {
         return ChattingMessage.builder()
                 .senderId(chatMessage.senderId())
                 .senderName(chatMessage.senderName())

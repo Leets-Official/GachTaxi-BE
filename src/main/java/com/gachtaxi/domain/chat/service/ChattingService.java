@@ -32,7 +32,7 @@ public class ChattingService {
         long userId = getSessionAttribute(accessor, CHAT_USER_ID, Long.class);
 
         ChatMessage chatMessage = ChatMessage.of(request, roomId, userId);
-        ChattingMessage chattingMessage = ChattingMessage.of(chatMessage);
+        ChattingMessage chattingMessage = ChattingMessage.from(chatMessage);
 
         ChannelTopic topic = new ChannelTopic(chatTopic + chatMessage.roomId());
         redisChatPublisher.publish(topic, chatMessage);
