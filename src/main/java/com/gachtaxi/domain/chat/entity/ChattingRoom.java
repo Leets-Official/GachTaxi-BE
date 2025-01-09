@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class ChattingRoom extends BaseEntity {
 
     @Builder.Default
