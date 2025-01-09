@@ -51,7 +51,6 @@ public class JwtExtractor {
 
     public Boolean isExpired(String token) {
         Claims claims = parseClaims(token);
-        if(claims == null) return true;
         return claims.getExpiration().before(new Date());
     }
 
@@ -69,12 +68,19 @@ public class JwtExtractor {
         JwtParser parser = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build();
-        Claims claims = null;
-        try{
-            claims = parser.parseClaimsJws(token).getBody();
-        }catch (JwtException e){
-            log.error(e.getMessage());
-        }
+        Claims claims = parser.parseClaimsJws(token).getBody();
         return claims;
+    }
+
+    public boolean validateJwtToken(String token) {
+        try {
+            JwtParser parser = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build();
+            parser.parseClaimsJws(token).getBody();
+            return true;
+        }catch (JwtException e){
+            return false;
+        }
     }
 }
