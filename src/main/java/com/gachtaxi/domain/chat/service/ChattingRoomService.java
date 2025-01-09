@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ChattingRoomService {
 
+    private static final String ENTER_MESSAGE =" 님이 입장하셨습니다.";
+
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingParticipantRepository chattingParticipantRepository;
     private final MemberService memberService;
@@ -47,7 +49,7 @@ public class ChattingRoomService {
 //        Members members = memberService.find();
 
         ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
-        ChatMessage chatMessage = ChatMessage.subscribe(roomId, senderId, senderName, senderName+" 님이 입장하셨습니다.");
+        ChatMessage chatMessage = ChatMessage.subscribe(roomId, senderId, senderName, senderName + ENTER_MESSAGE);
 
 //        ChattingParticipant chattingParticipant = ChattingParticipant.of(chattingRoom, members);
 //        chattingParticipantRepository.save(chattingParticipant);
