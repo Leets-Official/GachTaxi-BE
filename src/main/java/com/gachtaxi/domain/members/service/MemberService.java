@@ -1,9 +1,10 @@
 package com.gachtaxi.domain.members.service;
 
-import com.gachtaxi.domain.members.dto.request.TmpMemberDto;
+import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
+import com.gachtaxi.domain.members.exception.MemberNotFoundException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,10 +32,18 @@ public class MemberService {
 
     // 임시 유저 저장
     @Transactional
-    public TmpMemberDto saveTmpMember(Long kakaoId){
+    public InactiveMemberDto saveTmpMember(Long kakaoId){
         Members tmpMember = Members.ofKakaoId(kakaoId);
         memberRepository.save(tmpMember);
-        return TmpMemberDto.of(tmpMember);
+        return InactiveMemberDto.of(tmpMember);
+    }
+
+    @Transactional
+    public void updateInactiveMemberOfEmail(String email, Long userId) {
+        Members members = memberRepository.findById(userId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        members.updateEmail(email);
     }
 
     public Optional<Members> findByKakaoId(Long kakaoId) {

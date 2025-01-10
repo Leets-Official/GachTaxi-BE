@@ -1,6 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
-import com.gachtaxi.domain.members.dto.request.TmpMemberDto;
+import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.auth.kakao.util.KakaoUtil;
@@ -37,7 +37,7 @@ public class AuthService {
         Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
 
         if(optionalMember.isEmpty()) {
-            TmpMemberDto tmpDto = memberService.saveTmpMember(kakaoId);
+            InactiveMemberDto tmpDto = memberService.saveTmpMember(kakaoId);
 
             jwtService.responseTmpAccessToken(tmpDto, response);
             return oauthMapper.toKakaoUnRegisterResponse(tmpDto.userId());
@@ -45,7 +45,7 @@ public class AuthService {
 
         // 회원 가입 진행 중 중단된 유저 또한 다시 임시 토큰을 재발급해준다.
         if(optionalMember.get().getStatus() == INACTIVE){
-            TmpMemberDto tmpDto = TmpMemberDto.of(optionalMember.get());
+            InactiveMemberDto tmpDto = InactiveMemberDto.of(optionalMember.get());
             jwtService.responseTmpAccessToken(tmpDto, response);
             return oauthMapper.toKakaoUnRegisterResponse(tmpDto.userId());
         }

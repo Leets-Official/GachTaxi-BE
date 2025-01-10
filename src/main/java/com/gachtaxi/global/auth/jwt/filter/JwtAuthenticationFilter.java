@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,9 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.JWT_TOKEN_EXPIRED;
-import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.JWT_TOKEN_NOT_FOUND;
+import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.*;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -38,7 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = token.get();
 
-        if(jwtExtractor.isExpired(accessToken)){
+        if (!jwtExtractor.validateJwtToken(accessToken)) {
+            request.setAttribute(JWT_ERROR, JWT_TOKEN_INVALID);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (jwtExtractor.isExpired(accessToken)) {
             request.setAttribute(JWT_ERROR, JWT_TOKEN_EXPIRED);
             filterChain.doFilter(request, response);
             return;

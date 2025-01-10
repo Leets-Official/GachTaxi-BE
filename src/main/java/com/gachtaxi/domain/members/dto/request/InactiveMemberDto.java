@@ -5,13 +5,13 @@ import com.gachtaxi.domain.members.entity.enums.Role;
 import lombok.Builder;
 
 @Builder
-public record TmpMemberDto(
+public record InactiveMemberDto(
    Long userId,
    String email,
    Role role
 ) {
-    public static TmpMemberDto of(Members tmpMember) {
-        return TmpMemberDto.builder()
+    public static InactiveMemberDto of(Members tmpMember) {
+        return InactiveMemberDto.builder()
                 .userId(tmpMember.getId())
                 .email(tmpMember.getEmail())
                 .role(tmpMember.getRole())
