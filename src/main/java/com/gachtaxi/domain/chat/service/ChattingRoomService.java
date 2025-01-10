@@ -3,6 +3,7 @@ package com.gachtaxi.domain.chat.service;
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import com.gachtaxi.domain.chat.dto.request.ChattingRoomResponse;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
+import com.gachtaxi.domain.chat.entity.enums.Status;
 import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
@@ -59,6 +60,7 @@ public class ChattingRoomService {
 
     public ChattingRoom find(long chattingRoomId) {
         return chattingRoomRepository.findById(chattingRoomId)
+                .filter(chattingRoom -> chattingRoom.getStatus() == Status.ACTIVE)
                 .orElseThrow(ChattingRoomNotFoundException::new);
     }
 }

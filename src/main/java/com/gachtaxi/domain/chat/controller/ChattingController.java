@@ -8,7 +8,7 @@ import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.gachtaxi.domain.chat.controller.ResponseMessage.CREATE_CHATTING_ROOM_SUCCESS;
@@ -21,7 +21,7 @@ public class ChattingController {
     private final ChattingService chattingService;
     private final ChattingRoomService chattingRoomService;
 
-    @GetMapping("/api/chat/room")
+    @PostMapping("/api/chat/room")
     public ApiResponse<ChattingRoomResponse> createChattingRoom() {
         ChattingRoomResponse response = chattingRoomService.save();
 
