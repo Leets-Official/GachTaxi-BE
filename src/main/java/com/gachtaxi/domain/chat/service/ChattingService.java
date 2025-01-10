@@ -32,12 +32,11 @@ public class ChattingService {
         long userId = getSessionAttribute(accessor, CHAT_USER_ID, Long.class);
 
         ChatMessage chatMessage = ChatMessage.of(request, roomId, userId);
+        ChannelTopic topic = new ChannelTopic(chatTopic + chatMessage.roomId());
         ChattingMessage chattingMessage = ChattingMessage.from(chatMessage);
 
-        ChannelTopic topic = new ChannelTopic(chatTopic + chatMessage.roomId());
-        redisChatPublisher.publish(topic, chatMessage);
-
         chattingMessageRepository.save(chattingMessage);
+        redisChatPublisher.publish(topic, chatMessage);
     }
 
     private <T> T getSessionAttribute(SimpMessageHeaderAccessor accessor, String attributeName, Class<T> type) {
