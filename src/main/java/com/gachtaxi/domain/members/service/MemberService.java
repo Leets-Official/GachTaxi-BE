@@ -45,6 +45,7 @@ public class MemberService {
 
     @Transactional
     public void updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
+        checkDuplicatedStudentNumber(dto.studentNumber());
         Members members = memberRepository.findById(userId)
                 .orElseThrow(MemberNotFoundException::new);
 
