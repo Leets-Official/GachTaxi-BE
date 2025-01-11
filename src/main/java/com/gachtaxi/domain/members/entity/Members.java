@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.entity;
 
+import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
@@ -81,6 +82,12 @@ public class Members extends BaseEntity {
 
     public void updateEmail(String email) {
         this.email = email;
+    }
+
+    public void updateAgreement(MemberAgreementRequestDto dto) {
+        this.termsAgreement = dto.termsAgreement();
+        this.privacyAgreement = dto.privacyAgreement();
+        this.marketingAgreement = dto.marketingAgreement();
     }
 
     public static Members of(UserSignUpRequestDto dto){

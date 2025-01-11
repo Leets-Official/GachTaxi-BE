@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
+import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
@@ -45,6 +46,16 @@ public class MemberService {
 
         members.updateEmail(email);
     }
+
+    @Transactional
+    public void updateInactiveMemberOfAgreement(MemberAgreementRequestDto dto, Long userId) {
+        Members members = memberRepository.findById(userId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        members.updateAgreement(dto);
+    }
+
+
 
     public Optional<Members> findByKakaoId(Long kakaoId) {
         return memberRepository.findByKakaoId(kakaoId);

@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
+import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.auth.kakao.util.KakaoUtil;
@@ -53,5 +54,9 @@ public class AuthService {
         Members member = optionalMember.get();
         jwtService.responseJwtToken(member.getId(), member.getEmail(), member.getRole(), response);
         return oauthMapper.toKakaoLoginResponse(member.getId());
+    }
+
+    public void updateMemberAgreement(MemberAgreementRequestDto dto, Long userId){
+        memberService.updateInactiveMemberOfAgreement(dto, userId);
     }
 }
