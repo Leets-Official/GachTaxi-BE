@@ -1,6 +1,6 @@
 package com.gachtaxi.global.auth.jwt.service;
 
-import com.gachtaxi.domain.members.dto.request.TmpMemberDto;
+import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.exception.CookieNotFoundException;
@@ -9,7 +9,7 @@ import com.gachtaxi.global.auth.jwt.exception.TokenInvalidException;
 import com.gachtaxi.global.auth.jwt.util.CookieUtil;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
 import com.gachtaxi.global.auth.jwt.util.JwtProvider;
-import com.gachtaxi.global.auth.jwt.util.JwtRedisUtil;
+import com.gachtaxi.global.common.redis.RedisUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +27,7 @@ public class JwtService {
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 
     private final CookieUtil cookieUtil;
-    private final JwtRedisUtil redisUtil;
+    private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
     private final JwtExtractor jwtExtractor;
 
@@ -37,8 +37,8 @@ public class JwtService {
         setCookie(jwtToken.refreshToken(), response);
     }
 
-    public void responseTmpAccessToken(TmpMemberDto tmpMemberDto, HttpServletResponse response) {
-        String tmpAccessToken = jwtProvider.generateTmpAccessToken(tmpMemberDto.userId(), tmpMemberDto.role().name());
+    public void responseTmpAccessToken(InactiveMemberDto inactiveMemberDto, HttpServletResponse response) {
+        String tmpAccessToken = jwtProvider.generateTmpAccessToken(inactiveMemberDto.userId(), inactiveMemberDto.role().name());
         setHeader(tmpAccessToken, response);
     }
 
@@ -49,7 +49,7 @@ public class JwtService {
         }
         Long userId = jwtExtractor.getId(refreshToken);
 
-        String redisToken = (String) redisUtil.get(userId);
+        String redisToken = (String) redisUtil.getRefreshToken(userId);
         if(!redisToken.equals(refreshToken)) {
             throw new TokenInvalidException();
         }
@@ -87,7 +87,7 @@ public class JwtService {
         String accessToken = jwtProvider.generateAccessToken(userId, email, role);
         String refreshToken = jwtProvider.generateRefreshToken(userId, email, role);
 
-        redisUtil.set(userId, refreshToken);
+        redisUtil.setRefreshToken(userId, refreshToken);
         return JwtTokenDto.of(accessToken, refreshToken);
     }
 

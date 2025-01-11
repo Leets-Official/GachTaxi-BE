@@ -20,13 +20,13 @@ public class PermitUrlConfig {
 
     public String[] getMemberUrl(){
         return new String[]{
-
+                "/auth/code/**",
         };
     }
 
     public String[] getAdminUrl(){
         return new String[]{
-
+                "/api/admin/email/template",
         };
     }
 

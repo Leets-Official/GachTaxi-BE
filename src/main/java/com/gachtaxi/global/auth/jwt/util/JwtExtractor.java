@@ -1,12 +1,12 @@
 package com.gachtaxi.global.auth.jwt.util;
 
-import com.gachtaxi.global.auth.jwt.exception.TokenInvalidException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Optional;
 
 // 토큰 추출 및 검증
+@Slf4j
 @Component
 public class JwtExtractor {
 
@@ -64,13 +65,22 @@ public class JwtExtractor {
     }
 
     private Claims parseClaims(String token) {
-        try{
+        JwtParser parser = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build();
+        Claims claims = parser.parseClaimsJws(token).getBody();
+        return claims;
+    }
+
+    public boolean validateJwtToken(String token) {
+        try {
             JwtParser parser = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build();
-            return parser.parseClaimsJws(token).getBody();
+            parser.parseClaimsJws(token).getBody();
+            return true;
         }catch (JwtException e){
-            throw new TokenInvalidException();
+            return false;
         }
     }
 }

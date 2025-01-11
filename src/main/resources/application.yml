@@ -13,6 +13,13 @@ springdoc:
 chat:
   topic: ${CHAT_TOPIC}
 
+aws:
+  ses:
+    accessKey: ${AWS_SES_ACCESS_KEY}
+    secretKey: ${AWS_SES_SECRET_KEY}
+    from: ${AWS_SES_FROM}
+    templateName: ${AWS_SES_TEMPLATE_NAME}
+
 cloud:
   aws:
     s3:
