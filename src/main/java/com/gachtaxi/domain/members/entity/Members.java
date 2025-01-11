@@ -125,6 +125,10 @@ public class Members extends BaseEntity {
                 .kakaoId(kakaoId)
                 .status(UserStatus.INACTIVE)
                 .role(Role.MEMBER)
+                .termsAgreement(false)
+                .privacyAgreement(false)
+                .marketingAgreement(false)
+                .twoFactorAuthentication(false)
                 .build();
     }
 }
