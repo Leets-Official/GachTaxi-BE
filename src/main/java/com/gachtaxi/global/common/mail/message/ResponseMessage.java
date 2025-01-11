@@ -9,6 +9,7 @@ public enum ResponseMessage {
 
     EMAIL_SEND_SUCCESS("이메일을 성공적으로 전송했습니다"),
     EMAIL_AUTHENTICATION_SUCESS("이메일 인증에 성공했습니다!"),
+    AGREEEMENT_UPDATE_SUCCESS("약관 동의 정보를 업데이트 했습니다!"),
     EMAIL_TEMPLATE_CREATE_SUCCESS("이메일 템플릿을 생성했습니다.");
 
     private final String message;

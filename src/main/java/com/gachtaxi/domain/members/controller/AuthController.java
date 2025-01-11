@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.members.controller;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberAuthCodeRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.response.InactiveMemberResponseDto;
 import com.gachtaxi.domain.members.service.AuthService;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -22,8 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.KakaoAuthCode;
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.OauthKakaoResponse;
-import static com.gachtaxi.global.common.mail.message.ResponseMessage.EMAIL_AUTHENTICATION_SUCESS;
-import static com.gachtaxi.global.common.mail.message.ResponseMessage.EMAIL_SEND_SUCCESS;
+import static com.gachtaxi.global.common.mail.message.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @RequestMapping("/auth")
@@ -75,5 +75,15 @@ public class AuthController {
         emailService.checkEmailAuthCode(dto.email(), dto.authCode());
         memberService.updateInactiveMemberOfEmail(dto.email(), userId);
         return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage(), InactiveMemberResponseDto.from(userId));
+    }
+
+    @PatchMapping("/agreement")
+    @Operation(summary = "약관 동의 정보를 업데이트하는 API 입니다.")
+    public ApiResponse updateUserAgreement(
+            @RequestBody MemberAgreementRequestDto dto,
+            @CurrentMemberId Long userId
+    ){
+        authService.updateMemberAgreement(dto, userId);
+        return ApiResponse.response(OK, AGREEEMENT_UPDATE_SUCCESS.getMessage());
     }
 }
