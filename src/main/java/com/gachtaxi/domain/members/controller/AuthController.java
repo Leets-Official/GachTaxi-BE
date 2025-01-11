@@ -2,6 +2,7 @@ package com.gachtaxi.domain.members.controller;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberAuthCodeRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.dto.response.InactiveMemberResponseDto;
 import com.gachtaxi.domain.members.service.AuthService;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -79,11 +80,21 @@ public class AuthController {
 
     @PatchMapping("/agreement")
     @Operation(summary = "약관 동의 정보를 업데이트하는 API 입니다.")
-    public ApiResponse updateUserAgreement(
+    public ApiResponse<Void> updateUserAgreement(
             @RequestBody MemberAgreementRequestDto dto,
             @CurrentMemberId Long userId
     ){
         authService.updateMemberAgreement(dto, userId);
         return ApiResponse.response(OK, AGREEEMENT_UPDATE_SUCCESS.getMessage());
+    }
+
+    @PatchMapping("/supplement")
+    @Operation(summary = "사용자 추가 정보 업데이트하는 API 입니다. (프로필, 닉네임, 실명, 학번, 성별,)")
+    public ApiResponse<Void> updateMemberSupplement(
+            @RequestBody MemberSupplmentRequestDto dto,
+            @CurrentMemberId Long userId
+    ){
+        authService.updateMemberSupplement(dto, userId);
+        return ApiResponse.response(OK, SUPPLEMENT_UPDATE_SUCCESS.getMessage());
     }
 }
