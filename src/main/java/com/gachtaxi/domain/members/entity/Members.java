@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.members.entity;
 
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
@@ -88,6 +89,15 @@ public class Members extends BaseEntity {
         this.termsAgreement = dto.termsAgreement();
         this.privacyAgreement = dto.privacyAgreement();
         this.marketingAgreement = dto.marketingAgreement();
+    }
+
+    public void updateSupplment(MemberSupplmentRequestDto dto) {
+        this.profilePicture = dto.profilePicture();
+        this.nickname = dto.nickname();
+        this.realName = dto.realName();
+        this.studentNumber = dto.studentNumber();
+        this.gender = dto.gender();
+        this.status = UserStatus.ACTIVE;
     }
 
     public static Members of(UserSignUpRequestDto dto){
