@@ -1,8 +1,6 @@
 package com.gachtaxi.global.auth.kakao.dto;
 
-import com.gachtaxi.global.auth.enums.OauthLoginStatus;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 
 public class KaKaoDTO {
 
@@ -35,11 +33,4 @@ public class KaKaoDTO {
             String nickname,
             Boolean is_default_nickname
     ) {}
-
-    @Builder
-    public record OauthKakaoResponse(
-            Long userId,
-            OauthLoginStatus status
-    ){}
-
 }
