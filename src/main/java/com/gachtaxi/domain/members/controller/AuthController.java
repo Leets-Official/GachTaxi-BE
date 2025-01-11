@@ -74,7 +74,7 @@ public class AuthController {
             @CurrentMemberId Long userId
     ) {
         emailService.checkEmailAuthCode(dto.email(), dto.authCode());
-        memberService.updateInactiveMemberOfEmail(dto.email(), userId);
+        memberService.updateMemberEmail(dto.email(), userId);
         return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage(), InactiveMemberResponseDto.from(userId));
     }
 
@@ -84,7 +84,7 @@ public class AuthController {
             @RequestBody MemberAgreementRequestDto dto,
             @CurrentMemberId Long userId
     ){
-        authService.updateMemberAgreement(dto, userId);
+        memberService.updateMemberAgreement(dto, userId);
         return ApiResponse.response(OK, AGREEEMENT_UPDATE_SUCCESS.getMessage());
     }
 
@@ -94,7 +94,7 @@ public class AuthController {
             @RequestBody MemberSupplmentRequestDto dto,
             @CurrentMemberId Long userId
     ){
-        authService.updateMemberSupplement(dto, userId);
+        memberService.updateMemberSupplement(dto, userId);
         return ApiResponse.response(OK, SUPPLEMENT_UPDATE_SUCCESS.getMessage());
     }
 }

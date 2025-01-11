@@ -41,7 +41,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateInactiveMemberOfEmail(String email, Long userId) {
+    public void updateMemberEmail(String email, Long userId) {
         Members members = memberRepository.findById(userId)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -49,7 +49,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateInactiveMemberOfAgreement(MemberAgreementRequestDto dto, Long userId) {
+    public void updateMemberAgreement(MemberAgreementRequestDto dto, Long userId) {
         Members members = memberRepository.findById(userId)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -57,7 +57,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateInactiveMemberOfSupplment(MemberSupplmentRequestDto dto, Long userId) {
+    public void updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
         Members members = memberRepository.findById(userId)
                 .orElseThrow(MemberNotFoundException::new);
 
