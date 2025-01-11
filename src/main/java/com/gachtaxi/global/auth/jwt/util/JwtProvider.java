@@ -14,7 +14,7 @@ import java.util.Date;
 public class JwtProvider {
 
     public static final String ACCESS_TOKEN_SUBJECT = "Authorization";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+    public static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String ID_CLAIM = "id";
     private static final String EMAIL_CLAIM = "email";
     private static final String ROLE_CLAIM = "role";

@@ -14,12 +14,13 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.gachtaxi.global.auth.jwt.util.JwtProvider.ACCESS_TOKEN_SUBJECT;
+
 // 토큰 추출 및 검증
 @Slf4j
 @Component
 public class JwtExtractor {
 
-    private static final String ACCESS_TOKEN_SUBJECT = "Authorization";
     private static final String BEARER = "Bearer ";
     private static final String ID_CLAIM = "id";
     private static final String EMAIL_CLAIM = "email";
