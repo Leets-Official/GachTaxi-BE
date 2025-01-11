@@ -14,7 +14,6 @@ import com.gachtaxi.global.common.mail.dto.request.EmailAddressDto;
 import com.gachtaxi.global.common.mail.service.EmailService;
 import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +54,11 @@ public class AuthController {
 
     @PostMapping("/refresh")
     @Operation(summary = "RefreshToken으로 AccessToken과 RefreshToken을 재발급 하는 API 입니다.")
-    public ApiResponse<Void> reissueRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(request);
-
+    public ApiResponse<Void> reissueRefreshToken(
+            @CookieValue(value = REFRESH_TOKEN_SUBJECT) String refreshToken,
+            HttpServletResponse response
+    ) {
+        JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(refreshToken);
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
         cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
 
