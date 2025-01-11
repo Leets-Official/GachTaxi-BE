@@ -2,7 +2,6 @@ package com.gachtaxi.domain.members.entity;
 
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
-import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.domain.members.entity.enums.UserStatus;
@@ -98,26 +97,6 @@ public class Members extends BaseEntity {
         this.studentNumber = dto.studentNumber();
         this.gender = dto.gender();
         this.status = UserStatus.ACTIVE;
-    }
-
-    public static Members of(UserSignUpRequestDto dto){
-        return Members.builder()
-                //.profilePicture(dto.profilePicture())
-                .email(dto.email())
-                .nickname(dto.nickName())
-                .realName(dto.realName())
-                .studentNumber(dto.studentNumber())
-                //.phoneNumber(dto.phoneNumber())
-                .kakaoId(dto.kakaoId())
-                .googleId(dto.googleId())
-                .role(Role.MEMBER)
-                .status(UserStatus.ACTIVE)
-                .gender(dto.gender())
-                .termsAgreement(dto.termsAgreement())
-                .privacyAgreement(dto.privacyAgreement())
-                .marketingAgreement(dto.marketingAgreement())
-                .twoFactorAuthentication(dto.twoFactorAuthentication())
-                .build();
     }
 
     public static Members ofKakaoId(Long kakaoId){
