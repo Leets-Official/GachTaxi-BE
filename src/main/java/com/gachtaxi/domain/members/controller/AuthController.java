@@ -6,10 +6,10 @@ import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.dto.response.InactiveMemberResponseDto;
 import com.gachtaxi.domain.members.service.AuthService;
 import com.gachtaxi.domain.members.service.MemberService;
-import com.gachtaxi.global.auth.enums.OauthLoginStatus;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
+import com.gachtaxi.global.auth.jwt.util.CookieUtil;
 import com.gachtaxi.global.common.mail.dto.request.EmailAddressDto;
 import com.gachtaxi.global.common.mail.service.EmailService;
 import com.gachtaxi.global.common.response.ApiResponse;
@@ -22,8 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
+import static com.gachtaxi.global.auth.jwt.util.JwtProvider.ACCESS_TOKEN_SUBJECT;
+import static com.gachtaxi.global.auth.jwt.util.JwtProvider.REFRESH_TOKEN_SUBJECT;
 import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.KakaoAuthCode;
-import static com.gachtaxi.global.auth.kakao.dto.KaKaoDTO.OauthKakaoResponse;
 import static com.gachtaxi.global.common.mail.message.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -33,18 +34,23 @@ import static org.springframework.http.HttpStatus.OK;
 public class AuthController {
 
     private final EmailService emailService;
+    private final CookieUtil cookieUtil;
     private final AuthService authService;
     private final JwtService jwtService;
     private final MemberService memberService;
 
     @PostMapping("/login/kakao")
     @Operation(summary = "인가 코드를 전달받아, 소셜 로그인을 진행합니다.")
-    public ApiResponse<OauthKakaoResponse> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
-        OauthKakaoResponse res = authService.kakaoLogin(kakaoAuthCode.authCode(), response);
-        ResponseMessage OAUTH_STATUS = (res.status() == OauthLoginStatus.LOGIN)
-                ? LOGIN_SUCCESS
-                : UN_REGISTER;
-        return ApiResponse.response(HttpStatus.OK, OAUTH_STATUS.getMessage(), res);
+    public ApiResponse<Void> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
+        JwtTokenDto jwtTokenDto = authService.kakaoLogin(kakaoAuthCode.authCode());
+        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
+
+        if(jwtTokenDto.refreshToken()==null){ // 임시 유저
+            return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage());
+        }
+
+        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+        return ApiResponse.response(HttpStatus.OK, LOGIN_SUCCESS.getMessage());
     }
 
     @PostMapping("/refresh")
@@ -52,8 +58,9 @@ public class AuthController {
     public ApiResponse<Void> reissueRefreshToken(HttpServletRequest request, HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(request);
 
-        jwtService.setCookie(jwtTokenDto.refreshToken(), response);
-        jwtService.setHeader(jwtTokenDto.accessToken(), response);
+        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
+        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+
         return ApiResponse.response(HttpStatus.OK, REFRESH_TOKEN_REISSUE.getMessage());
     }
 
@@ -97,4 +104,8 @@ public class AuthController {
         memberService.updateMemberSupplement(dto, userId);
         return ApiResponse.response(OK, SUPPLEMENT_UPDATE_SUCCESS.getMessage());
     }
+
+    /*
+    * refactoring
+    * */
 }

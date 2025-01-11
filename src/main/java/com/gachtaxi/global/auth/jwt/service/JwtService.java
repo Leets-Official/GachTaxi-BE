@@ -1,7 +1,6 @@
 package com.gachtaxi.global.auth.jwt.service;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
-import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.exception.CookieNotFoundException;
 import com.gachtaxi.global.auth.jwt.exception.TokenExpiredException;
@@ -12,34 +11,35 @@ import com.gachtaxi.global.auth.jwt.util.JwtProvider;
 import com.gachtaxi.global.common.redis.RedisUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+
+import static com.gachtaxi.global.auth.jwt.util.JwtProvider.REFRESH_TOKEN_SUBJECT;
 
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
-    private static final String ACCESS_TOKEN_SUBJECT = "Authorization";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-
     private final CookieUtil cookieUtil;
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
     private final JwtExtractor jwtExtractor;
 
-    public void responseJwtToken(Long userId, String email, Role role, HttpServletResponse response) {
-        JwtTokenDto jwtToken = generateJwtToken(userId, email, role.name());
-        setHeader(jwtToken.accessToken(), response);
-        setCookie(jwtToken.refreshToken(), response);
+    // JwtToken 생성 + Redis 저장
+    public JwtTokenDto generateJwtToken(Long userId, String email, String role) {
+        String accessToken = jwtProvider.generateAccessToken(userId, email, role);
+        String refreshToken = jwtProvider.generateRefreshToken(userId, email, role);
+
+        redisUtil.setRefreshToken(userId, refreshToken);
+        return JwtTokenDto.of(accessToken, refreshToken);
     }
 
-    public void responseTmpAccessToken(InactiveMemberDto inactiveMemberDto, HttpServletResponse response) {
+    public JwtTokenDto generateTmpAccessToken(InactiveMemberDto inactiveMemberDto) {
         String tmpAccessToken = jwtProvider.generateTmpAccessToken(inactiveMemberDto.userId(), inactiveMemberDto.role().name());
-        setHeader(tmpAccessToken, response);
+        return JwtTokenDto.of(tmpAccessToken);
     }
 
     public JwtTokenDto reissueJwtToken(HttpServletRequest request) {
@@ -47,8 +47,8 @@ public class JwtService {
         if(jwtExtractor.isExpired(refreshToken)){
             throw new TokenExpiredException();
         }
-        Long userId = jwtExtractor.getId(refreshToken);
 
+        Long userId = jwtExtractor.getId(refreshToken);
         String redisToken = (String) redisUtil.getRefreshToken(userId);
         if(!redisToken.equals(refreshToken)) {
             throw new TokenInvalidException();
@@ -80,22 +80,5 @@ public class JwtService {
             throw new CookieNotFoundException();
         }
         return cookies;
-    }
-
-    // JwtToken 생성 + Redis 저장
-    private JwtTokenDto generateJwtToken(Long userId, String email, String role) {
-        String accessToken = jwtProvider.generateAccessToken(userId, email, role);
-        String refreshToken = jwtProvider.generateRefreshToken(userId, email, role);
-
-        redisUtil.setRefreshToken(userId, refreshToken);
-        return JwtTokenDto.of(accessToken, refreshToken);
-    }
-
-    public void setHeader(String accessToken, HttpServletResponse response) {
-        response.setHeader(ACCESS_TOKEN_SUBJECT, accessToken);
-    }
-
-    public void setCookie(String refreshToken, HttpServletResponse response) {
-        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, refreshToken, response);
     }
 }
