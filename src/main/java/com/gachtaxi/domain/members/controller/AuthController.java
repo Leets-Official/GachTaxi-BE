@@ -44,7 +44,7 @@ public class AuthController {
         JwtTokenDto jwtTokenDto = authService.kakaoLogin(kakaoAuthCode.authCode());
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
 
-        if(jwtTokenDto.refreshToken()==null){ // 임시 유저
+        if(jwtTokenDto.isTemporaryUser()){ // 임시 유저
             return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage());
         }
 
