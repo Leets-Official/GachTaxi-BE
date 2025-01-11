@@ -23,4 +23,11 @@ public class ChattingParticipant extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "members_id")
     private Members members;
+
+    public static ChattingParticipant of(ChattingRoom chattingRoom, Members members) {
+        return ChattingParticipant.builder()
+                .chattingRoom(chattingRoom)
+                .members(members)
+                .build();
+    }
 }

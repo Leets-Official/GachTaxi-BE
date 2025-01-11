@@ -1,6 +1,6 @@
-package com.gachtaxi.domain.chat.interceptor;
+package com.gachtaxi.domain.chat.stomp;
 
-import com.gachtaxi.domain.chat.interceptor.strategy.ChatStrategyHandler;
+import com.gachtaxi.domain.chat.stomp.strategy.ChatStrategyHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;

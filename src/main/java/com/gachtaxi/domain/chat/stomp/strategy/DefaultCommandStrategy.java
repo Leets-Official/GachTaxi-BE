@@ -1,31 +1,23 @@
-package com.gachtaxi.domain.chat.interceptor.strategy;
+package com.gachtaxi.domain.chat.stomp.strategy;
 
-import com.gachtaxi.domain.chat.exception.ChatSubscribeException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
-public class StompSubscribeStrategy implements StompCommandStrategy{
-
-    private static final String SUB_END_POINT = "/sub/chat/room/";
+public class DefaultCommandStrategy implements StompCommandStrategy{
 
     @Override
     public boolean supports(StompCommand command) {
-        return StompCommand.SUBSCRIBE.equals(command);
+        return false;
     }
 
     @Override
     public Message<?> preSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel) {
-        String destination = accessor.getDestination();
-
-        if (!destination.startsWith(SUB_END_POINT)) {
-            throw new ChatSubscribeException();
-        }
-
         return message;
     }
 }
-
