@@ -1,5 +1,7 @@
 package com.gachtaxi.global.common.mail.service;
 
+import com.gachtaxi.domain.members.exception.DuplicatedEmailException;
+import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.global.common.mail.exception.AuthCodeNotMatchException;
 import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.global.common.redis.RedisUtil;
@@ -27,6 +29,7 @@ public class EmailService {
     private final SesClient sesClient;
     private final RedisUtil redisUtil;
     private final SecureRandom secureRandom = new SecureRandom();
+    private final MemberRepository memberRepository;
 
     @Value("${aws.ses.templateName}")
     private String emailTemplateName;
@@ -35,6 +38,7 @@ public class EmailService {
 
     public void sendEmail(String recipientEmail) {
         checkGachonEmail(recipientEmail);
+        checkDuplicatedEmail(recipientEmail);
 
         String code = generateCode();
         redisUtil.setEmailAuthCode(recipientEmail, code);
@@ -61,6 +65,10 @@ public class EmailService {
         if(!email.endsWith(GACHON_EMAIL_FORM)){
             throw new EmailFormInvalidException();
         }
+    }
+    private void checkDuplicatedEmail(String email){
+        memberRepository.findByEmail(email)
+                .orElseThrow(DuplicatedEmailException::new);
     }
 
     private String generateCode() {
