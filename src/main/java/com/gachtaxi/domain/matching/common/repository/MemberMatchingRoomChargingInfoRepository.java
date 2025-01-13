@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberMatchingRoomChargingInfoRepository extends JpaRepository<MemberMatchingRoomChargingInfo, Long> {
 
-  List<MemberMatchingRoomChargingInfo> findByMatchingRoomAAndPaymentStatus(MatchingRoom matchingRoom, PaymentStatus paymentStatus);
+  List<MemberMatchingRoomChargingInfo> findByMatchingRoomAndPaymentStatus(MatchingRoom matchingRoom, PaymentStatus paymentStatus);
   Optional<MemberMatchingRoomChargingInfo> findByMembersAndMatchingRoom(Members members, MatchingRoom matchingRoom);
 }
