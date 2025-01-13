@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.controller;
 
+import com.gachtaxi.domain.matching.aop.SseSubscribeRequired;
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingCancelledRequest;
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingPostRequest;
 import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingPostResponse;
@@ -32,17 +33,11 @@ public class AutoMatchingController {
   }
 
   @PostMapping("/request")
+  @SseSubscribeRequired
   public ApiResponse<AutoMatchingPostResponse> requestMatching(
       @CurrentMemberId Long memberId,
       @RequestBody AutoMatchingPostRequest autoMatchingPostRequest
   ) {
-    if (!this.autoMatchingService.isSseSubscribed(memberId)) {
-      return ApiResponse.response(
-          HttpStatus.BAD_REQUEST,
-          ResponseMessage.NOT_SUBSCRIBED_SSE.getMessage()
-      );
-    }
-
     return ApiResponse.response(
         HttpStatus.OK,
         ResponseMessage.AUTO_MATCHING_REQUEST_ACCEPTED.getMessage(),
@@ -51,17 +46,11 @@ public class AutoMatchingController {
   }
 
   @PostMapping("/cancel")
+  @SseSubscribeRequired
   public ApiResponse<AutoMatchingPostResponse> cancelMatching(
       @CurrentMemberId Long memberId,
       @RequestBody AutoMatchingCancelledRequest autoMatchingCancelledRequest
   ) {
-    if (!this.autoMatchingService.isSseSubscribed(memberId)) {
-      return ApiResponse.response(
-          HttpStatus.BAD_REQUEST,
-          ResponseMessage.NOT_SUBSCRIBED_SSE.getMessage()
-      );
-    }
-
     return ApiResponse.response(
         HttpStatus.OK,
         ResponseMessage.AUTO_MATCHING_REQUEST_CANCELLED.getMessage(),
