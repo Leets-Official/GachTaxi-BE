@@ -1,11 +1,13 @@
 package com.gachtaxi.domain.members.entity;
 
+import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.domain.members.entity.enums.UserStatus;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -109,5 +111,27 @@ public class Members extends BaseEntity {
                 .status(UserStatus.INACTIVE)
                 .role(Role.MEMBER)
                 .build();
+    }
+
+    public boolean isRoomMaster(MatchingRoom matchingRoom){
+        return this.equals(matchingRoom.getRoomMaster());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Members members = (Members) o;
+        return Objects.equals(studentNumber, members.studentNumber) && Objects.equals(
+            kakaoId, members.kakaoId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentNumber, kakaoId);
     }
 }
