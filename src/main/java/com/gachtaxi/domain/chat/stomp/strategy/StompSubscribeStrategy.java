@@ -10,15 +10,13 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-import static com.gachtaxi.domain.chat.stomp.strategy.StompConnectStrategy.CHAT_USER_ID;
-
 @Component
 @RequiredArgsConstructor
 public class StompSubscribeStrategy implements StompCommandStrategy {
 
     private static final String SUB_END_POINT = "/sub/chat/room/";
     public static final String CHAT_ROOM_ID = "CHAT_ROOM_ID";
-
+    public static final String CHAT_USER_NAME = "CHAT_USER_NAME";
 
     private final ChattingRoomService chattingRoomService;
 
@@ -38,12 +36,9 @@ public class StompSubscribeStrategy implements StompCommandStrategy {
             throw new ChatSubscribeException();
         }
 
-        Long senderId = (Long) accessor.getSessionAttributes().get(CHAT_USER_ID);
         Long roomId = Long.valueOf(destination.replace(SUB_END_POINT, ""));
-        String senderName = accessor.getFirstNativeHeader("senderName");
 
-        chattingRoomService.subscribeChatRoom(roomId, senderId, senderName);
-        accessor.getSessionAttributes().put(CHAT_ROOM_ID, roomId);
+        chattingRoomService.subscribeChatRoom(roomId, accessor);
 
         return message;
     }
