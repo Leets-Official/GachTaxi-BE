@@ -8,6 +8,6 @@ import com.gachtaxi.global.common.exception.BaseException;
 public class NotActiveMatchingRoomException extends BaseException {
 
   public NotActiveMatchingRoomException() {
-    super(BAD_REQUEST, lNOT_ACTIVE_MATCHING_ROOM.getMessage());
+    super(BAD_REQUEST, NOT_ACTIVE_MATCHING_ROOM.getMessage());
   }
 }
