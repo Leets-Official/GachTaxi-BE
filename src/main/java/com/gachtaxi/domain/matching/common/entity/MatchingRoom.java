@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "matching_room")
@@ -38,6 +39,8 @@ public class MatchingRoom extends BaseEntity {
   private List<MemberMatchingRoomChargingInfo> memberMatchingRoomChargingInfo;
 
   @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+  @Getter
+  @Setter
   private Members roomMaster;
 
   @Column(name = "title", nullable = false)
@@ -58,5 +61,13 @@ public class MatchingRoom extends BaseEntity {
 
   public boolean isActiveMatchingRoom() {
     return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
+  }
+
+  public void changeRoomMaster(Members members) {
+    this.setRoomMaster(members);
+  }
+
+  public void cancelMatchingRoom() {
+    this.matchingRoomStatus = MatchingRoomStatus.CANCELLED;
   }
 }
