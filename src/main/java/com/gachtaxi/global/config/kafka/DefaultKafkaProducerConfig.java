@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -21,39 +22,51 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 @Configuration
 public class KafkaProducerConfig {
 
+  @Primary
+  @Bean
+  public ProducerFactory<String, Object> producerFactory() {
+    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
+  }
+
+  @Primary
+  @Bean
+  public KafkaTemplate<String, Object> kafkaTemplate() {
+    return new KafkaTemplate<>(producerFactory());
+  }
+
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
-
-  @Bean
-  @Qualifier("matchRoomCreatedEventProducerFactory")
-  public ProducerFactory<String, MatchRoomCreatedEvent> matchRoomCreatedEventProducerFactory() {
-    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
-  }
-
-  @Bean
-  @Qualifier("matchMemberJoinedEventProducerFactory")
-  public ProducerFactory<String, MatchMemberJoinedEvent> matchMemberJoinedEventProducerFactory() {
-    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
-  }
-
-  @Bean
-  @Qualifier("matchMemberCanceledEventProducerFactory")
-  public ProducerFactory<String, MatchMemberCancelledEvent> matchMemberCanceledEventProducerFactory() {
-    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
-  }
-
-  @Bean
-  @Qualifier("matchRoomCancelledEventProducerFactory")
-  public ProducerFactory<String, MatchRoomCancelledEvent> matchRoomCanclledEventProducerFactory() {
-    return new DefaultKafkaProducerFactory<>(getProducerOptions());
-  }
-
-  @Bean
-  @Qualifier("matchRoomCompletedEventProducerFactory")
-  public ProducerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventProducerFactory() {
-    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
-  }
-
+//
+//  @Bean
+//  @Qualifier("matchRoomCreatedEventProducerFactory")
+//  public ProducerFactory<String, MatchRoomCreatedEvent> matchRoomCreatedEventProducerFactory() {
+//    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
+//  }
+//
+//  @Bean
+//  @Qualifier("matchMemberJoinedEventProducerFactory")
+//  public ProducerFactory<String, MatchMemberJoinedEvent> matchMemberJoinedEventProducerFactory() {
+//    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
+//  }
+//
+//  @Bean
+//  @Qualifier("matchMemberCanceledEventProducerFactory")
+//  public ProducerFactory<String, MatchMemberCancelledEvent> matchMemberCanceledEventProducerFactory() {
+//    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
+//  }
+//
+//  @Bean
+//  @Qualifier("matchRoomCancelledEventProducerFactory")
+//  public ProducerFactory<String, MatchRoomCancelledEvent> matchRoomCanclledEventProducerFactory() {
+//    return new DefaultKafkaProducerFactory<>(getProducerOptions());
+//  }
+//
+//  @Bean
+//  @Qualifier("matchRoomCompletedEventProducerFactory")
+//  public ProducerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventProducerFactory() {
+//    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
+//  }
+//
   private Map<String, Object> getProducerOptions() {
     Map<String, Object> configs = new HashMap<>();
     configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
