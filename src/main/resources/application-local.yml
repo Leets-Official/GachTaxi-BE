@@ -54,12 +54,14 @@ gachtaxi:
       cookieMaxAge: ${JWT_COOKIE_MAX_AGE}
       secureOption: ${COOKIE_SECURE_OPTION}
       cookiePathOption: ${COOKIE_PATH_OPTION}
+    redis:
+      emailAuthCodeExpiration: ${REDIS_EMAIL_AUTH_CODE_EXPIRATION}
   kafka:
     topics:
       match-room-created: ${KAFKA_TOPIC_MATCH_ROOM_CREATED}
       match-member-joined: ${KAFKA_TOPIC_MATCH_MEMBER_JOINED}
       match-room-cancelled: ${KAFKA_TOPIC_MATCH_ROOM_CANCELLED}
+      match-member-cancelled: ${KAFKA_TOPIC_MATCH_MEMBER_CANCELLED}
     partition-count: ${KAFKA_PARTITION_COUNT}
     replication-factor: ${KAFKA_REPLICATION_FACTOR}
-    redis:
-      emailAuthCodeExpiration: ${REDIS_EMAIL_AUTH_CODE_EXPIRATION}
+
