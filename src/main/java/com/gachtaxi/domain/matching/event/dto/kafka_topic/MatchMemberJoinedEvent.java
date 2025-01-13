@@ -2,9 +2,10 @@ package com.gachtaxi.domain.matching.event.dto.kafka_topic;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Builder;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record MatchMemberJoinedEvent(
     Long roomId,
     Long memberId,
