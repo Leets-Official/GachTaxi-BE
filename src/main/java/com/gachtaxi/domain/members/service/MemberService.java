@@ -62,6 +62,6 @@ public class MemberService {
     }
 
     public Members findById(Long id) {
-        return memberRepository.findById(id).orElseThrow(NoSuchMemberException::new);
+        return memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 }
