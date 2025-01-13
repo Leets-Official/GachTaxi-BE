@@ -138,7 +138,7 @@ public class AutoMatchingProducer {
     String key = String.valueOf(matchRoomCompletedEvent.roomId());
 
     CompletableFuture<?> future = this.matchRoomCompletedEventKafkaTemplate.send(
-        matchRoomCancelledTopic, key, matchRoomCompletedEvent);
+        matchRoomCompletedTopic, key, matchRoomCompletedEvent);
 
     future.thenAccept(result -> {
           if (result instanceof RecordMetadata metadata) {
