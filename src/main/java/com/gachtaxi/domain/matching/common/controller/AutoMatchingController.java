@@ -55,7 +55,13 @@ public class AutoMatchingController {
       @CurrentMemberId Long memberId,
       @RequestBody AutoMatchingCancelledRequest autoMatchingCancelledRequest
   ) {
-    log.info("memberId: {}, autoMatchingCancelledRequest: {}", memberId, autoMatchingCancelledRequest);
+    if (!this.autoMatchingService.isSseSubscribed(memberId)) {
+      return ApiResponse.response(
+          HttpStatus.BAD_REQUEST,
+          ResponseMessage.NOT_SUBSCRIBED_SSE.getMessage()
+      );
+    }
+
     return ApiResponse.response(
         HttpStatus.OK,
         ResponseMessage.AUTO_MATCHING_REQUEST_CANCELLED.getMessage(),
