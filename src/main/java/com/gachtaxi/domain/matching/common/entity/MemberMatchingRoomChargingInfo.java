@@ -48,6 +48,15 @@ public class MemberMatchingRoomChargingInfo extends BaseEntity {
     this.paymentStatus = PaymentStatus.LEFT;
   }
 
+  public boolean isAlreadyLeft() {
+    return this.paymentStatus == PaymentStatus.LEFT;
+  }
+
+  public MemberMatchingRoomChargingInfo joinMatchingRoom() {
+    this.paymentStatus = PaymentStatus.NOT_PAYED;
+    return this;
+  }
+
   public static MemberMatchingRoomChargingInfo notPayedOf(MatchingRoom matchingRoom, Members members) {
     return MemberMatchingRoomChargingInfo.builder()
         .matchingRoom(matchingRoom)
