@@ -4,10 +4,9 @@ import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoomTagInfo;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
 import com.gachtaxi.domain.matching.common.entity.Route;
-import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
-import com.gachtaxi.domain.matching.common.exception.MemberAlreadyJoinedException;
+import com.gachtaxi.domain.matching.common.exception.MemberAlreadyLeftMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.MemberNotInMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomException;
@@ -51,10 +50,10 @@ public class MatchingRoomService {
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
 
-    MatchingRoom matchingRoom = MatchingRoom.activeFrom(matchRoomCreatedEvent, members, route);
+    MatchingRoom matchingRoom = MatchingRoom.activeOf(matchRoomCreatedEvent, members, route);
 
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
-    this.saveHostMemberChargingInfo(matchingRoom, members);
+    this.saveRoomMasterChargingInfo(matchingRoom, members);
 
     this.matchingRoomRepository.save(matchingRoom);
   }
@@ -64,45 +63,49 @@ public class MatchingRoomService {
   }
 
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {
-    tags.forEach(tag -> {
-      this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag));
-    });
+    tags.forEach(tag -> this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag)));
   }
 
-  private void saveHostMemberChargingInfo(MatchingRoom matchingRoom, Members members) {
+  private void saveRoomMasterChargingInfo(MatchingRoom matchingRoom, Members members) {
     this.memberMatchingRoomChargingInfoRepository.save(MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members));
   }
 
   public void joinMemberToMatchingRoom(MatchMemberJoinedEvent matchMemberJoinedEvent) {
     Members members = this.memberService.findById(matchMemberJoinedEvent.memberId());
-    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(
-        matchMemberJoinedEvent.roomId()).orElseThrow(
-        NoSuchMatchingRoomException::new);
+    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(matchMemberJoinedEvent.roomId()).orElseThrow(NoSuchMatchingRoomException::new);
 
-    if (this.memberMatchingRoomChargingInfoRepository.findByMembersAndMatchingRoom(members, matchingRoom).isPresent()) {
-      throw new MemberAlreadyJoinedException();
-    }
-
-    if (!matchingRoom.isActiveMatchingRoom()) {
+    if (!matchingRoom.isActive()) {
       throw new NotActiveMatchingRoomException();
     }
 
-    List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoom(
-        matchingRoom);
+    MemberMatchingRoomChargingInfo requestedMembersInfo = null;
+
+    Optional<MemberMatchingRoomChargingInfo> joinedInPast = this.alreadyJoinedInPast(members, matchingRoom);
+
+    if (joinedInPast.isPresent()) {
+      requestedMembersInfo = joinedInPast.get().joinMatchingRoom();
+    } else {
+      requestedMembersInfo = MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members);
+    }
+    this.memberMatchingRoomChargingInfoRepository.save(requestedMembersInfo);
+
+    List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
     int distributedCharge = (int) Math.ceil((double) matchingRoom.getTotalCharge() / (existMembers.size() + 1));
 
-    this.memberMatchingRoomChargingInfoRepository.save(
-        MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members)
-    );
-
     this.updateExistMembersCharge(existMembers, distributedCharge);
 
-    if (existMembers.size() == matchingRoom.getCapacity() - 1) {
+    int nowMemberCount = existMembers.size() + 1;
+
+    if (matchingRoom.isFull(nowMemberCount)) {
       this.autoMatchingProducer.sendMatchRoomCompletedEvent(
           MatchRoomCompletedEvent.of(matchingRoom.getId())
       );
     }
+  }
+
+  private Optional<MemberMatchingRoomChargingInfo> alreadyJoinedInPast(Members members, MatchingRoom matchingRoom) {
+    return this.memberMatchingRoomChargingInfoRepository.findByMembersAndMatchingRoom(members, matchingRoom);
   }
 
   private void updateExistMembersCharge(List<MemberMatchingRoomChargingInfo> existMembers, int charge) {
@@ -114,13 +117,15 @@ public class MatchingRoomService {
 
   public void leaveMemberFromMatchingRoom(MatchMemberCancelledEvent matchMemberCancelledEvent) {
     Members members = this.memberService.findById(matchMemberCancelledEvent.memberId());
-    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(
-        matchMemberCancelledEvent.roomId()).orElseThrow(
-        NoSuchMatchingRoomException::new);
+    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(matchMemberCancelledEvent.roomId()).orElseThrow(NoSuchMatchingRoomException::new);
 
-    MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo = this.memberMatchingRoomChargingInfoRepository.findByMembersAndMatchingRoom(
-            members, matchingRoom)
+    MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo =
+        this.memberMatchingRoomChargingInfoRepository.findByMembersAndMatchingRoom(members, matchingRoom)
         .orElseThrow(MemberNotInMatchingRoomException::new);
+
+    if (memberMatchingRoomChargingInfo.isAlreadyLeft()) {
+      throw new MemberAlreadyLeftMatchingRoomException();
+    }
 
     memberMatchingRoomChargingInfo.leftMatchingRoom();
 
@@ -138,8 +143,8 @@ public class MatchingRoomService {
   }
 
   private Optional<Members> findNextRoomMaster(MatchingRoom matchingRoom, Members members) {
-    List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoom(
-        matchingRoom);
+    List<MemberMatchingRoomChargingInfo> existMembers =
+        this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
     return existMembers.stream()
         .map(MemberMatchingRoomChargingInfo::getMembers)
@@ -148,20 +153,28 @@ public class MatchingRoomService {
   }
 
   public void cancelMatchingRoom(MatchRoomCancelledEvent matchRoomCancelledEvent) {
-    MatchingRoom matchingRoom = getMatchingRoomById(matchRoomCancelledEvent.roomId());
+    MatchingRoom matchingRoom = this.getMatchingRoomById(matchRoomCancelledEvent.roomId());
+
+    if (!matchingRoom.isActive()) {
+      throw new NotActiveMatchingRoomException();
+    }
 
     matchingRoom.cancelMatchingRoom();
     this.matchingRoomRepository.save(matchingRoom);
   }
 
-  private MatchingRoom getMatchingRoomById(Long roomId) {
-    return this.matchingRoomRepository.findById(roomId).orElseThrow(NoSuchMatchingRoomException::new);
-  }
-
   public void completeMatchingRoom(MatchRoomCompletedEvent matchRoomCompletedEvent) {
     MatchingRoom matchingRoom = this.getMatchingRoomById(matchRoomCompletedEvent.roomId());
 
+    if (!matchingRoom.isActive()) {
+      throw new NotActiveMatchingRoomException();
+    }
+
     matchingRoom.completeMatchingRoom();
     this.matchingRoomRepository.save(matchingRoom);
+  }
+
+  private MatchingRoom getMatchingRoomById(Long roomId) {
+    return this.matchingRoomRepository.findById(roomId).orElseThrow(NoSuchMatchingRoomException::new);
   }
 }
