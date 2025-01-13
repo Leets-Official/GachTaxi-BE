@@ -3,6 +3,7 @@ package com.gachtaxi.global.config.kafka;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,6 +121,31 @@ public class KafkaConsumerConfig {
     ConcurrentKafkaListenerContainerFactory<String, MatchRoomCancelledEvent> factory
         = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(matchRoomCancelledEventConsumerFactory());
+    factory.setConcurrency(3);
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+    return factory;
+  }
+
+  // MatchRoomCompleted
+  @Bean
+  public ConsumerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventConsumerFactory() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+    JsonDeserializer<MatchRoomCompletedEvent> jsonDeserializer =
+        new JsonDeserializer<>(MatchRoomCompletedEvent.class);
+    jsonDeserializer.addTrustedPackages("com.gachtaxi.domain.matching.event.dto");
+
+    return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), jsonDeserializer);
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventListenerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, MatchRoomCompletedEvent> factory
+        = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(matchRoomCompletedEventConsumerFactory());
     factory.setConcurrency(3);
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
