@@ -47,7 +47,7 @@ public class MatchingRoomService {
   private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
   public MatchingRoom save(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    Members members = this.memberService.findById(matchRoomCreatedEvent.hostMemberId());
+    Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
 
