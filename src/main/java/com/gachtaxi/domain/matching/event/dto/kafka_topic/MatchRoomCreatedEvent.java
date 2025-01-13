@@ -24,14 +24,27 @@ public record MatchRoomCreatedEvent(
     Integer expectedTotalCharge,
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime createdAt
-) {
+    LocalDateTime createdAt,
+
+    String topic
+) implements MatchingEvent{
+
+  @Override
+  public Object getKey() {
+    return null;
+  }
+
+  @Override
+  public String getTopic() {
+    return this.topic;
+  }
 
   public static MatchRoomCreatedEvent of(
       Long roomMasterId,
       AutoMatchingPostRequest autoMatchingPostRequest,
       int maxCapacity,
-      String description
+      String description,
+      String topic
       ) {
     return MatchRoomCreatedEvent.builder()
         .roomMasterId(roomMasterId)
@@ -44,6 +57,7 @@ public record MatchRoomCreatedEvent(
         .description(description)
         .expectedTotalCharge(autoMatchingPostRequest.expectedTotalCharge())
         .criteria(autoMatchingPostRequest.getCriteria())
+        .topic(topic)
         .build();
   }
 }
