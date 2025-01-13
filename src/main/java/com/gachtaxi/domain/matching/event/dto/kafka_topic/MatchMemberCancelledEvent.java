@@ -15,8 +15,8 @@ public record MatchMemberCancelledEvent(
 ) {
 
   public static MatchMemberCancelledEvent of(Long roomId, Long memberId) {
-    return MatchMemberCancelledEvent.builder().
-        roomId(roomId)
+    return MatchMemberCancelledEvent.builder()
+        .roomId(roomId)
         .memberId(memberId)
         .build();
   }
