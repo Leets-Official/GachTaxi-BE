@@ -27,66 +27,34 @@ public class KafkaProducerConfig {
   @Bean
   @Qualifier("matchRoomCreatedEventProducerFactory")
   public ProducerFactory<String, MatchRoomCreatedEvent> matchRoomCreatedEventProducerFactory() {
-    Map<String, Object> configs = new HashMap<>();
-    configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-    configs.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-    configs.put(ProducerConfig.ACKS_CONFIG, "all");
-    configs.put(ProducerConfig.RETRIES_CONFIG, 3);
-
-    return new DefaultKafkaProducerFactory<>(configs);
+    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
   }
 
   @Bean
   @Qualifier("matchMemberJoinedEventProducerFactory")
   public ProducerFactory<String, MatchMemberJoinedEvent> matchMemberJoinedEventProducerFactory() {
-    Map<String, Object> configs = new HashMap<>();
-    configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-    configs.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-    configs.put(ProducerConfig.ACKS_CONFIG, "all");
-    configs.put(ProducerConfig.RETRIES_CONFIG, 3);
-
-    return new DefaultKafkaProducerFactory<>(configs);
+    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
   }
 
   @Bean
   @Qualifier("matchMemberCanceledEventProducerFactory")
   public ProducerFactory<String, MatchMemberCancelledEvent> matchMemberCanceledEventProducerFactory() {
-    Map<String, Object> configs = new HashMap<>();
-    configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-    configs.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-    configs.put(ProducerConfig.ACKS_CONFIG, "all");
-    configs.put(ProducerConfig.RETRIES_CONFIG, 3);
-
-    return new DefaultKafkaProducerFactory<>(configs);
+    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
   }
 
   @Bean
   @Qualifier("matchRoomCancelledEventProducerFactory")
   public ProducerFactory<String, MatchRoomCancelledEvent> matchRoomCanclledEventProducerFactory() {
-    Map<String, Object> configs = new HashMap<>();
-    configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-    configs.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-    configs.put(ProducerConfig.ACKS_CONFIG, "all");
-    configs.put(ProducerConfig.RETRIES_CONFIG, 3);
-
-    return new DefaultKafkaProducerFactory<>(configs);
+    return new DefaultKafkaProducerFactory<>(getProducerOptions());
   }
 
   @Bean
   @Qualifier("matchRoomCompletedEventProducerFactory")
   public ProducerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventProducerFactory() {
+    return new DefaultKafkaProducerFactory<>(this.getProducerOptions());
+  }
+
+  private Map<String, Object> getProducerOptions() {
     Map<String, Object> configs = new HashMap<>();
     configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -96,37 +64,6 @@ public class KafkaProducerConfig {
     configs.put(ProducerConfig.ACKS_CONFIG, "all");
     configs.put(ProducerConfig.RETRIES_CONFIG, 3);
 
-    return new DefaultKafkaProducerFactory<>(configs);
-  }
-
-  @Bean
-  @Qualifier("matchMemberJoinedEventKafkaTemplate")
-  public KafkaTemplate<String, MatchMemberJoinedEvent> matchMemberJoinedEventKafkaTemplate() {
-
-    return new KafkaTemplate<>(matchMemberJoinedEventProducerFactory());
-  }
-
-  @Bean
-  @Qualifier("matchRoomCreatedEventKafkaTemplate")
-  public KafkaTemplate<String, MatchRoomCreatedEvent> matchRoomCreatedEventKafkaTemplate() {
-    return new KafkaTemplate<>(matchRoomCreatedEventProducerFactory());
-  }
-
-  @Bean
-  @Qualifier("matchMemberCanceledEventKafkaTemplate")
-  public KafkaTemplate<String, MatchMemberCancelledEvent> matchMemberCancelledEventKafkaTemplate() {
-    return new KafkaTemplate<>(matchMemberCanceledEventProducerFactory());
-  }
-
-  @Bean
-  @Qualifier("matchRoomCancelledEventKafkaTemplate")
-  public KafkaTemplate<String, MatchRoomCancelledEvent> matchRoomCancelledEventKafkaTemplate() {
-    return new KafkaTemplate<>(matchRoomCanclledEventProducerFactory());
-  }
-
-  @Bean
-  @Qualifier("matchRoomCompletedEventKafkaTemplate")
-  public KafkaTemplate<String, MatchRoomCompletedEvent> matchRoomCompletedEventKafkaTemplate() {
-    return new KafkaTemplate<>(matchRoomCompletedEventProducerFactory());
+    return configs;
   }
 }
