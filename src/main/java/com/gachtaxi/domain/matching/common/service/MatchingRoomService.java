@@ -51,15 +51,7 @@ public class MatchingRoomService {
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
 
-    MatchingRoom matchingRoom = MatchingRoom.builder()
-        .capacity(matchRoomCreatedEvent.maxCapacity())
-        .roomMaster(members)
-        .title(matchRoomCreatedEvent.title())
-        .description(matchRoomCreatedEvent.description())
-        .route(route)
-        .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
-        .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
-        .build();
+    MatchingRoom matchingRoom = MatchingRoom.activeFrom(matchRoomCreatedEvent, members, route);
 
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
     this.saveHostMemberChargingInfo(matchingRoom, members);
@@ -68,36 +60,17 @@ public class MatchingRoomService {
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    Route route = Route.builder()
-        .startLocationCoordinate(matchRoomCreatedEvent.startPoint())
-        .startLocationName(matchRoomCreatedEvent.startName())
-        .endLocationCoordinate(matchRoomCreatedEvent.destinationPoint())
-        .endLocationName(matchRoomCreatedEvent.destinationName())
-        .build();
-
-    return this.routeRepository.save(route);
+    return this.routeRepository.save(Route.from(matchRoomCreatedEvent));
   }
 
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {
-    for (Tags tag : tags) {
-      MatchingRoomTagInfo matchingRoomTagInfo = MatchingRoomTagInfo.builder()
-          .matchingRoom(matchingRoom)
-          .tags(tag)
-          .build();
-
-      this.matchingRoomTagInfoRepository.save(matchingRoomTagInfo);
-    }
+    tags.forEach(tag -> {
+      this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag));
+    });
   }
 
   private void saveHostMemberChargingInfo(MatchingRoom matchingRoom, Members members) {
-    MemberMatchingRoomChargingInfo matchingRoomChargingInfo = MemberMatchingRoomChargingInfo.builder()
-        .matchingRoom(matchingRoom)
-        .members(members)
-        .charge(matchingRoom.getTotalCharge())
-        .paymentStatus(PaymentStatus.NOT_PAYED)
-        .build();
-
-    this.memberMatchingRoomChargingInfoRepository.save(matchingRoomChargingInfo);
+    this.memberMatchingRoomChargingInfoRepository.save(MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members));
   }
 
   public void joinMemberToMatchingRoom(MatchMemberJoinedEvent matchMemberJoinedEvent) {
@@ -121,12 +94,7 @@ public class MatchingRoomService {
     int distributedCharge = matchingRoom.getTotalCharge() / (existMembers.size() + 1);
 
     this.memberMatchingRoomChargingInfoRepository.save(
-        MemberMatchingRoomChargingInfo.builder()
-            .matchingRoom(matchingRoom)
-            .members(members)
-            .charge(distributedCharge)
-            .paymentStatus(PaymentStatus.NOT_PAYED)
-            .build()
+        MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members)
     );
 
     this.updateExistMembersCharge(existMembers, distributedCharge);
@@ -181,18 +149,18 @@ public class MatchingRoomService {
   }
 
   public void cancelMatchingRoom(MatchRoomCancelledEvent matchRoomCancelledEvent) {
-    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(
-        matchRoomCancelledEvent.roomId()).orElseThrow(
-        NoSuchMatchingRoomException::new);
+    MatchingRoom matchingRoom = getMatchingRoomById(matchRoomCancelledEvent.roomId());
 
     matchingRoom.cancelMatchingRoom();
     this.matchingRoomRepository.save(matchingRoom);
   }
 
+  private MatchingRoom getMatchingRoomById(Long roomId) {
+    return this.matchingRoomRepository.findById(roomId).orElseThrow(NoSuchMatchingRoomException::new);
+  }
+
   public void completeMatchingRoom(MatchRoomCompletedEvent matchRoomCompletedEvent) {
-    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(
-        matchRoomCompletedEvent.roomId()
-    ).orElseThrow(NoSuchMatchingRoomException::new);
+    MatchingRoom matchingRoom = this.getMatchingRoomById(matchRoomCompletedEvent.roomId());
 
     matchingRoom.completeMatchingRoom();
     this.matchingRoomRepository.save(matchingRoom);
