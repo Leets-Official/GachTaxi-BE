@@ -62,6 +62,7 @@ gachtaxi:
       match-member-joined: ${KAFKA_TOPIC_MATCH_MEMBER_JOINED}
       match-room-cancelled: ${KAFKA_TOPIC_MATCH_ROOM_CANCELLED}
       match-member-cancelled: ${KAFKA_TOPIC_MATCH_MEMBER_CANCELLED}
+      match-room-completed: ${KAFKA_TOPIC_MATCH_ROOM_COMPLETED}
     partition-count: ${KAFKA_PARTITION_COUNT}
     replication-factor: ${KAFKA_REPLICATION_FACTOR}
 

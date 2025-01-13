@@ -17,6 +17,9 @@ public class KafkaTopicsConfig {
   @Value("${gachtaxi.kafka.topics.match-room-cancelled}")
   private String matchRoomCancelledTopic;
 
+  @Value("${gachtaxi.kafka.topics.match-room-completed}")
+  private String matchRoomCompletedTopic;
+
   @Value("${gachtaxi.kafka.partition-count}")
   private short partitionCount;
 
