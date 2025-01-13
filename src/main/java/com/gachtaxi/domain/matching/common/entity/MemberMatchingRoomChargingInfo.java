@@ -14,6 +14,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -30,6 +31,7 @@ import lombok.Setter;
 public class MemberMatchingRoomChargingInfo extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @Getter
   private Members members;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -40,5 +42,9 @@ public class MemberMatchingRoomChargingInfo extends BaseEntity {
   private Integer charge;
 
   @Enumerated(EnumType.STRING)
-  private PaymentStatus paymentStatus = PaymentStatus.NOT_PAYED;
+  private PaymentStatus paymentStatus;
+
+  public void leftMatchingRoom() {
+    this.paymentStatus = PaymentStatus.LEFT;
+  }
 }
