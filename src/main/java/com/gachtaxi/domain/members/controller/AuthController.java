@@ -40,16 +40,16 @@ public class AuthController {
 
     @PostMapping("/login/kakao")
     @Operation(summary = "인가 코드를 전달받아, 소셜 로그인을 진행합니다.")
-    public ApiResponse<Void> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
+    public ApiResponse<ResponseMessage> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
         JwtTokenDto jwtTokenDto = authService.kakaoLogin(kakaoAuthCode.authCode());
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
 
         if(jwtTokenDto.isTemporaryUser()){ // 임시 유저
-            return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage());
+            return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage(), UN_REGISTER);
         }
 
         cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
-        return ApiResponse.response(HttpStatus.OK, LOGIN_SUCCESS.getMessage());
+        return ApiResponse.response(HttpStatus.OK, LOGIN_SUCCESS.getMessage(), LOGIN_SUCCESS);
     }
 
     @PostMapping("/refresh")
