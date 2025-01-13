@@ -4,6 +4,7 @@ import com.gachtaxi.domain.matching.common.service.MatchingRoomService;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.event.service.sse.SseService;
 import lombok.RequiredArgsConstructor;
@@ -105,6 +106,28 @@ public class AutoMatchingConsumer {
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchRoomCancelledEvent", e);
       this.sseService.sendToClient(event.roomId(), "MATCH_ROOM_CANCELLED", e.getMessage());
+    }
+  }
+
+  /**
+   * 방 완료 이벤트 구독
+   */
+  @KafkaListener(
+      topics = "${gachtaxi.kafka.topics.match-room-completed}",
+      containerFactory = "matchRoomCompletedEventListenerFactory"
+  )
+  public void onMatchingRoomCompleted(MatchRoomCompletedEvent event, Acknowledgment ack) {
+    try {
+      log.info("[KAFKA CONSUMER] Received MatchingRoomCompletedEvent: {}", event);
+
+      this.matchingRoomService.completeMatchingRoom(event);
+
+      this.sseService.broadcast("MATCH_ROOM_COMPLETED", event);
+
+      ack.acknowledge();
+    } catch (Exception e) {
+      log.error("[KAFKA CONSUMER] Error processing MatchingRoomCompletedEvent", e);
+      this.sseService.sendToClient(event.roomId(), "MATCH_ROOM_COMPLETED", e.getMessage());
     }
   }
 }
