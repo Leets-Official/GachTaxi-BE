@@ -27,7 +27,7 @@ import lombok.Setter;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public class MemberMatchingRoomChargingInfo extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +46,14 @@ public class MemberMatchingRoomChargingInfo extends BaseEntity {
 
   public void leftMatchingRoom() {
     this.paymentStatus = PaymentStatus.LEFT;
+  }
+
+  public static MemberMatchingRoomChargingInfo notPayedOf(MatchingRoom matchingRoom, Members members) {
+    return MemberMatchingRoomChargingInfo.builder()
+        .matchingRoom(matchingRoom)
+        .members(members)
+        .charge(matchingRoom.getTotalCharge())
+        .paymentStatus(PaymentStatus.NOT_PAYED)
+        .build();
   }
 }

@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.matching.common.entity;
 
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -22,7 +23,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "matching_room")
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MatchingRoom extends BaseEntity {
@@ -73,5 +74,17 @@ public class MatchingRoom extends BaseEntity {
 
   public void completeMatchingRoom() {
     this.matchingRoomStatus = MatchingRoomStatus.COMPLETE;
+  }
+
+  public static MatchingRoom activeFrom(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
+    return MatchingRoom.builder()
+        .capacity(matchRoomCreatedEvent.maxCapacity())
+        .roomMaster(members)
+        .title(matchRoomCreatedEvent.title())
+        .description(matchRoomCreatedEvent.description())
+        .route(route)
+        .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
+        .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
+        .build();
   }
 }
