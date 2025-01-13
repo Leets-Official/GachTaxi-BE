@@ -5,10 +5,12 @@ import com.gachtaxi.domain.matching.common.exception.ControllerNotHasCurrentMemb
 import com.gachtaxi.domain.matching.common.service.AutoMatchingService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
+import java.lang.reflect.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -22,13 +24,18 @@ public class SseSubscribeRequiredAop {
   @Around("@annotation(com.gachtaxi.domain.matching.aop.SseSubscribeRequired)")
   public Object checkSseSubscribe(ProceedingJoinPoint proceedingJoinPoint) throws Throwable{
     Long memberId = null;
-    for (Object arg : proceedingJoinPoint.getArgs()) {
-      Class<?> argClass = arg.getClass();
-      if (arg instanceof Long && argClass.isAnnotationPresent(CurrentMemberId.class)) {
-        memberId = (Long) arg;
+    MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
+    Parameter[] parameters = signature.getMethod().getParameters();
+
+    for (int i = 0; i < parameters.length; i++) {
+      Parameter parameter = parameters[i];
+      if (parameter.getType().equals(Long.class) && parameter.isAnnotationPresent(
+          CurrentMemberId.class)) {
+        memberId = (Long) proceedingJoinPoint.getArgs()[i];
         break;
       }
     }
+
     if (memberId == null) {
       throw new ControllerNotHasCurrentMemberIdException();
     }
