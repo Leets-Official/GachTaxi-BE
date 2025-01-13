@@ -46,7 +46,7 @@ public class MatchingRoomService {
   private final RouteRepository routeRepository;
   private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
-  public MatchingRoom save(MatchRoomCreatedEvent matchRoomCreatedEvent) {
+  public void createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
@@ -56,7 +56,7 @@ public class MatchingRoomService {
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
     this.saveHostMemberChargingInfo(matchingRoom, members);
 
-    return this.matchingRoomRepository.save(matchingRoom);
+    this.matchingRoomRepository.save(matchingRoom);
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
@@ -90,8 +90,7 @@ public class MatchingRoomService {
     List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoom(
         matchingRoom);
 
-    // TODO: 딱 떨어지지 않는 금액은 어떻게 해야할지?
-    int distributedCharge = matchingRoom.getTotalCharge() / (existMembers.size() + 1);
+    int distributedCharge = (int) Math.ceil((double) matchingRoom.getTotalCharge() / (existMembers.size() + 1));
 
     this.memberMatchingRoomChargingInfoRepository.save(
         MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members)
