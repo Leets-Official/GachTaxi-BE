@@ -18,6 +18,7 @@ import com.gachtaxi.domain.matching.common.repository.RouteRepository;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.event.service.kafka.AutoMatchingProducer;
 import com.gachtaxi.domain.members.entity.Members;
@@ -129,6 +130,12 @@ public class MatchingRoomService {
     );
 
     this.updateExistMembersCharge(existMembers, distributedCharge);
+
+    if (existMembers.size() == matchingRoom.getCapacity() - 1) {
+      this.autoMatchingProducer.sendMatchRoomCompletedEvent(
+          MatchRoomCompletedEvent.builder().roomId(matchingRoom.getId()).build()
+      );
+    }
   }
 
   private void updateExistMembersCharge(List<MemberMatchingRoomChargingInfo> existMembers, int charge) {
@@ -179,6 +186,15 @@ public class MatchingRoomService {
         NoSuchMatchingRoomException::new);
 
     matchingRoom.cancelMatchingRoom();
+    this.matchingRoomRepository.save(matchingRoom);
+  }
+
+  public void completeMatchingRoom(MatchRoomCompletedEvent matchRoomCompletedEvent) {
+    MatchingRoom matchingRoom = this.matchingRoomRepository.findById(
+        matchRoomCompletedEvent.roomId()
+    ).orElseThrow(NoSuchMatchingRoomException::new);
+
+    matchingRoom.completeMatchingRoom();
     this.matchingRoomRepository.save(matchingRoom);
   }
 }
