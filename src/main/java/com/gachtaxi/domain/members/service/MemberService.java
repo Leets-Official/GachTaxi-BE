@@ -60,4 +60,8 @@ public class MemberService {
             throw new DuplicatedStudentNumberException();
         });
     }
+
+    public Members findById(Long id) {
+        return memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+    }
 }

@@ -16,6 +16,21 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      retries: ${KAFKA_PRODUCER_RETRIES}
+      acks: ${KAFKA_PRODUCER_ACKS}
+      properties:
+        enable.idempotence: ${KAFKA_PRODUCER_ENABLE_IDEMPOTENCE}
+        max.in.flight.requests.per.connection: ${KAFKA_PRODUCER_MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID}
+      auto-offset-reset: ${KAFKA_CONSUMER_AUTO_OFFSET_RESET}
+      enable-auto-commit: ${KAFKA_CONSUMER_ENABLE_AUTO_COMMIT}
+    admin:
+      properties:
+        client.id: ${KAFKA_ADMIN_CLIENT_ID}
     mongodb:
       uri: ${MONGODB_URI}
 
@@ -39,5 +54,12 @@ gachtaxi:
       cookieMaxAge: ${JWT_COOKIE_MAX_AGE}
       secureOption: ${COOKIE_SECURE_OPTION}
       cookiePathOption: ${COOKIE_PATH_OPTION}
+  kafka:
+    topics:
+      match-room-created: ${KAFKA_TOPIC_MATCH_ROOM_CREATED}
+      match-member-joined: ${KAFKA_TOPIC_MATCH_MEMBER_JOINED}
+      match-room-cancelled: ${KAFKA_TOPIC_MATCH_ROOM_CANCELLED}
+    partition-count: ${KAFKA_PARTITION_COUNT}
+    replication-factor: ${KAFKA_REPLICATION_FACTOR}
     redis:
       emailAuthCodeExpiration: ${REDIS_EMAIL_AUTH_CODE_EXPIRATION}
