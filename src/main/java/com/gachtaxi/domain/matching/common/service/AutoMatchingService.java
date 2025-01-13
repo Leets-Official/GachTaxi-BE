@@ -3,9 +3,11 @@ package com.gachtaxi.domain.matching.common.service;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.algorithm.service.MatchingAlgorithmService;
 import com.gachtaxi.domain.matching.common.dto.enums.AutoMatchingStatus;
+import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingCancelledRequest;
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingPostRequest;
 import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingPostResponse;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.event.service.kafka.AutoMatchingProducer;
@@ -15,9 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AutoMatchingService {
@@ -83,5 +87,18 @@ public class AutoMatchingService {
         .build();
 
     this.autoMatchingProducer.sendMatchMemberJoinedEvent(joinedEvent);
+  }
+
+  public AutoMatchingPostResponse handlerAutoCancelMatching(Long memberId,
+      AutoMatchingCancelledRequest autoMatchingCancelledRequest) {
+
+    MatchMemberCancelledEvent matchMemberCancelledEvent = MatchMemberCancelledEvent.builder()
+        .roomId(autoMatchingCancelledRequest.roomId())
+        .memberId(memberId)
+        .build();
+
+    this.autoMatchingProducer.sendMatchMemberLeftEvent(matchMemberCancelledEvent);
+
+    return AutoMatchingPostResponse.of(AutoMatchingStatus.CANCELLED);
   }
 }
