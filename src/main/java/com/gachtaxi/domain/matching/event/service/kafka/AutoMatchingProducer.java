@@ -3,6 +3,7 @@ package com.gachtaxi.domain.matching.event.service.kafka;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class AutoMatchingProducer {
   private final KafkaTemplate<String, MatchMemberJoinedEvent> matchMemberJoinedEventKafkaTemplate;
   private final KafkaTemplate<String, MatchMemberCancelledEvent> matchMemberCanceledEventKafkaTemplate;
   private final KafkaTemplate<String, MatchRoomCancelledEvent> matchRoomCancelledEventKafkaTemplate;
+  private final KafkaTemplate<String, MatchRoomCompletedEvent> matchRoomCompletedEventKafkaTemplate;
 
   @Value("${gachtaxi.kafka.topics.match-room-created}")
   private String matchRoomCreatedTopic;
@@ -33,6 +35,9 @@ public class AutoMatchingProducer {
 
   @Value("${gachtaxi.kafka.topics.match-room-cancelled}")
   private String matchRoomCancelledTopic;
+
+  @Value("${gachtaxi.kafka.topics.match-room-completed}")
+  private String matchRoomCompletedTopic;
 
   /**
    * 방 생성 이벤트를 발행
@@ -122,6 +127,29 @@ public class AutoMatchingProducer {
         }
     ).exceptionally(ex -> {
       log.error("[KAFKA PRODUCER] Failed to send MatchRoomCancelledEvent key={}", key, ex);
+      return null;
+    });
+  }
+
+  /**
+   * 매칭 성공 이벤트를 발행
+   */
+  public void sendMatchRoomCompletedEvent(MatchRoomCompletedEvent matchRoomCompletedEvent) {
+    String key = String.valueOf(matchRoomCompletedEvent.roomId());
+
+    CompletableFuture<?> future = this.matchRoomCompletedEventKafkaTemplate.send(
+        matchRoomCancelledTopic, key, matchRoomCompletedEvent);
+
+    future.thenAccept(result -> {
+          if (result instanceof RecordMetadata metadata) {
+            log.info("[KAFKA PRODUCER] Success sending MatchRoomCompleted: "
+                    + "topic={}, partition={}, offset={}, key={}",
+                metadata.topic(), metadata.partition(), metadata.offset(), key
+            );
+          }
+        }
+    ).exceptionally(ex -> {
+      log.error("[KAFKA PRODUCER] Failed to send MatchRoomCompleted key={}", key, ex);
       return null;
     });
   }
