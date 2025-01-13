@@ -62,40 +62,10 @@ jobs:
           port: 30922
           key: ${{ secrets.DEV_SSH_SECRET_PRIVATE_KEY }}
           script: |
-            # Blue-Green Deployment 포트 및 컨테이너 이름 설정
-            BLUE_PORT=8080
-            GREEN_PORT=8081
-            BLUE_NAME="blue"
-            GREEN_NAME="green"
-
-            # 현재 실행 중인 컨테이너 확인
-            IS_BLUE_ON=$(sudo docker ps --filter "name=$BLUE_NAME" --filter "status=running" -q)
-
-            if [ -n "$IS_BLUE_ON" ]; then
-              echo "** ${GREEN_PORT} 포트에서 GREEN 컨테이너 실행"
-              sudo docker run --name $GREEN_NAME -d -p $GREEN_PORT:$GREEN_PORT \
-                --env-file ./gachtaxi-dev.env -e TZ=Asia/Seoul ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
-              BEFORE_NAME=$BLUE_NAME
-              AFTER_NAME=$GREEN_NAME
-              BEFORE_PORT=$BLUE_PORT
-              AFTER_PORT=$GREEN_PORT
-            else
-              echo "** ${BLUE_PORT} 포트에서 BLUE 컨테이너 실행"
-              sudo docker run --name $BLUE_NAME -d -p $BLUE_PORT:$BLUE_PORT \
-                --env-file ./gachtaxi-dev.env -e TZ=Asia/Seoul ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi
-              BEFORE_NAME=$GREEN_NAME
-              AFTER_NAME=$BLUE_NAME
-              BEFORE_PORT=$GREEN_PORT
-              AFTER_PORT=$BLUE_PORT
-            fi
-
-            echo "** ${AFTER_NAME} 컨테이너 실행 완료 (포트: ${AFTER_PORT})"
-
-            # 이전 컨테이너 중지 및 삭제
-            echo "** 이전 컨테이너(${BEFORE_NAME}) 종료 및 삭제"
-            sudo docker stop $BEFORE_NAME || true
-            sudo docker rm $BEFORE_NAME || true
+            docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:latest
+            
+            docker compose up -d --no-deps gachtaxi 
             
             # 사용하지 않는 이미지 정리
             echo "** 사용하지 않는 Docker 이미지 정리"
-            sudo docker image prune -a -f
+            echo "${{ secrets.DEV_SSH_SECRET_PASSWORD }}" | sudo docker image prune -f
