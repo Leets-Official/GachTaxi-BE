@@ -12,7 +12,8 @@ public enum ResponseMessage {
 
   // auto matching
   AUTO_MATCHING_REQUEST_ACCEPTED("자동 매칭 요청 전송에 성공했습니다."),
-  NOT_SUBSCRIBED_SSE("SSE 구독 후 자동 매칭을 요청할 수 있습니다.");
+  NOT_SUBSCRIBED_SSE("SSE 구독 후 자동 매칭을 요청할 수 있습니다."),
+  AUTO_MATCHING_REQUEST_CANCELLED("자동 매칭 취소 요청 전송에 성공했습니다.");
 
   private final String message;
 }
