@@ -70,4 +70,8 @@ public class MatchingRoom extends BaseEntity {
   public void cancelMatchingRoom() {
     this.matchingRoomStatus = MatchingRoomStatus.CANCELLED;
   }
+
+  public void completeMatchingRoom() {
+    this.matchingRoomStatus = MatchingRoomStatus.COMPLETE;
+  }
 }
