@@ -34,12 +34,12 @@ public class AutoMatchingConsumer {
 
       this.matchingRoomService.save(event);
 
-      this.sseService.sendToClient(event.hostMemberId(), "MATCH_ROOM_CREATED", event);
+      this.sseService.sendToClient(event.roomMasterId(), "MATCH_ROOM_CREATED", event);
 
       ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchRoomCreatedEvent", e);
-      this.sseService.sendToClient(event.hostMemberId(), "MATCH_ROOM_CREATED", e.getMessage());
+      this.sseService.sendToClient(event.roomMasterId(), "MATCH_ROOM_CREATED", e.getMessage());
     }
   }
 
