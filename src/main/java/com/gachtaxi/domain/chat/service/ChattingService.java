@@ -61,7 +61,7 @@ public class ChattingService {
         Members members = memberService.find(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
-        Slice<ChattingMessage> chattingMessages = checkPageNumber(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
+        Slice<ChattingMessage> chattingMessages = loadMessage(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
 
         List<ChattingMessageResponse> chattingMessageResponses = chattingMessages.stream()
                 .map(ChattingMessageResponse::from)
@@ -72,12 +72,13 @@ public class ChattingService {
         return ChatResponse.of(chattingParticipant, chattingMessageResponses, chatPageableResponse);
     }
 
-    private Slice<ChattingMessage> checkPageNumber(long roomId, ChattingParticipant chattingParticipant, int pageNumber, int pageSize, LocalDateTime lastMessageTimeStamp) {
+    private Slice<ChattingMessage> loadMessage(long roomId, ChattingParticipant chattingParticipant, int pageNumber, int pageSize, LocalDateTime lastMessageTimeStamp) {
         if (pageNumber == 0) {
             return loadInitialMessage(roomId, chattingParticipant);
         }
 
-        return loadMessage(roomId, chattingParticipant.getJoinedAt(), lastMessageTimeStamp, pageNumber, pageSize);
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterAndTimeStampBeforeOrderByTimeStampDesc(roomId, chattingParticipant.getJoinedAt(), lastMessageTimeStamp, pageable);
     }
 
     private Slice<ChattingMessage> loadInitialMessage(long roomId, ChattingParticipant chattingParticipant) {
@@ -87,12 +88,6 @@ public class ChattingService {
         Pageable pageable = PageRequest.of(0, effectivePageSize);
 
         return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getJoinedAt(), pageable);
-    }
-
-    private Slice<ChattingMessage> loadMessage(long roomId, LocalDateTime joinedAt, LocalDateTime lastMessageTime, int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-
-        return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterAndTimeStampBeforeOrderByTimeStampDesc(roomId, joinedAt, lastMessageTime, pageable);
     }
 
     private <T> T getSessionAttribute(SimpMessageHeaderAccessor accessor, String attributeName, Class<T> type) {
