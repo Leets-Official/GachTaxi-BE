@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static com.gachtaxi.domain.chat.stomp.strategy.StompConnectStrategy.CHAT_USER_ID;
 import static com.gachtaxi.domain.chat.stomp.strategy.StompSubscribeStrategy.CHAT_ROOM_ID;
+import static com.gachtaxi.domain.chat.stomp.strategy.StompSubscribeStrategy.CHAT_USER_NAME;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +46,9 @@ public class ChattingService {
     public void chat(ChatMessageRequest request, SimpMessageHeaderAccessor accessor) {
         long roomId = getSessionAttribute(accessor, CHAT_ROOM_ID, Long.class);
         long userId = getSessionAttribute(accessor, CHAT_USER_ID, Long.class);
+        String senderName = getSessionAttribute(accessor, CHAT_USER_NAME, String.class);
 
-        ChatMessage chatMessage = ChatMessage.of(request, roomId, userId);
+        ChatMessage chatMessage = ChatMessage.of(request, roomId, userId, senderName);
         ChannelTopic topic = new ChannelTopic(chatTopic + chatMessage.roomId());
         ChattingMessage chattingMessage = ChattingMessage.from(chatMessage);
 

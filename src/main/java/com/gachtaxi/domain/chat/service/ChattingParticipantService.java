@@ -22,4 +22,8 @@ public class ChattingParticipantService {
         return chattingParticipantRepository.findByChattingRoomAndMembers(chattingRoom, member)
                 .orElseThrow(ChattingParticipantNotFoundException::new);
     }
+
+    public void delete(ChattingParticipant chattingParticipant) {
+        chattingParticipantRepository.delete(chattingParticipant);
+    }
 }

@@ -14,25 +14,25 @@ public record ChatMessage(
         LocalDateTime timeStamp,
         MessageType messageType
 ) {
-    public static ChatMessage of(ChatMessageRequest request, long roomId, long senderId) {
+    public static ChatMessage of(ChatMessageRequest request, long roomId, long senderId, String senderName) {
         return ChatMessage.builder()
                 .roomId(roomId)
                 .senderId(senderId)
-                .senderName(request.senderName())
+                .senderName(senderName)
                 .message(request.message())
                 .timeStamp(LocalDateTime.now())
                 .messageType(MessageType.MESSAGE)
                 .build();
     }
 
-    public static ChatMessage subscribe(long roomId, Long senderId, String senderName, String message) {
+    public static ChatMessage of(long roomId, Long senderId, String senderName, String message, MessageType messageType) {
         return ChatMessage.builder()
                 .roomId(roomId)
                 .senderId(senderId)
                 .senderName(senderName)
                 .message(message)
                 .timeStamp(LocalDateTime.now())
-                .messageType(MessageType.ENTER)
+                .messageType(messageType)
                 .build();
     }
 }

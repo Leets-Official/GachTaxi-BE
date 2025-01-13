@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
-import static com.gachtaxi.domain.chat.controller.ResponseMessage.CREATE_CHATTING_ROOM_SUCCESS;
-import static com.gachtaxi.domain.chat.controller.ResponseMessage.GET_CHATTING_MESSAGE_SUCCESS;
+import static com.gachtaxi.domain.chat.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "CHAT")
@@ -47,6 +46,15 @@ public class ChattingController {
         ChatResponse response = chattingService.getMessage(roomId, memberId, pageNumber, pageSize, lastMessageTimeStamp);
 
         return ApiResponse.response(OK, GET_CHATTING_MESSAGE_SUCCESS.getMessage(), response);
+    }
+
+    @DeleteMapping("/api/chat/{roomId}")
+    @Operation(summary = "채팅방을 퇴장하는 API입니다.")
+    public ApiResponse<Void> exitChattingRoom(@PathVariable Long roomId,
+                                              @CurrentMemberId Long memberId) {
+        chattingRoomService.exitChatRoom(roomId, memberId);
+
+        return ApiResponse.response(OK, EXIT_CHATTING_ROOM_SUCCESS.getMessage());
     }
 
     @MessageMapping("/chat/message")
