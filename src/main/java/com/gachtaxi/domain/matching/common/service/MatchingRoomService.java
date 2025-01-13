@@ -14,6 +14,7 @@ import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomTagInfoRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.matching.common.repository.RouteRepository;
+import com.gachtaxi.domain.matching.event.MatchingEventFactory;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
@@ -44,6 +45,9 @@ public class MatchingRoomService {
   private final MatchingRoomTagInfoRepository matchingRoomTagInfoRepository;
   private final RouteRepository routeRepository;
   private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
+
+  // event factory
+  private final MatchingEventFactory matchingEventFactory;
 
   public void createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
@@ -89,7 +93,7 @@ public class MatchingRoomService {
     }
     this.memberMatchingRoomChargingInfoRepository.save(requestedMembersInfo);
 
-    List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
+    List<MemberMatchingRoomChargingInfo> existMembers = this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
     int distributedCharge = (int) Math.ceil((double) matchingRoom.getTotalCharge() / (existMembers.size() + 1));
 
@@ -98,9 +102,7 @@ public class MatchingRoomService {
     int nowMemberCount = existMembers.size() + 1;
 
     if (matchingRoom.isFull(nowMemberCount)) {
-      this.autoMatchingProducer.sendMatchRoomCompletedEvent(
-          MatchRoomCompletedEvent.of(matchingRoom.getId())
-      );
+      this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchRoomCompletedEvent(matchingRoom.getId()));
     }
   }
 
@@ -135,16 +137,14 @@ public class MatchingRoomService {
       this.findNextRoomMaster(matchingRoom, members)
           .ifPresentOrElse(
               nextRoomMaster -> matchingRoom.changeRoomMaster(nextRoomMaster),
-              () -> this.autoMatchingProducer.sendMatchRoomCancelledEvent(
-                  MatchRoomCancelledEvent.of(matchingRoom.getId())
-              )
+              () -> this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchRoomCancelledEvent(matchingRoom.getId()))
           );
     }
   }
 
   private Optional<Members> findNextRoomMaster(MatchingRoom matchingRoom, Members members) {
     List<MemberMatchingRoomChargingInfo> existMembers =
-        this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
+        this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
     return existMembers.stream()
         .map(MemberMatchingRoomChargingInfo::getMembers)

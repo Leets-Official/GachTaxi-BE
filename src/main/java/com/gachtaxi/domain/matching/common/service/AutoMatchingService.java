@@ -7,18 +7,13 @@ import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingCancelledRequ
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingPostRequest;
 import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingPostResponse;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
+import com.gachtaxi.domain.matching.event.MatchingEventFactory;
 import com.gachtaxi.domain.matching.event.service.kafka.AutoMatchingProducer;
 import com.gachtaxi.domain.matching.event.service.sse.SseService;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -27,15 +22,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class AutoMatchingService {
 
-  @Value("${gachtaxi.matching.auto-matching-max-capacity}")
-  private int autoMaxCapacity;
-
-  @Value("${gachtaxi.matching.auto-matcnig-description}")
-  private String autoDescription;
-
   private final SseService sseService;
-  private final AutoMatchingProducer autoMatchingProducer;
   private final MatchingAlgorithmService matchingAlgorithmService;
+  private final MatchingEventFactory matchingEventFactory;
+  private final AutoMatchingProducer autoMatchingProducer;
 
   public SseEmitter handleSubscribe(Long userId) {
     return this.sseService.subscribe(userId);
@@ -65,19 +55,18 @@ public class AutoMatchingService {
 
   private void sendMatchRoomCreatedEvent(Long memberId,
       AutoMatchingPostRequest autoMatchingPostRequest) {
-    this.autoMatchingProducer.sendMatchRoomCreatedEvent(MatchRoomCreatedEvent.of(memberId, autoMatchingPostRequest, autoMaxCapacity, autoDescription));
+    this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchRoomCreatedEvent(memberId, autoMatchingPostRequest));
   }
 
   private void sendMatchMemberJoinedEvent(Long memberId, FindRoomResult roomResult) {
     Long roomId = roomResult.roomId();
-
-    this.autoMatchingProducer.sendMatchMemberJoinedEvent(MatchMemberJoinedEvent.of(roomId, memberId));
+    this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchMemberJoinedEvent(roomId, memberId));
   }
 
   public AutoMatchingPostResponse handlerAutoCancelMatching(Long memberId,
       AutoMatchingCancelledRequest autoMatchingCancelledRequest) {
 
-    this.autoMatchingProducer.sendMatchMemberLeftEvent(MatchMemberCancelledEvent.of(autoMatchingCancelledRequest.roomId(), memberId));
+    this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchMemberCancelledEvent(autoMatchingCancelledRequest.roomId(), memberId));
 
     return AutoMatchingPostResponse.of(AutoMatchingStatus.CANCELLED);
   }
