@@ -60,7 +60,7 @@ public class MatchingRoom extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
-  public boolean isActiveMatchingRoom() {
+  public boolean isActive() {
     return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
   }
 
@@ -76,7 +76,11 @@ public class MatchingRoom extends BaseEntity {
     this.matchingRoomStatus = MatchingRoomStatus.COMPLETE;
   }
 
-  public static MatchingRoom activeFrom(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
+  public boolean isFull(int size) {
+    return size == totalCharge;
+  }
+
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
