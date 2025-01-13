@@ -20,6 +20,9 @@ public class KafkaTopicsConfig {
   @Value("${gachtaxi.kafka.topics.match-room-completed}")
   private String matchRoomCompletedTopic;
 
+  @Value("${gachtaxi.kafka.topics.match-member-cancelled}")
+  private String matchMemberCancelledTopic;
+
   @Value("${gachtaxi.kafka.partition-count}")
   private short partitionCount;
 
@@ -39,5 +42,15 @@ public class KafkaTopicsConfig {
   @Bean
   public NewTopic matchRoomCancelledTopic() {
     return new NewTopic(matchRoomCancelledTopic, partitionCount, replicationFactor);
+  }
+
+  @Bean
+  public NewTopic matchMemberCancelledTopic() {
+    return new NewTopic(matchMemberCancelledTopic, partitionCount, replicationFactor);
+  }
+
+  @Bean
+  public NewTopic matchRoomCompletedTopic() {
+    return new NewTopic(matchRoomCompletedTopic, partitionCount, replicationFactor);
   }
 }
