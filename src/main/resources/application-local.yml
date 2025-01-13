@@ -65,4 +65,7 @@ gachtaxi:
       match-room-completed: ${KAFKA_TOPIC_MATCH_ROOM_COMPLETED}
     partition-count: ${KAFKA_PARTITION_COUNT}
     replication-factor: ${KAFKA_REPLICATION_FACTOR}
+  matching:
+    auto-matching-max-capacity: ${AUTO_MATCHING_MAX_CAPACITY}
+    auto-matcnig-description: ${AUTO_MATCHING_DESCRIPTION}
 

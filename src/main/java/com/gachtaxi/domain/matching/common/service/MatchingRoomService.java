@@ -133,7 +133,7 @@ public class MatchingRoomService {
 
     if (existMembers.size() == matchingRoom.getCapacity() - 1) {
       this.autoMatchingProducer.sendMatchRoomCompletedEvent(
-          MatchRoomCompletedEvent.builder().roomId(matchingRoom.getId()).build()
+          MatchRoomCompletedEvent.of(matchingRoom.getId())
       );
     }
   }
@@ -164,7 +164,7 @@ public class MatchingRoomService {
           .ifPresentOrElse(
               nextRoomMaster -> matchingRoom.changeRoomMaster(nextRoomMaster),
               () -> this.autoMatchingProducer.sendMatchRoomCancelledEvent(
-                  MatchRoomCancelledEvent.builder().roomId(matchingRoom.getId()).build()
+                  MatchRoomCancelledEvent.of(matchingRoom.getId())
               )
           );
     }

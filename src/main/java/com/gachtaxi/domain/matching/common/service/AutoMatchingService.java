@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -26,8 +27,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class AutoMatchingService {
 
-  private static final int AUTO_MAX_CAPACITY = 4;
-  private static final String AUTO_DESCRIPTION = "AUTO_MATCHING";
+  @Value("${gachtaxi.matching.auto-matching-max-capacity}")
+  private int autoMaxCapacity;
+
+  @Value("${gachtaxi.matching.auto-matcnig-description}")
+  private String autoDescription;
 
   private final SseService sseService;
   private final AutoMatchingProducer autoMatchingProducer;
@@ -61,43 +65,19 @@ public class AutoMatchingService {
 
   private void sendMatchRoomCreatedEvent(Long memberId,
       AutoMatchingPostRequest autoMatchingPostRequest) {
-    MatchRoomCreatedEvent createdEvent = MatchRoomCreatedEvent.builder()
-        .hostMemberId(memberId)
-        .startPoint(autoMatchingPostRequest.startPoint())
-        .startName(autoMatchingPostRequest.startName())
-        .destinationPoint(autoMatchingPostRequest.destinationPoint())
-        .destinationName(autoMatchingPostRequest.destinationName())
-        .maxCapacity(AUTO_MAX_CAPACITY)
-        .title(UUID.randomUUID().toString())
-        .description(AUTO_DESCRIPTION)
-        .expectedTotalCharge(autoMatchingPostRequest.expectedTotalCharge())
-        .criteria(autoMatchingPostRequest.getCriteria())
-        .build();
-
-    this.autoMatchingProducer.sendMatchRoomCreatedEvent(createdEvent);
+    this.autoMatchingProducer.sendMatchRoomCreatedEvent(MatchRoomCreatedEvent.of(memberId, autoMatchingPostRequest, autoMaxCapacity, autoDescription));
   }
 
   private void sendMatchMemberJoinedEvent(Long memberId, FindRoomResult roomResult) {
     Long roomId = roomResult.roomId();
 
-    MatchMemberJoinedEvent joinedEvent = MatchMemberJoinedEvent.builder()
-        .roomId(roomId)
-        .memberId(memberId)
-        .joinedAt(LocalDateTime.now())
-        .build();
-
-    this.autoMatchingProducer.sendMatchMemberJoinedEvent(joinedEvent);
+    this.autoMatchingProducer.sendMatchMemberJoinedEvent(MatchMemberJoinedEvent.of(roomId, memberId));
   }
 
   public AutoMatchingPostResponse handlerAutoCancelMatching(Long memberId,
       AutoMatchingCancelledRequest autoMatchingCancelledRequest) {
 
-    MatchMemberCancelledEvent matchMemberCancelledEvent = MatchMemberCancelledEvent.builder()
-        .roomId(autoMatchingCancelledRequest.roomId())
-        .memberId(memberId)
-        .build();
-
-    this.autoMatchingProducer.sendMatchMemberLeftEvent(matchMemberCancelledEvent);
+    this.autoMatchingProducer.sendMatchMemberLeftEvent(MatchMemberCancelledEvent.of(autoMatchingCancelledRequest.roomId(), memberId));
 
     return AutoMatchingPostResponse.of(AutoMatchingStatus.CANCELLED);
   }
