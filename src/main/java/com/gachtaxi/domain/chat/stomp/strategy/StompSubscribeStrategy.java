@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StompSubscribeStrategy implements StompCommandStrategy {
 
-    private static final String SUB_END_POINT = "/sub/chat/room/";
     public static final String CHAT_ROOM_ID = "CHAT_ROOM_ID";
     public static final String CHAT_USER_NAME = "CHAT_USER_NAME";
-
+    private static final String SUB_END_POINT = "/sub/chat/room/";
+    private static final String ERROR_END_POINT = "/user/queue/errors";
     private final ChattingRoomService chattingRoomService;
 
     @Value("${chat.topic}")
@@ -32,15 +32,18 @@ public class StompSubscribeStrategy implements StompCommandStrategy {
     public Message<?> preSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel) {
         String destination = accessor.getDestination();
 
-        if (!destination.startsWith(SUB_END_POINT)) {
-            throw new ChatSubscribeException();
+        if (destination.startsWith(SUB_END_POINT)) {
+            Long roomId = Long.valueOf(destination.replace(SUB_END_POINT, ""));
+            chattingRoomService.subscribeChatRoom(roomId, accessor);
+
+            return message;
         }
 
-        Long roomId = Long.valueOf(destination.replace(SUB_END_POINT, ""));
+        if (destination.startsWith(ERROR_END_POINT)) {
+            return message;
+        }
 
-        chattingRoomService.subscribeChatRoom(roomId, accessor);
-
-        return message;
+        throw new ChatSubscribeException();
     }
 }
 
