@@ -19,7 +19,7 @@ public abstract class KafkaBeanUtils {
     return beanNameBuilder.toString();
   }
 
-  public static String getFirstUpperString(String str) {
+  private static String getFirstUpperString(String str) {
     return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
 }

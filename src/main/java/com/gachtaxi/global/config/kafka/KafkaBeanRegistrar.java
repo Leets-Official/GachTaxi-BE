@@ -8,7 +8,6 @@ import com.gachtaxi.global.auth.jwt.util.KafkaBeanUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -24,10 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.stereotype.Component;
 
-@Slf4j
-@Component
 public class KafkaBeanRegistrar implements BeanDefinitionRegistryPostProcessor, EnvironmentAware {
 
   private Environment environment;
@@ -38,8 +34,6 @@ public class KafkaBeanRegistrar implements BeanDefinitionRegistryPostProcessor, 
     Map<String, String> topics = Binder.get(environment)
         .bind("gachtaxi.kafka.topics", Bindable.mapOf(String.class, String.class))
         .orElse(Collections.emptyMap());
-
-    log.info(topics.toString());
 
     for (String topic : topics.values()) {
       this.registerProducerFactoryAndKafkaTemplate(topic, registry);
