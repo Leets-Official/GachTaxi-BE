@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // response format
-    private static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
+    public static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
     private static final String VALID_EXCEPTION = "Validation failed";
 
     @ExceptionHandler(BaseException.class)
