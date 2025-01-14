@@ -10,6 +10,7 @@ import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -58,7 +59,7 @@ public class ChattingController {
     }
 
     @MessageMapping("/chat/message")
-    public void message(ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) {
+    public void message(@Valid ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) {
         chattingService.chat(request, headerAccessor);
     }
 }
