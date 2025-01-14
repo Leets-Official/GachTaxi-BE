@@ -23,6 +23,11 @@ public class ChattingParticipantService {
                 .orElseThrow(ChattingParticipantNotFoundException::new);
     }
 
+    public ChattingParticipant find(long roomId, long memberId) {
+        return chattingParticipantRepository.findByChattingRoomIdAndMembersId(roomId, memberId)
+                .orElseThrow(ChattingParticipantNotFoundException::new);
+    }
+
     public void delete(ChattingParticipant chattingParticipant) {
         chattingParticipantRepository.delete(chattingParticipant);
     }
