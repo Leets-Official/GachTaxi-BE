@@ -80,17 +80,17 @@ public class ChattingService {
 
     private Slice<ChattingMessage> loadMessage(long roomId, ChattingParticipant chattingParticipant, int pageNumber, int pageSize, LocalDateTime lastMessageTimeStamp) {
         if (pageNumber == 0) {
-            return loadInitialMessage(roomId, chattingParticipant);
+            return loadInitialMessage(roomId, chattingParticipant, pageSize);
         }
 
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
         return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterAndTimeStampBeforeOrderByTimeStampDesc(roomId, chattingParticipant.getJoinedAt(), lastMessageTimeStamp, pageable);
     }
 
-    private Slice<ChattingMessage> loadInitialMessage(long roomId, ChattingParticipant chattingParticipant) {
+    private Slice<ChattingMessage> loadInitialMessage(long roomId, ChattingParticipant chattingParticipant, int pageSize) {
         int chattingCount = chattingMessageRepository.countAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getDisconnectedAt());
 
-        int effectivePageSize = Math.max(chattingCount, 20);
+        int effectivePageSize = Math.max(chattingCount, pageSize);
         Pageable pageable = PageRequest.of(0, effectivePageSize);
 
         return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getJoinedAt(), pageable);
