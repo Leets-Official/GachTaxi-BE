@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.chat.entity;
 
 import com.gachtaxi.domain.chat.entity.enums.Status;
+import com.gachtaxi.domain.chat.exception.UnSubscriptionException;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -42,6 +43,12 @@ public class ChattingParticipant extends BaseEntity {
                 .chattingRoom(chattingRoom)
                 .members(members)
                 .build();
+    }
+
+    public void checkSubscription() {
+        if (this.status == Status.INACTIVE) {
+            throw new UnSubscriptionException();
+        }
     }
 
     public void subscribe() {

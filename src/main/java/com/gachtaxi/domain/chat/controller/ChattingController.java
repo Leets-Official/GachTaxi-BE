@@ -8,7 +8,6 @@ import com.gachtaxi.domain.chat.service.ChattingService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ public class ChattingController {
                                                          @CurrentMemberId Long memberId,
                                                          @RequestParam int pageNumber,
                                                          @RequestParam int pageSize,
-                                                         @RequestParam(required = false) @Parameter(required = false) LocalDateTime lastMessageTimeStamp) {
+                                                         @RequestParam(required = false) LocalDateTime lastMessageTimeStamp) {
         ChatResponse response = chattingService.getMessage(roomId, memberId, pageNumber, pageSize, lastMessageTimeStamp);
 
         return ApiResponse.response(OK, GET_CHATTING_MESSAGE_SUCCESS.getMessage(), response);

@@ -61,8 +61,14 @@ public class ChattingService {
         Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
+        chattingParticipant.checkSubscription();
+
         Slice<ChattingMessage> chattingMessages = loadMessage(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
 
+        return getChatResponse(pageNumber, chattingMessages, chattingParticipant);
+    }
+
+    private ChatResponse getChatResponse(int pageNumber, Slice<ChattingMessage> chattingMessages, ChattingParticipant chattingParticipant) {
         List<ChattingMessageResponse> chattingMessageResponses = chattingMessages.stream()
                 .map(ChattingMessageResponse::from)
                 .toList();
