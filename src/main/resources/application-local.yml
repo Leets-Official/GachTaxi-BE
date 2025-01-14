@@ -60,6 +60,7 @@ gachtaxi:
     topics:
       match-room-created: ${KAFKA_TOPIC_MATCH_ROOM_CREATED}
       match-member-joined: ${KAFKA_TOPIC_MATCH_MEMBER_JOINED}
+      match-member-cancelled: ${KAFKA_TOPIC_MATCH_MEMBER_CANCELLED}
       match-room-cancelled: ${KAFKA_TOPIC_MATCH_ROOM_CANCELLED}
       match-member-cancelled: ${KAFKA_TOPIC_MATCH_MEMBER_CANCELLED}
       match-room-completed: ${KAFKA_TOPIC_MATCH_ROOM_COMPLETED}
@@ -68,4 +69,3 @@ gachtaxi:
   matching:
     auto-matching-max-capacity: ${AUTO_MATCHING_MAX_CAPACITY}
     auto-matcnig-description: ${AUTO_MATCHING_DESCRIPTION}
-
