@@ -58,7 +58,7 @@ public class ChattingService {
 
     public ChatResponse getMessage(long roomId, long senderId, int pageNumber, int pageSize, LocalDateTime lastMessageTimeStamp) {
         ChattingRoom chattingRoom = chattingRoomService.find(roomId);
-        Members members = memberService.find(senderId);
+        Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
         Slice<ChattingMessage> chattingMessages = loadMessage(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
