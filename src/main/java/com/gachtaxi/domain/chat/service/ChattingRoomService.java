@@ -66,7 +66,7 @@ public class ChattingRoomService {
         Long senderId = (Long) accessor.getSessionAttributes().get(CHAT_USER_ID);
 
         ChattingRoom chattingRoom = find(roomId);
-        Members members = memberService.find(senderId);
+        Members members = memberService.findById(senderId);
 
         accessor.getSessionAttributes().put(CHAT_ROOM_ID, roomId);
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
@@ -94,7 +94,7 @@ public class ChattingRoomService {
             웹소켓 연결도 해제 될텐데 삭제가 먼저 되면 NPE는 어떻게 하지.
          */
         ChattingRoom chattingRoom = find(roomId);
-        Members members = memberService.find(senderId);
+        Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
         chattingParticipantService.delete(chattingParticipant);
