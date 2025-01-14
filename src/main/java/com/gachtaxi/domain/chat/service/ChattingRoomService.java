@@ -90,9 +90,6 @@ public class ChattingRoomService {
 
     @Transactional
     public void exitChatRoom(long roomId, long senderId) {
-        /*
-            웹소켓 연결도 해제 될텐데 삭제가 먼저 되면 NPE는 어떻게 하지.
-         */
         ChattingRoom chattingRoom = find(roomId);
         Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
