@@ -9,7 +9,6 @@ public record ChatPageableResponse(
         int pageNumber,
         int pageSize,
         int numberOfElements,
-        boolean first,
         boolean last,
         boolean empty
 ) {
@@ -18,7 +17,6 @@ public record ChatPageableResponse(
                 .pageNumber(pageNumber)
                 .pageSize(slice.getSize())
                 .numberOfElements(slice.getNumberOfElements())
-                .first(slice.isFirst())
                 .last(slice.isLast())
                 .empty(slice.isEmpty())
                 .build();

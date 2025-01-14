@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
@@ -83,7 +84,7 @@ public class ChattingService {
             return loadInitialMessage(roomId, chattingParticipant, pageSize);
         }
 
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(Sort.Direction.DESC, "timeStamp"));
         return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterAndTimeStampBeforeOrderByTimeStampDesc(roomId, chattingParticipant.getJoinedAt(), lastMessageTimeStamp, pageable);
     }
 
@@ -91,7 +92,7 @@ public class ChattingService {
         int chattingCount = chattingMessageRepository.countAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getDisconnectedAt());
 
         int effectivePageSize = Math.max(chattingCount, pageSize);
-        Pageable pageable = PageRequest.of(0, effectivePageSize);
+        Pageable pageable = PageRequest.of(0, effectivePageSize, Sort.by(Sort.Direction.DESC, "timeStamp"));
 
         return chattingMessageRepository.findAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getJoinedAt(), pageable);
     }
