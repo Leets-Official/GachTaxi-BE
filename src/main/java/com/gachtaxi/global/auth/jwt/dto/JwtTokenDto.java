@@ -12,4 +12,14 @@ public record JwtTokenDto(
                 .accessToken(accessToken)
                 .refreshToken(refreshToken).build();
     }
+
+    public static JwtTokenDto of(String accessToken) {
+        return JwtTokenDto.builder()
+                .accessToken(accessToken)
+                .build();
+    }
+
+    public boolean isTemporaryUser(){
+        return this.refreshToken == null || this.refreshToken.isEmpty();
+    }
 }
