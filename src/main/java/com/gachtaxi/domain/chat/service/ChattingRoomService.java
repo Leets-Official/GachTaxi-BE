@@ -8,10 +8,8 @@ import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.entity.enums.Status;
 import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
-import com.gachtaxi.domain.chat.exception.DuplicateSubscribeException;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
-import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -21,8 +19,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.gachtaxi.domain.chat.stomp.strategy.StompConnectStrategy.CHAT_USER_ID;
 import static com.gachtaxi.domain.chat.stomp.strategy.StompSubscribeStrategy.CHAT_ROOM_ID;
@@ -37,7 +33,6 @@ public class ChattingRoomService {
 
 
     private final ChattingRoomRepository chattingRoomRepository;
-    private final ChattingParticipantRepository chattingParticipantRepository;
     private final ChattingMessageRepository chattingMessageRepository;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
@@ -71,14 +66,7 @@ public class ChattingRoomService {
         accessor.getSessionAttributes().put(CHAT_ROOM_ID, roomId);
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
 
-        Optional<ChattingParticipant> optionalChattingParticipant = find(chattingRoom, members);
-
-        if (optionalChattingParticipant.isPresent()) {
-            ChattingParticipant presentParticipant = optionalChattingParticipant.get();
-
-            checkDuplicateSubscription(presentParticipant);
-            presentParticipant.subscribe();
-
+        if (chattingParticipantService.checkSubscription(chattingRoom, members)) {
             return;
         }
 
@@ -114,13 +102,5 @@ public class ChattingRoomService {
         redisChatPublisher.publish(topic, chatMessage);
     }
 
-    private Optional<ChattingParticipant> find(ChattingRoom chattingRoom, Members members) {
-        return chattingParticipantRepository.findByChattingRoomAndMembers(chattingRoom, members);
-    }
 
-    private void checkDuplicateSubscription(ChattingParticipant chattingParticipant) {
-        if (chattingParticipant.getStatus() == Status.ACTIVE) {
-            throw new DuplicateSubscribeException();
-        }
-    }
 }

@@ -49,7 +49,7 @@ public class ChattingController {
     }
 
     @DeleteMapping("/api/chat/{roomId}")
-    @Operation(summary = "채팅방을 퇴장하는 API입니다.")
+    @Operation(summary = "채팅방을 퇴장하는 API입니다. 퇴장시 STOMP UNSUBSCRIBE를 꼭 해주세요")
     public ApiResponse<Void> exitChattingRoom(@PathVariable Long roomId,
                                               @CurrentMemberId Long memberId) {
         chattingRoomService.exitChatRoom(roomId, memberId);

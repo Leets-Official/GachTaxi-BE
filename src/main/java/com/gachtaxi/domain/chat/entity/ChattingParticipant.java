@@ -45,7 +45,7 @@ public class ChattingParticipant extends BaseEntity {
                 .build();
     }
 
-    public void checkSubscription() {
+    public void checkSubscriptionStatus() {
         if (this.status == Status.INACTIVE) {
             throw new UnSubscriptionException();
         }

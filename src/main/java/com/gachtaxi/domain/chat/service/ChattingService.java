@@ -61,7 +61,7 @@ public class ChattingService {
         Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
-        chattingParticipant.checkSubscription();
+        chattingParticipant.checkSubscriptionStatus();
 
         Slice<ChattingMessage> chattingMessages = loadMessage(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
 
