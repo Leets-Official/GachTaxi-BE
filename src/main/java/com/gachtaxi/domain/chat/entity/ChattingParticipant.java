@@ -48,11 +48,15 @@ public class ChattingParticipant extends BaseEntity {
         this.status = Status.ACTIVE;
     }
 
-    /*
-    todo disconnect 이벤트 처리 시 요청하기
-     */
-    public void disconnect(Status status) {
-        this.status = status;
+    public void unsubscribe() {
+        this.status = Status.INACTIVE;
         this.disconnectedAt = LocalDateTime.now();
+    }
+
+    public void disconnect() {
+        if (this.status == Status.ACTIVE) {
+            this.status = Status.INACTIVE;
+            this.disconnectedAt = LocalDateTime.now();
+        }
     }
 }
