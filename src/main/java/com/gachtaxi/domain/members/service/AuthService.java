@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
+import com.gachtaxi.domain.members.dto.request.MemberTokenDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.auth.google.dto.GoogleTokenResponse;
 import com.gachtaxi.global.auth.google.dto.GoogleUserInfoResponse;
@@ -38,12 +39,12 @@ public class AuthService {
         }
 
         // 회원 가입 진행 중 중단된 유저 또한 다시 임시 토큰을 재발급해준다.
-        Members member = optionalMember.get();
-        if(member.getStatus() == INACTIVE){
+        Members members = optionalMember.get();
+        if(members.getStatus() == INACTIVE){
             return jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()));
         }
 
-        return jwtService.generateJwtToken(member.getId(), member.getEmail(), member.getRole().name());
+        return jwtService.generateJwtToken(MemberTokenDto.from(members));
     }
 
     public JwtTokenDto googleLogin(String authCode) {
@@ -57,12 +58,12 @@ public class AuthService {
             return jwtService.generateTmpAccessToken(memberService.saveTmpGoogleMember(googleId));
         }
 
-        Members member = optionalMember.get();
-        if(member.getStatus() == INACTIVE){ // -> 정상 작동 확인 O
+        Members members = optionalMember.get();
+        if(members.getStatus() == INACTIVE){ // -> 정상 작동 확인 O
             return jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()));
         }
 
         // ACTIVE일 경우 Refresh, Access 정상 작동 확인 O
-        return jwtService.generateJwtToken(member.getId(), member.getEmail(), member.getRole().name());
+        return jwtService.generateJwtToken(MemberTokenDto.from(members));
     }
 }

@@ -120,9 +120,14 @@ public class AuthController {
     @Operation(summary = "사용자 추가 정보 업데이트하는 API 입니다. (프로필, 닉네임, 실명, 학번, 성별,)")
     public ApiResponse<Void> updateMemberSupplement(
             @RequestBody MemberSupplmentRequestDto dto,
-            @CurrentMemberId Long userId
+            @CurrentMemberId Long userId,
+            HttpServletResponse response
     ){
-        memberService.updateMemberSupplement(dto, userId);
+        JwtTokenDto jwtTokenDto = jwtService
+                .generateJwtToken(memberService.updateMemberSupplement(dto, userId));
+
+        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
+        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
         return ApiResponse.response(OK, SUPPLEMENT_UPDATE_SUCCESS.getMessage());
     }
 
