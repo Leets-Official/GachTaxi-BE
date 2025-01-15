@@ -42,7 +42,7 @@ public class Members extends BaseEntity {
     private Long kakaoId;
 
     @Column(name = "google_id", unique = true)
-    private Long googleId;
+    private String googleId;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -102,6 +102,18 @@ public class Members extends BaseEntity {
     public static Members ofKakaoId(Long kakaoId){
         return Members.builder()
                 .kakaoId(kakaoId)
+                .status(UserStatus.INACTIVE)
+                .role(Role.MEMBER)
+                .termsAgreement(false)
+                .privacyAgreement(false)
+                .marketingAgreement(false)
+                .twoFactorAuthentication(false)
+                .build();
+    }
+
+    public static Members ofGoogleId(String googleId){
+        return Members.builder()
+                .googleId(googleId)
                 .status(UserStatus.INACTIVE)
                 .role(Role.MEMBER)
                 .termsAgreement(false)

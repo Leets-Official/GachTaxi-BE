@@ -21,8 +21,15 @@ public class MemberService {
 
     // 임시 유저 저장
     @Transactional
-    public InactiveMemberDto saveTmpMember(Long kakaoId){
+    public InactiveMemberDto saveTmpKakaoMember(Long kakaoId){
         Members tmpMember = Members.ofKakaoId(kakaoId);
+        memberRepository.save(tmpMember);
+        return InactiveMemberDto.of(tmpMember);
+    }
+
+    @Transactional
+    public InactiveMemberDto saveTmpGoogleMember(String googleId){
+        Members tmpMember = Members.ofGoogleId(googleId);
         memberRepository.save(tmpMember);
         return InactiveMemberDto.of(tmpMember);
     }
@@ -47,9 +54,9 @@ public class MemberService {
         members.updateSupplment(dto);
     }
 
-    public Optional<Members> findByKakaoId(Long kakaoId) {
-        return memberRepository.findByKakaoId(kakaoId);
-    }
+    public Optional<Members> findByKakaoId(Long kakaoId) {return memberRepository.findByKakaoId(kakaoId);}
+
+    public Optional<Members> findByGoogleId(String googleId) {return memberRepository.findByGoogleId(googleId);}
 
     /*
     * refactor
