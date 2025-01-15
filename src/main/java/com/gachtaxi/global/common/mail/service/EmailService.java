@@ -1,6 +1,5 @@
 package com.gachtaxi.global.common.mail.service;
 
-import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedEmailException;
 import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
@@ -15,7 +14,6 @@ import software.amazon.awssdk.services.ses.model.Destination;
 import software.amazon.awssdk.services.ses.model.SendTemplatedEmailRequest;
 
 import java.security.SecureRandom;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -76,10 +74,10 @@ public class EmailService {
     }
     private void checkDuplicatedEmail(String email){
         // 여기서 member가 INACTIVE면 넘어가게 해야함. 무조건 중복 email이라고 넘기면 안됨.
-        Optional<Members> members = memberRepository.findByEmail(email);
-        if(members.isPresent()){
+        memberRepository.findByEmail(email).ifPresent(member -> {
             throw new DuplicatedEmailException();
-        }
+        });
+
     }
 
     private String generateCode() {
