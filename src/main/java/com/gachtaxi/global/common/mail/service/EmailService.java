@@ -53,8 +53,6 @@ public class EmailService {
         }
     }
 
-    // 인증 코드 검증
-
     /*
     * refactoring
     * */

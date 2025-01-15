@@ -39,8 +39,11 @@ public class AuthController {
     private final MemberService memberService;
 
     @PostMapping("/login/kakao")
-    @Operation(summary = "인가 코드를 전달받아, 소셜 로그인을 진행합니다.")
-    public ApiResponse<ResponseMessage> kakaoLogin(@RequestBody @Valid KakaoAuthCode kakaoAuthCode, HttpServletResponse response) {
+    @Operation(summary = "인가 코드를 전달받아, 카카오 소셜 로그인을 진행합니다.")
+    public ApiResponse<ResponseMessage> kakaoLogin(
+            @RequestBody @Valid KakaoAuthCode kakaoAuthCode
+            , HttpServletResponse response)
+    {
         JwtTokenDto jwtTokenDto = authService.kakaoLogin(kakaoAuthCode.authCode());
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
 
@@ -53,7 +56,11 @@ public class AuthController {
     }
 
     @PostMapping("/login/google")
-    public ApiResponse<ResponseMessage> googleLogin(@RequestBody @Valid GoogleAuthCode googleAuthCode, HttpServletResponse response) {
+    @Operation(summary = "인가 코드를 전달받아, 구글 소셜 로그인을 진행합니다.")
+    public ApiResponse<ResponseMessage> googleLogin(
+            @RequestBody @Valid GoogleAuthCode googleAuthCode
+            , HttpServletResponse response)
+    {
         JwtTokenDto jwtTokenDto = authService.googleLogin(googleAuthCode.authCode());
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
 
@@ -71,21 +78,23 @@ public class AuthController {
             @CookieValue(value = REFRESH_TOKEN_SUBJECT) String refreshToken,
             HttpServletResponse response
     ) {
+
         JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(refreshToken);
-        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
-        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+        responseToken(jwtTokenDto, response);
 
         return ApiResponse.response(HttpStatus.OK, REFRESH_TOKEN_REISSUE.getMessage());
     }
 
     @PostMapping("/code/mail")
-    @Operation(summary = "이메일 인증 코드를 보내는 API입니다.")
+    @Operation(summary = "이메일 인증 코드를 보내는 API입니다. 기존 가입자의 경우 통합 로그인을 해주세요.")
     public ApiResponse sendEmail(
             @RequestBody @Valid EmailAddressDto emailDto,
             @CurrentMemberId Long userId
     ) {
+
         MemberMailResponseDto dto = memberService.IsAlreadySignEmail(emailDto.email(), userId);
         emailService.sendEmail(emailDto.email());
+
         return ApiResponse.response(OK, EMAIL_SEND_SUCCESS.getMessage(), dto);
     }
 
@@ -95,12 +104,15 @@ public class AuthController {
             @RequestBody @Valid InactiveMemberAuthCodeRequestDto dto,
             @CurrentMemberId Long userId
     ) {
+
         emailService.checkEmailAuthCode(dto.email(), dto.authCode());
         memberService.updateMemberEmail(dto.email(), userId);
+
         return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage(), InactiveMemberResponseDto.from(userId));
     }
 
     @PatchMapping("/code/integration")
+    @Operation(summary = "인증코드 검증 + 통합 로그인을 진행하는 API 입니다. 성공 시 토큰을 발행합니다. ")
     public ApiResponse checkAuthCodeAndKakaoIntegration(
             @RequestBody MemberIntegrationRequestDto dto,
             @CurrentMemberId Long userId,
@@ -110,6 +122,7 @@ public class AuthController {
 
         JwtTokenDto jwtTokenDto = generateIntegration(dto, userId);
         responseToken(jwtTokenDto, response);
+
         return ApiResponse.response(OK, INTEGRATION_SUCCESS.getMessage());
     }
 
@@ -132,8 +145,8 @@ public class AuthController {
     ){
         JwtTokenDto jwtTokenDto = jwtService
                 .generateJwtToken(memberService.updateMemberSupplement(dto, userId));
-
         responseToken(jwtTokenDto, response);
+
         return ApiResponse.response(OK, SUPPLEMENT_UPDATE_SUCCESS.getMessage());
     }
 
