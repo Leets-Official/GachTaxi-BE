@@ -28,25 +28,15 @@ public class MemberService {
         if(findMembers.isPresent()) { // 이미 가입되어 있는 회원 가입 한 유저면
             Members members = findMembers.get(); // 이미 가입되어있는 멤버
             Members tmpMembers = findById(tmpId);
-            //만약 카카오 Id가 있다면 KAKAO_INTEGRATE
-            if (members.getKakaoId() != null) {
-                if(tmpMembers.getGoogleId() != null) {
-                    return new MemberMailResponseDto(KAKAO_INTEGRATE, email, null, tmpMembers.getGoogleId());
-                }else{
-                    // 임시 유저 구글 ID도 null이다? -> 회원가입한 카카오 계정이 아닌 다른 카카오 계정을 로그인 해
-                    // 다른 카카오 계정으로 로그인하고 같은 학교 이메일을 사용한 경우
-                    throw new DuplicatedEmailException();
-                }
+
+            if (members.hasKakaoId() && !members.hasGoogleId() && tmpMembers.hasGoogleId()) {
+                return new MemberMailResponseDto(KAKAO_INTEGRATE, email, null, tmpMembers.getGoogleId());
             }
-            if (members.getGoogleId() != null){ // 구글 Id가 있다는 의미므로 GOOGLE_INTEGRATE
-                if(tmpMembers.getKakaoId() != null) {
-                    return new MemberMailResponseDto(GOOGLE_INTEGRATE, email, tmpMembers.getKakaoId(), null);
-                }else{
-                    // 임시 유저 카카오ID도 null -> 회원가입한 구글 계정이 아닌 다른 구글 계정으로 로그인한 경우
-                    // 다른 구글 계정으로 로그인하고 같은 학교 이메일을 사용한 경우
-                    throw new DuplicatedEmailException();
-                }
+            if (members.hasGoogleId() && !members.hasKakaoId() && tmpMembers.hasKakaoId()){ // 구글 Id가 있다는 의미므로 GOOGLE_INTEGRATE
+                return new MemberMailResponseDto(GOOGLE_INTEGRATE, email, tmpMembers.getKakaoId(), null);
             }
+
+            throw new DuplicatedEmailException();
         }
         return new MemberMailResponseDto(MAIL_SUCCESS, email, null, null);
     }

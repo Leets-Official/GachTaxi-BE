@@ -80,6 +80,20 @@ public class Members extends BaseEntity {
     * friend_info
     * */
 
+    public boolean hasKakaoId(){
+        if(kakaoId == null){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasGoogleId(){
+        if(googleId == null){
+            return false;
+        }
+        return true;
+    }
+
     public void updateEmail(String email) {
         this.email = email;
     }
