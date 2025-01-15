@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.members.repository;
 
 import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.domain.members.entity.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,6 @@ public interface MemberRepository extends JpaRepository<Members, Long> {
     Optional<Members> findByGoogleId(String googleId);
 
     Optional<Members> findByNickname(String nickname);
+
+    Optional<Members> findByEmailAndStatus(String email, UserStatus status);
 }

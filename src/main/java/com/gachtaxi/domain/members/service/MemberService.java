@@ -51,6 +51,26 @@ public class MemberService {
         return new MemberMailResponseDto(MAIL_SUCCESS, email, null, null);
     }
 
+    @Transactional
+    public MemberTokenDto IntegrationMemberToKakao(MemberIntegrationRequestDto dto, Long tmpId) {
+        Members existsMembers = findActiveByEmail(dto.email());
+        memberRepository.deleteById(tmpId);
+        memberRepository.flush();
+
+        existsMembers.updateGoogleId(dto.googleId());
+        return MemberTokenDto.from(existsMembers);
+    }
+
+    @Transactional
+    public MemberTokenDto IntegrationMemberToGoogle(MemberIntegrationRequestDto dto, Long tmpId) {
+        Members existsMembers = findActiveByEmail(dto.email());
+        memberRepository.deleteById(tmpId);
+        memberRepository.flush();
+
+        existsMembers.updateKakaoId(dto.kakaoId());
+        return MemberTokenDto.from(existsMembers);
+    }
+
     // 임시 유저 저장
     @Transactional
     public InactiveMemberDto saveTmpKakaoMember(Long kakaoId){

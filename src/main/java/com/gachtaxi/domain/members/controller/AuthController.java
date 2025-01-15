@@ -100,7 +100,18 @@ public class AuthController {
         return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage(), InactiveMemberResponseDto.from(userId));
     }
 
+    @PatchMapping("/code/integration")
+    public ApiResponse checkAuthCodeAndKakaoIntegration(
+            @RequestBody MemberIntegrationRequestDto dto,
+            @CurrentMemberId Long userId,
+            HttpServletResponse response
+    ) {
+        emailService.checkEmailAuthCode(dto.email(), dto.authCode());
 
+        JwtTokenDto jwtTokenDto = generateIntegration(dto, userId);
+        responseToken(jwtTokenDto, response);
+        return ApiResponse.response(OK, INTEGRATION_SUCCESS.getMessage());
+    }
 
     @PatchMapping("/agreement")
     @Operation(summary = "약관 동의 정보를 업데이트하는 API 입니다.")
@@ -133,5 +144,15 @@ public class AuthController {
     private void responseToken(JwtTokenDto jwtTokenDto, HttpServletResponse response) {
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
         cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+    }
+
+    private JwtTokenDto generateIntegration(MemberIntegrationRequestDto dto, Long userId){
+        if(dto.kakaoId() != null){ // 카카오Id에 값이 있으면 구글로 통합 로그인
+            return jwtService
+                    .generateJwtToken(memberService.IntegrationMemberToGoogle(dto, userId));
+        }else{ //카카오로 통합 로그인
+            return jwtService
+                    .generateJwtToken(memberService.IntegrationMemberToKakao(dto, userId));
+        }
     }
 }

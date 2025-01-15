@@ -84,6 +84,14 @@ public class Members extends BaseEntity {
         this.email = email;
     }
 
+    public void updateKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
+    public void updateGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
     public void updateAgreement(MemberAgreementRequestDto dto) {
         this.termsAgreement = dto.termsAgreement();
         this.privacyAgreement = dto.privacyAgreement();
