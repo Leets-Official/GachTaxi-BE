@@ -1,9 +1,8 @@
 package com.gachtaxi.domain.members.controller;
 
-import com.gachtaxi.domain.members.dto.request.InactiveMemberAuthCodeRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
+import com.gachtaxi.domain.members.dto.request.*;
 import com.gachtaxi.domain.members.dto.response.InactiveMemberResponseDto;
+import com.gachtaxi.domain.members.dto.response.MemberMailResponseDto;
 import com.gachtaxi.domain.members.service.AuthService;
 import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.google.dto.GoogleAuthCode;
@@ -85,14 +84,9 @@ public class AuthController {
             @RequestBody @Valid EmailAddressDto emailDto,
             @CurrentMemberId Long userId
     ) {
-        // emailService의 sendEmail은 정말 이메일에 authcode만 보내도록
-        // memberService에서 email에 대해서 ACTIVE한 유저가 있는 지 확인 -> 통합 dto 반환
-        //
-        // memberService에서 email에 대해 ACTIVE한 유저가 없으면 그냥 이메일 전송 -> 일반 응답 dto 반환
-
+        MemberMailResponseDto dto = memberService.IsAlreadySignEmail(emailDto.email(), userId);
         emailService.sendEmail(emailDto.email());
-        // 응답 데이터를 AUTH_MAIL, KAKAO, GOOGLE_LOGIN
-        return ApiResponse.response(OK, EMAIL_SEND_SUCCESS.getMessage(), InactiveMemberResponseDto.from(userId));
+        return ApiResponse.response(OK, EMAIL_SEND_SUCCESS.getMessage(), dto);
     }
 
     @PatchMapping("/code/mail")
@@ -105,6 +99,8 @@ public class AuthController {
         memberService.updateMemberEmail(dto.email(), userId);
         return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage(), InactiveMemberResponseDto.from(userId));
     }
+
+
 
     @PatchMapping("/agreement")
     @Operation(summary = "약관 동의 정보를 업데이트하는 API 입니다.")
@@ -126,12 +122,16 @@ public class AuthController {
         JwtTokenDto jwtTokenDto = jwtService
                 .generateJwtToken(memberService.updateMemberSupplement(dto, userId));
 
-        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
-        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+        responseToken(jwtTokenDto, response);
         return ApiResponse.response(OK, SUPPLEMENT_UPDATE_SUCCESS.getMessage());
     }
 
     /*
     * refactoring
     * */
+
+    private void responseToken(JwtTokenDto jwtTokenDto, HttpServletResponse response) {
+        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
+        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+    }
 }
