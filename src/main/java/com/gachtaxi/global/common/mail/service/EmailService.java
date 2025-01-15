@@ -1,9 +1,10 @@
 package com.gachtaxi.global.common.mail.service;
 
+import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedEmailException;
+import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.global.common.mail.exception.AuthCodeNotMatchException;
-import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.global.common.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.ses.model.Destination;
 import software.amazon.awssdk.services.ses.model.SendTemplatedEmailRequest;
 
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -38,7 +40,13 @@ public class EmailService {
 
     public void sendEmail(String recipientEmail) {
         checkGachonEmail(recipientEmail);
-        checkDuplicatedEmail(recipientEmail);
+//        checkDuplicatedEmail(recipientEmail);
+
+        /*
+        * 1. 학교 이메일로 조회 시 유저가 존재하는 경우 + ACTIVE라면 다른 소셜로 로그인 했다는 의미
+        * 따라서
+        * 2. else -> 이메일로 인증 코드르 보낸다. (INACTIVE 유저여도 상관 X)
+        * */
 
         String code = generateCode();
         redisUtil.setEmailAuthCode(recipientEmail, code);
@@ -67,8 +75,11 @@ public class EmailService {
         }
     }
     private void checkDuplicatedEmail(String email){
-        memberRepository.findByEmail(email)
-                .orElseThrow(DuplicatedEmailException::new);
+        // 여기서 member가 INACTIVE면 넘어가게 해야함. 무조건 중복 email이라고 넘기면 안됨.
+        Optional<Members> members = memberRepository.findByEmail(email);
+        if(members.isPresent()){
+            throw new DuplicatedEmailException();
+        }
     }
 
     private String generateCode() {

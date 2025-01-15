@@ -6,6 +6,7 @@ import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.dto.response.InactiveMemberResponseDto;
 import com.gachtaxi.domain.members.service.AuthService;
 import com.gachtaxi.domain.members.service.MemberService;
+import com.gachtaxi.global.auth.google.dto.GoogleAuthCode;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
@@ -44,7 +45,20 @@ public class AuthController {
         JwtTokenDto jwtTokenDto = authService.kakaoLogin(kakaoAuthCode.authCode());
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
 
-        if(jwtTokenDto.isTemporaryUser()){ // 임시 유저
+        if (jwtTokenDto.isTemporaryUser()) { // 임시 유저
+            return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage(), UN_REGISTER);
+        }
+
+        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
+        return ApiResponse.response(HttpStatus.OK, LOGIN_SUCCESS.getMessage(), LOGIN_SUCCESS);
+    }
+
+    @PostMapping("/login/google")
+    public ApiResponse<ResponseMessage> googleLogin(@RequestBody @Valid GoogleAuthCode googleAuthCode, HttpServletResponse response) {
+        JwtTokenDto jwtTokenDto = authService.googleLogin(googleAuthCode.authCode());
+        response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
+
+        if (jwtTokenDto.isTemporaryUser()) { // 임시 유저
             return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage(), UN_REGISTER);
         }
 
@@ -71,7 +85,13 @@ public class AuthController {
             @RequestBody @Valid EmailAddressDto emailDto,
             @CurrentMemberId Long userId
     ) {
+        // emailService의 sendEmail은 정말 이메일에 authcode만 보내도록
+        // memberService에서 email에 대해서 ACTIVE한 유저가 있는 지 확인 -> 통합 dto 반환
+        //
+        // memberService에서 email에 대해 ACTIVE한 유저가 없으면 그냥 이메일 전송 -> 일반 응답 dto 반환
+
         emailService.sendEmail(emailDto.email());
+        // 응답 데이터를 AUTH_MAIL, KAKAO, GOOGLE_LOGIN
         return ApiResponse.response(OK, EMAIL_SEND_SUCCESS.getMessage(), InactiveMemberResponseDto.from(userId));
     }
 
