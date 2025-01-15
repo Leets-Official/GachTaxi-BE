@@ -1,6 +1,5 @@
 package com.gachtaxi.global.common.mail.service;
 
-import com.gachtaxi.domain.members.exception.DuplicatedEmailException;
 import com.gachtaxi.domain.members.exception.EmailFormInvalidException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.global.common.mail.exception.AuthCodeNotMatchException;
@@ -38,13 +37,6 @@ public class EmailService {
 
     public void sendEmail(String recipientEmail) {
         checkGachonEmail(recipientEmail);
-//        checkDuplicatedEmail(recipientEmail);
-
-        /*
-        * 1. 학교 이메일로 조회 시 유저가 존재하는 경우 + ACTIVE라면 다른 소셜로 로그인 했다는 의미
-        * 따라서
-        * 2. else -> 이메일로 인증 코드르 보낸다. (INACTIVE 유저여도 상관 X)
-        * */
 
         String code = generateCode();
         redisUtil.setEmailAuthCode(recipientEmail, code);
@@ -71,13 +63,6 @@ public class EmailService {
         if(!email.endsWith(GACHON_EMAIL_FORM)){
             throw new EmailFormInvalidException();
         }
-    }
-    private void checkDuplicatedEmail(String email){
-        // 여기서 member가 INACTIVE면 넘어가게 해야함. 무조건 중복 email이라고 넘기면 안됨.
-        memberRepository.findByEmail(email).ifPresent(member -> {
-            throw new DuplicatedEmailException();
-        });
-
     }
 
     private String generateCode() {
