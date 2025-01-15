@@ -3,7 +3,9 @@ package com.gachtaxi.domain.members.service;
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberTokenDto;
 import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
 import com.gachtaxi.domain.members.exception.MemberNotFoundException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
@@ -47,11 +49,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
+    public MemberTokenDto updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
+        checkDuplicatedNickName(dto.nickname());
         checkDuplicatedStudentNumber(dto.studentNumber());
 
         Members members = findById(userId);
         members.updateSupplment(dto);
+
+        return MemberTokenDto.from(members);
     }
 
     public Optional<Members> findByKakaoId(Long kakaoId) {return memberRepository.findByKakaoId(kakaoId);}
@@ -72,4 +77,11 @@ public class MemberService {
             throw new DuplicatedStudentNumberException();
         });
     }
+
+    private void checkDuplicatedNickName(String nickName) {
+        memberRepository.findByNickname(nickName).ifPresent(m -> {
+            throw new DuplicatedNickNameException();
+        });
+    }
+
 }
