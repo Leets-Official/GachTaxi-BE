@@ -34,28 +34,27 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
       return Optional.empty();
     }
     /*
-     태그 조건이 비어있는 경우에는 위치 정보만 이용한 방 검색(300M 이내, ACTIVE 상태)
+     위치 정보를 이용한 방 검색(300M 이내)
      */
-    List<MatchingRoom> matchingRooms;
-    if (criteria == null || criteria.isEmpty()) {
-      matchingRooms = matchingRoomRepository.findRoomsByStartAndDestination(
+    List<MatchingRoom> matchingRooms = matchingRoomRepository.findRoomsByStartAndDestination(
               startLongitude,
               startLatitude,
               destinationLongitude,
               destinationLatitude
       );
-      }
     /*
-     태그 조건이 있는 경우에 위치 정보와 태그 정보를 이용한 방 검색(300M 이내, ACTIVE 상태)
+      ACTIVE 상태인 방만 필터링
      */
-    else {
-      matchingRooms = matchingRoomRepository.findRoomsByStartAndDestinationAndTags(
-              startLongitude,
-              startLatitude,
-              destinationLongitude,
-              destinationLatitude,
-              criteria
-      );
+    matchingRooms = matchingRooms.stream()
+            .filter(MatchingRoom::isActiveMatchingRoom)
+            .toList();
+    /*
+     태그 조건이 있는 경우에 태그정보까지 필터링
+     */
+    if (criteria != null && !criteria.isEmpty()) {
+      matchingRooms = matchingRooms.stream()
+              .filter(room -> criteria.stream().anyMatch(room::containsTag))
+              .toList();
     }
     /*
      조건에 맞는 방이 있으면 첫 번째 방의 상세 정보 반환
