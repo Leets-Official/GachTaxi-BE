@@ -48,11 +48,11 @@ public class AuthController {
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
 
         if (jwtTokenDto.isTemporaryUser()) { // 임시 유저
-            return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage(), UN_REGISTER);
+            return ApiResponse.response(OK, UN_REGISTER.getMessage(), UN_REGISTER);
         }
 
         cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
-        return ApiResponse.response(HttpStatus.OK, LOGIN_SUCCESS.getMessage(), LOGIN_SUCCESS);
+        return ApiResponse.response(OK, LOGIN_SUCCESS.getMessage(), LOGIN_SUCCESS);
     }
 
     @PostMapping("/login/google")
@@ -69,7 +69,7 @@ public class AuthController {
         }
 
         cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
-        return ApiResponse.response(HttpStatus.OK, LOGIN_SUCCESS.getMessage(), LOGIN_SUCCESS);
+        return ApiResponse.response(OK, LOGIN_SUCCESS.getMessage(), LOGIN_SUCCESS);
     }
 
     @PostMapping("/refresh")
@@ -82,7 +82,7 @@ public class AuthController {
         JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(refreshToken);
         responseToken(jwtTokenDto, response);
 
-        return ApiResponse.response(HttpStatus.OK, REFRESH_TOKEN_REISSUE.getMessage());
+        return ApiResponse.response(OK, REFRESH_TOKEN_REISSUE.getMessage());
     }
 
     @PostMapping("/code/mail")

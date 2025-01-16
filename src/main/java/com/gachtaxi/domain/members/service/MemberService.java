@@ -23,7 +23,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    // 임시 유저 저장
     @Transactional
     public InactiveMemberDto saveTmpKakaoMember(Long kakaoId){
         Members tmpMember = Members.ofKakaoId(kakaoId);
