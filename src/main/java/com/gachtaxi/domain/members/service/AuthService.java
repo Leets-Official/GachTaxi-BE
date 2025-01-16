@@ -28,17 +28,14 @@ public class AuthService {
     private final MemberService memberService;
 
     public JwtTokenDto kakaoLogin(String authCode) {
-        KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
-        KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
-
+        KakaoUserInfoResponse userInfo = getKakaoUserInfoResponse(authCode);
         Long kakaoId = userInfo.id();
-        Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
 
+        Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
         if(optionalMember.isEmpty()) {
             return jwtService.generateTmpAccessToken(memberService.saveTmpKakaoMember(kakaoId));
         }
 
-        // 회원 가입 진행 중 중단된 유저 또한 다시 임시 토큰을 재발급해준다.
         Members members = optionalMember.get();
         if(members.getStatus() == INACTIVE){
             return jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()));
@@ -48,22 +45,37 @@ public class AuthService {
     }
 
     public JwtTokenDto googleLogin(String authCode) {
-        GoogleTokenResponse googleAccessToken = googleUtils.reqeustGoogleToken(authCode);
-        GoogleUserInfoResponse userInfo = googleUtils.requestGoogleProfile(googleAccessToken.access_token());
-
+        GoogleUserInfoResponse userInfo = getGoogleUserInfoResponse(authCode);
         String googleId = userInfo.id();
-        Optional<Members> optionalMember = memberService.findByGoogleId(googleId);
 
-        if(optionalMember.isEmpty()) { //-> 정상 작동 확인 O
+        Optional<Members> optionalMember = memberService.findByGoogleId(googleId);
+        if(optionalMember.isEmpty()) {
             return jwtService.generateTmpAccessToken(memberService.saveTmpGoogleMember(googleId));
         }
 
         Members members = optionalMember.get();
-        if(members.getStatus() == INACTIVE){ // -> 정상 작동 확인 O
+        if(members.getStatus() == INACTIVE){
             return jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()));
         }
 
-        // ACTIVE일 경우 Refresh, Access 정상 작동 확인 O
         return jwtService.generateJwtToken(MemberTokenDto.from(members));
     }
+
+
+    /*
+    * refactoring
+    * */
+
+    private KakaoUserInfoResponse getKakaoUserInfoResponse(String authCode) {
+        KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
+        KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
+        return userInfo;
+    }
+
+    private GoogleUserInfoResponse getGoogleUserInfoResponse(String authCode) {
+        GoogleTokenResponse googleAccessToken = googleUtils.reqeustGoogleToken(authCode);
+        GoogleUserInfoResponse userInfo = googleUtils.requestGoogleProfile(googleAccessToken.access_token());
+        return userInfo;
+    }
+
 }
