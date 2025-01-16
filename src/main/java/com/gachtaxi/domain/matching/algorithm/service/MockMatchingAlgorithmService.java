@@ -3,6 +3,7 @@ package com.gachtaxi.domain.matching.algorithm.service;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
+import com.gachtaxi.domain.matching.common.exception.DuplicatedMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
@@ -31,7 +32,7 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
     Members user = memberService.findById(userId);
 
     if (matchingRoomRepository.existsByMemberInMatchingRoom(user)) {
-      return Optional.empty();
+      throw new DuplicatedMatchingRoomException(); // * 추후 논의 후 리팩토링 필요 * 똑같은 조건으로 방 생성시 예외 던져주기
     }
     /*
      위치 정보를 이용한 방 검색(300M 이내)
