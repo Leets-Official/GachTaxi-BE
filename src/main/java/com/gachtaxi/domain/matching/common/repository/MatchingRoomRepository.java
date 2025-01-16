@@ -26,6 +26,17 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
             @Param("tags") List<Tags> tags
     );
 
+    @Query("SELECT r FROM MatchingRoom r " +
+            "WHERE " +
+            "FUNCTION('ST_Distance_Sphere', FUNCTION('POINT', :startLongitude, :startLatitude), FUNCTION('POINT', r.route.startLongitude, r.route.startLatitude)) <= 300 " +
+            "AND FUNCTION('ST_Distance_Sphere', FUNCTION('POINT', :destinationLongitude, :destinationLatitude), FUNCTION('POINT', r.route.endLongitude, r.route.endLatitude)) <= 300 " +
+            "AND r.matchingRoomStatus = 'ACTIVE'")
+    List<MatchingRoom> findRoomsByStartAndDestination(
+            @Param("startLongitude") double startLongitude,
+            @Param("startLatitude") double startLatitude,
+            @Param("destinationLongitude") double destinationLongitude,
+            @Param("destinationLatitude") double destinationLatitude
+    );
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
             "FROM MatchingRoom r JOIN r.memberMatchingRoomChargingInfo m " +
             "WHERE m.members = :user")
