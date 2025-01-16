@@ -32,8 +32,7 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
     Members user = memberRepository.findById(userId)
             .orElseThrow(MemberNotFoundException::new);
 
-    boolean isAlreadyInRoom = matchingRoomRepository.existsByMemberInMatchingRoom(user);
-    if (isAlreadyInRoom) {
+    if (matchingRoomRepository.existsByMemberInMatchingRoom(user)) {
       return Optional.empty();
     }
     /*
