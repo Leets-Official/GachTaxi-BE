@@ -30,7 +30,7 @@ public class MatchingEventFactory {
   @Value("${gachtaxi.matching.auto-matching-max-capacity}")
   private int autoMaxCapacity;
 
-  @Value("${gachtaxi.matching.auto-matcnig-description}")
+  @Value("${gachtaxi.matching.auto-matching-description}")
   private String autoDescription;
 
   public MatchMemberCancelledEvent createMatchMemberCancelledEvent(Long roomId, Long memberId) {
