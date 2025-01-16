@@ -6,8 +6,7 @@ import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
-import com.gachtaxi.domain.members.exception.MemberNotFoundException;
-import com.gachtaxi.domain.members.repository.MemberRepository;
+import com.gachtaxi.domain.members.service.MemberService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
 
   private final MatchingRoomRepository matchingRoomRepository;
-  private final MemberRepository memberRepository;
+  private final MemberService memberService;
 
   @Override
   public Optional<FindRoomResult> findRoom(Long userId, double startLongitude, double startLatitude, double destinationLongitude, double destinationLatitude,
@@ -29,8 +28,7 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
     /*
      사용자 ID로 사용자 정보 조회(이미 방에 참여하고 있는지 중복체크)
      */
-    Members user = memberRepository.findById(userId)
-            .orElseThrow(MemberNotFoundException::new);
+    Members user = memberService.findById(userId);
 
     if (matchingRoomRepository.existsByMemberInMatchingRoom(user)) {
       return Optional.empty();
