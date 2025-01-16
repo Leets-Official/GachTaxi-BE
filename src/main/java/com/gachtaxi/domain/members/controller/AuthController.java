@@ -1,8 +1,8 @@
 package com.gachtaxi.domain.members.controller;
 
-import com.gachtaxi.domain.members.dto.request.*;
-import com.gachtaxi.domain.members.dto.response.InactiveMemberResponseDto;
-import com.gachtaxi.domain.members.dto.response.MemberMailResponseDto;
+import com.gachtaxi.domain.members.dto.request.InactiveMemberAuthCodeRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.service.AuthService;
 import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.google.dto.GoogleAuthCode;
@@ -92,10 +92,9 @@ public class AuthController {
             @CurrentMemberId Long userId
     ) {
 
-        MemberMailResponseDto dto = memberService.IsAlreadySignEmail(emailDto.email(), userId);
         emailService.sendEmail(emailDto.email());
 
-        return ApiResponse.response(OK, EMAIL_SEND_SUCCESS.getMessage(), dto);
+        return ApiResponse.response(OK, EMAIL_SEND_SUCCESS.getMessage());
     }
 
     @PatchMapping("/code/mail")
@@ -108,22 +107,7 @@ public class AuthController {
         emailService.checkEmailAuthCode(dto.email(), dto.authCode());
         memberService.updateMemberEmail(dto.email(), userId);
 
-        return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage(), InactiveMemberResponseDto.from(userId));
-    }
-
-    @PatchMapping("/code/integration")
-    @Operation(summary = "인증코드 검증 + 통합 로그인을 진행하는 API 입니다. 성공 시 토큰을 발행합니다. ")
-    public ApiResponse checkAuthCodeAndKakaoIntegration(
-            @RequestBody MemberIntegrationRequestDto dto,
-            @CurrentMemberId Long userId,
-            HttpServletResponse response
-    ) {
-        emailService.checkEmailAuthCode(dto.email(), dto.authCode());
-
-        JwtTokenDto jwtTokenDto = generateIntegration(dto, userId);
-        responseToken(jwtTokenDto, response);
-
-        return ApiResponse.response(OK, INTEGRATION_SUCCESS.getMessage());
+        return ApiResponse.response(OK, EMAIL_AUTHENTICATION_SUCESS.getMessage());
     }
 
     @PatchMapping("/agreement")
@@ -157,15 +141,5 @@ public class AuthController {
     private void responseToken(JwtTokenDto jwtTokenDto, HttpServletResponse response) {
         response.setHeader(ACCESS_TOKEN_SUBJECT, jwtTokenDto.accessToken());
         cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, jwtTokenDto.refreshToken(), response);
-    }
-
-    private JwtTokenDto generateIntegration(MemberIntegrationRequestDto dto, Long userId){
-        if(dto.kakaoId() != null){ // 카카오Id에 값이 있으면 구글로 통합 로그인
-            return jwtService
-                    .generateJwtToken(memberService.IntegrationMemberToGoogle(dto, userId));
-        }else{ //카카오로 통합 로그인
-            return jwtService
-                    .generateJwtToken(memberService.IntegrationMemberToKakao(dto, userId));
-        }
     }
 }
