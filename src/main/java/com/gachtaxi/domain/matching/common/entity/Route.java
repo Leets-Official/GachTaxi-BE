@@ -15,9 +15,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Route extends BaseEntity {
 
-  private String startLocationCoordinate;
+  private double startLongitude;
+  private double startLatitude;
   private String startLocationName;
 
-  private String endLocationCoordinate;
+  private double endLongitude;
+  private double endLatitude;
   private String endLocationName;
 }
