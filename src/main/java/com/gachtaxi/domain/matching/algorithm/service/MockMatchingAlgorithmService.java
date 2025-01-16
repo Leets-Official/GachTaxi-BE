@@ -3,6 +3,7 @@ package com.gachtaxi.domain.matching.algorithm.service;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
+import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.MemberNotFoundException;
@@ -10,6 +11,9 @@ import com.gachtaxi.domain.members.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,4 +63,16 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
      */
     return Optional.empty();
   }
+  @Override
+  public Page<MatchingRoom> findMatchingRooms(int pageNumber, int pageSize) {
+
+    if (pageNumber < 0) {
+      throw new PageNotFoundException();
+    }
+
+    PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+
+    return matchingRoomRepository.findAll(pageable);
+  }
+
 }
