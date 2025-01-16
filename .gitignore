@@ -37,3 +37,7 @@ out/
 .vscode/
 
 src/main/resources/.env
+
+### firebase ###
+/src/main/resources/firebase/serviceAccountKey.json
+
