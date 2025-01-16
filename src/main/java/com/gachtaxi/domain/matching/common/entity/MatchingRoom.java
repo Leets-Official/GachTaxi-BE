@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.matching.common.entity;
 
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
+import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -58,5 +59,9 @@ public class MatchingRoom extends BaseEntity {
 
   public boolean isActiveMatchingRoom() {
     return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
+  }
+  public boolean containsTag(Tags tag) {
+    return this.matchingRoomTagInfo.stream()
+            .anyMatch(tagInfo -> tagInfo.matchesTag(tag));
   }
 }
