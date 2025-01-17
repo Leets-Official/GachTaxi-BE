@@ -65,3 +65,5 @@ gachtaxi:
     partition-count: ${KAFKA_PARTITION_COUNT}
     replication-factor: ${KAFKA_REPLICATION_FACTOR}
 
+firebase:
+  adminSdk: ${FIREBASE_ADMIN_SDK_PATH}

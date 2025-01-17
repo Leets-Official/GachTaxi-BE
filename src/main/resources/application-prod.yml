@@ -18,3 +18,6 @@ spring:
 #      password: ${REDIS_PASSWORD}
 #    mongodb:
 #      uri: ${MONGODB_URI}
+
+firebase:
+  adminSdk: ${FIREBASE_ADMIN_SDK_PATH}
