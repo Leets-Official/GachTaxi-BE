@@ -35,10 +35,6 @@ public class StompConnectStrategy implements StompCommandStrategy{
 
         String token = jwtToken.replace(TOKEN_PREFIX, "").trim();
 
-        /*
-        todo 인증 객체 생성 후 설정하기
-         */
-
         Long userId = jwtExtractor.getId(token);
         accessor.getSessionAttributes().put(CHAT_USER_ID, userId);
 
