@@ -23,6 +23,8 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
   private final MatchingRoomRepository matchingRoomRepository;
   private final MemberService memberService;
 
+  private static final double SEARCH_RADIUS = 300.0;
+
   @Override
   public Optional<FindRoomResult> findRoom(Long userId, double startLongitude, double startLatitude, double destinationLongitude, double destinationLatitude,
                                            List<Tags> criteria) {
@@ -41,7 +43,8 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
               startLongitude,
               startLatitude,
               destinationLongitude,
-              destinationLatitude
+              destinationLatitude,
+              SEARCH_RADIUS
       );
     /*
       ACTIVE 상태인 방만 필터링
