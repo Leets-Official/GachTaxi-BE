@@ -62,12 +62,7 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
      */
     if (!matchingRooms.isEmpty()) {
       MatchingRoom room = matchingRooms.get(0);
-      return Optional.of(
-              FindRoomResult.builder()
-                      .roomId(room.getId())
-                      .maxCapacity(room.getCapacity())
-                      .build()
-      );
+      return Optional.of(room.toFindRoomResult());
     }
     /*
      조건에 맞는 방이 없으면 empty 반환
