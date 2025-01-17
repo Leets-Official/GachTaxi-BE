@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    Integer countAllByReceiverIdAndStatusAndStatus(Long receiverId, NotificationStatus status, NotificationStatus newStatus);
+    Integer countAllByReceiverIdAndStatusAndStatus(Long receiverId, NotificationStatus firstCondition, NotificationStatus secondCondition);
 
     Slice<Notification> findAllByReceiverId(Long receiverId, Pageable pageable);
 }
