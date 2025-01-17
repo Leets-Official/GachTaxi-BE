@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.entity;
 
+import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.members.entity.Members;
@@ -63,5 +64,11 @@ public class MatchingRoom extends BaseEntity {
   public boolean containsTag(Tags tag) {
     return this.matchingRoomTagInfo.stream()
             .anyMatch(tagInfo -> tagInfo.matchesTag(tag));
+  }
+  public FindRoomResult toFindRoomResult() {
+    return FindRoomResult.builder()
+            .roomId(this.getId())
+            .maxCapacity(this.getCapacity())
+            .build();
   }
 }
