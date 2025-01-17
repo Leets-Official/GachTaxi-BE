@@ -16,7 +16,7 @@ public record NotificationResponse(
         NotificationStatus status,
         String title,
         String content,
-        LocalDateTime readAt
+        LocalDateTime createdAt
 ) {
     public static NotificationResponse from(Notification notification) {
         return NotificationResponse.builder()
@@ -27,7 +27,7 @@ public record NotificationResponse(
                 .status(notification.getStatus())
                 .title(notification.getTitle())
                 .content(notification.getContent())
-                .readAt(notification.getReadAt())
+                .createdAt(notification.getCreateDate())
                 .build();
     }
 }
