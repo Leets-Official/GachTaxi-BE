@@ -39,5 +39,5 @@ out/
 src/main/resources/.env
 
 ### firebase ###
-/src/main/resources/firebase/serviceAccountKey.json
+/src/main/resources/serviceAccountKey.json
 
