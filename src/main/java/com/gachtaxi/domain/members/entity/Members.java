@@ -73,6 +73,9 @@ public class Members extends BaseEntity {
     @ColumnDefault("false")
     private Boolean twoFactorAuthentication;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     /*
     * 추가할 사항
     * blackList
@@ -88,6 +91,10 @@ public class Members extends BaseEntity {
         this.termsAgreement = dto.termsAgreement();
         this.privacyAgreement = dto.privacyAgreement();
         this.marketingAgreement = dto.marketingAgreement();
+    }
+
+    public void updateToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public void updateSupplment(MemberSupplmentRequestDto dto) {
