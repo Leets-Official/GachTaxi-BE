@@ -8,13 +8,13 @@ public class PermitUrlConfig {
     public String[] getPublicUrl(){
         return new String[]{
                 "/auth/login/kakao",
-                "/auth/refersh",
+                "/auth/refresh",
                 "/api/members",
 
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
 
-                "/ws"
+                "/ws/**"
         };
     }
 
