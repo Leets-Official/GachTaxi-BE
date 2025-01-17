@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class GlobalExceptionHandler {
 
     // response format
-    public static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
+    private static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
     private static final String VALID_EXCEPTION = "Validation failed";
 
     @ExceptionHandler(BaseException.class)

@@ -1,6 +1,6 @@
 package com.gachtaxi.domain.chat.entity;
 
-import com.gachtaxi.domain.chat.entity.enums.Status;
+import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
 import com.gachtaxi.domain.chat.exception.UnSubscriptionException;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
@@ -30,7 +30,7 @@ public class ChattingParticipant extends BaseEntity {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private ChatStatus status = ChatStatus.ACTIVE;
 
     @CreatedDate
     @Column(updatable = false)
@@ -46,23 +46,23 @@ public class ChattingParticipant extends BaseEntity {
     }
 
     public void checkSubscriptionStatus() {
-        if (this.status == Status.INACTIVE) {
+        if (this.status == ChatStatus.INACTIVE) {
             throw new UnSubscriptionException();
         }
     }
 
     public void subscribe() {
-        this.status = Status.ACTIVE;
+        this.status = ChatStatus.ACTIVE;
     }
 
     public void unsubscribe() {
-        this.status = Status.INACTIVE;
+        this.status = ChatStatus.INACTIVE;
         this.disconnectedAt = LocalDateTime.now();
     }
 
     public void disconnect() {
-        if (this.status == Status.ACTIVE) {
-            this.status = Status.INACTIVE;
+        if (this.status == ChatStatus.ACTIVE) {
+            this.status = ChatStatus.INACTIVE;
             this.disconnectedAt = LocalDateTime.now();
         }
     }

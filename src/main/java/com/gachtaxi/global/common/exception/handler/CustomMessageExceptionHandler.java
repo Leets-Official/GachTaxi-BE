@@ -7,11 +7,11 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-import static com.gachtaxi.global.common.exception.handler.GlobalExceptionHandler.LOG_FORMAT;
-
 @Slf4j
 @ControllerAdvice
 public class CustomMessageExceptionHandler {
+
+    private static final String LOG_FORMAT = "Class: {}, Code : {}, Message : {}";
 
     @MessageExceptionHandler(RuntimeException.class)
     @SendToUser(destinations = "/queue/errors", broadcast = false)

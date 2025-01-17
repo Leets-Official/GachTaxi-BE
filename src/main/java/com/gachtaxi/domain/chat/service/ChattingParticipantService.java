@@ -2,7 +2,7 @@ package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
-import com.gachtaxi.domain.chat.entity.enums.Status;
+import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
 import com.gachtaxi.domain.chat.exception.ChattingParticipantNotFoundException;
 import com.gachtaxi.domain.chat.exception.DuplicateSubscribeException;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
@@ -52,7 +52,7 @@ public class ChattingParticipantService {
     }
 
     private void checkDuplicateSubscription(ChattingParticipant chattingParticipant) {
-        if (chattingParticipant.getStatus() == Status.ACTIVE) {
+        if (chattingParticipant.getStatus() == ChatStatus.ACTIVE) {
             throw new DuplicateSubscribeException();
         }
     }
