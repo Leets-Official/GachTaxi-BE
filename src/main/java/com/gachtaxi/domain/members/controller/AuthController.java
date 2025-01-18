@@ -86,7 +86,7 @@ public class AuthController {
     }
 
     @PostMapping("/code/mail")
-    @Operation(summary = "이메일 인증 코드를 보내는 API입니다. 기존 가입자의 경우 통합 로그인을 해주세요.")
+    @Operation(summary = "이메일 인증 코드를 보내는 API입니다.")
     public ApiResponse sendEmail(
             @RequestBody @Valid EmailAddressDto emailDto,
             @CurrentMemberId Long userId
