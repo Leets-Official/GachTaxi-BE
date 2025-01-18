@@ -40,6 +40,7 @@ public class ChattingService {
     private final ChattingRoomService chattingRoomService;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
+    private final ChatRedisService chatRedisService;
 
     @Value("${chat.topic}")
     public String chatTopic;
@@ -62,7 +63,7 @@ public class ChattingService {
         Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
-        chattingParticipant.checkSubscriptionStatus();
+        chatRedisService.checkSubscriptionStatus(roomId, senderId);
 
         Slice<ChattingMessage> chattingMessages = loadMessage(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
 

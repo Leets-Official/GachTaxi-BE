@@ -2,7 +2,6 @@ package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
-import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
 import com.gachtaxi.domain.chat.exception.ChattingParticipantNotFoundException;
 import com.gachtaxi.domain.chat.exception.DuplicateSubscribeException;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
@@ -17,6 +16,7 @@ import java.util.Optional;
 public class ChattingParticipantService {
 
     private final ChattingParticipantRepository chattingParticipantRepository;
+    private final ChatRedisService chatRedisService;
 
     public void save(ChattingParticipant chattingParticipant) {
         chattingParticipantRepository.save(chattingParticipant);
@@ -38,8 +38,8 @@ public class ChattingParticipantService {
         if (optionalParticipant.isPresent()) {
             ChattingParticipant chattingParticipant = optionalParticipant.get();
 
-            checkDuplicateSubscription(chattingParticipant);
-            chattingParticipant.subscribe();
+            checkDuplicateSubscription(chattingRoom.getId(), members.getId());
+            chatRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
 
             return true;
         }
@@ -51,8 +51,8 @@ public class ChattingParticipantService {
         chattingParticipantRepository.delete(chattingParticipant);
     }
 
-    private void checkDuplicateSubscription(ChattingParticipant chattingParticipant) {
-        if (chattingParticipant.getStatus() == ChatStatus.ACTIVE) {
+    private void checkDuplicateSubscription(long roomId, long memberId) {
+        if (chatRedisService.isActive(roomId, memberId)) {
             throw new DuplicateSubscribeException();
         }
     }
