@@ -24,4 +24,8 @@ public class MatchingRoomTagInfo extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   private Tags tags;
+
+  public boolean matchesTag(Tags tag) {
+    return this.tags == tag;
+  }
 }

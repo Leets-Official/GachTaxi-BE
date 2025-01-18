@@ -57,13 +57,22 @@ public class MatchingRoomService {
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    Route route = Route.builder()
-        .startLocationCoordinate(matchRoomCreatedEvent.startPoint())
-        .startLocationName(matchRoomCreatedEvent.startName())
-        .endLocationCoordinate(matchRoomCreatedEvent.destinationPoint())
-        .endLocationName(matchRoomCreatedEvent.destinationName())
-        .build();
+    String[] startCoordinates = matchRoomCreatedEvent.startPoint().split(",");
+    double startLongitude = Double.parseDouble(startCoordinates[0]);
+    double startLatitude = Double.parseDouble(startCoordinates[1]);
 
+    String[] endCoordinates = matchRoomCreatedEvent.destinationPoint().split(",");
+    double endLongitude = Double.parseDouble(endCoordinates[0]);
+    double endLatitude = Double.parseDouble(endCoordinates[1]);
+
+    Route route = Route.builder()
+            .startLongitude(startLongitude)
+            .startLatitude(startLatitude)
+            .startLocationName(matchRoomCreatedEvent.startName())
+            .endLongitude(endLongitude)
+            .endLatitude(endLatitude)
+            .endLocationName(matchRoomCreatedEvent.destinationName())
+            .build();
     return this.routeRepository.save(route);
   }
 
