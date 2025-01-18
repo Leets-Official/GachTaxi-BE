@@ -81,17 +81,11 @@ public class Members extends BaseEntity {
     * */
 
     public boolean hasKakaoId(){
-        if(kakaoId == null){
-            return false;
-        }
-        return true;
+        return kakaoId != null;
     }
 
     public boolean hasGoogleId(){
-        if(googleId == null){
-            return false;
-        }
-        return true;
+        return googleId != null;
     }
 
     public void updateEmail(String email) {
