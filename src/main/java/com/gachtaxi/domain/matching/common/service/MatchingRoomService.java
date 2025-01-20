@@ -63,7 +63,23 @@ public class MatchingRoomService {
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    return this.routeRepository.save(Route.from(matchRoomCreatedEvent));
+    String[] startCoordinates = matchRoomCreatedEvent.startPoint().split(",");
+    double startLongitude = Double.parseDouble(startCoordinates[0]);
+    double startLatitude = Double.parseDouble(startCoordinates[1]);
+
+    String[] endCoordinates = matchRoomCreatedEvent.destinationPoint().split(",");
+    double endLongitude = Double.parseDouble(endCoordinates[0]);
+    double endLatitude = Double.parseDouble(endCoordinates[1]);
+
+    Route route = Route.builder()
+            .startLongitude(startLongitude)
+            .startLatitude(startLatitude)
+            .startLocationName(matchRoomCreatedEvent.startName())
+            .endLongitude(endLongitude)
+            .endLatitude(endLatitude)
+            .endLocationName(matchRoomCreatedEvent.destinationName())
+            .build();
+    return this.routeRepository.save(route);
   }
 
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {

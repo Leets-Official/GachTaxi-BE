@@ -31,4 +31,8 @@ public class MatchingRoomTagInfo extends BaseEntity {
         .tags(tag)
         .build();
   }
+
+  public boolean matchesTag(Tags tag) {
+    return this.tags == tag;
+  }
 }

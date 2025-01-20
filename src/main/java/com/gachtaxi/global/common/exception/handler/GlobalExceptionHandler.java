@@ -8,12 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.COOKIE_NOT_FOUND;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice
@@ -28,8 +31,13 @@ public class GlobalExceptionHandler {
         return exceptionResponse(e, e.getStatus(), e.getMessage(), null);
     }
 
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<ApiResponse<Void>> handleException(MissingRequestCookieException e) {
+        return exceptionResponse(e, BAD_REQUEST, COOKIE_NOT_FOUND.getMessage(), null);
+    }
+
     // BindException 처리
-    @ExceptionHandler(BindException.class)
+    @ExceptionHandler({BindException.class})
     public ResponseEntity<ApiResponse<List<ValidErrorResponse>>> handleException(MethodArgumentNotValidException e) {
         List<ValidErrorResponse> validErrorResponses = e.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> ValidErrorResponse.builder()

@@ -2,6 +2,8 @@ package com.gachtaxi.domain.members.entity;
 
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.domain.members.entity.enums.UserStatus;
@@ -9,6 +11,7 @@ import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -43,36 +46,42 @@ public class Members extends BaseEntity {
     private Long kakaoId;
 
     @Column(name = "google_id", unique = true)
-    private Long googleId;
+    private String googleId;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @Builder.Default
+    private Role role = Role.MEMBER;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    @Builder.Default
+    private UserStatus status = UserStatus.INACTIVE;
 
     // 이용 약관 동의
     @Column(name = "terms_agreement")
-    @ColumnDefault("true")
-    private Boolean termsAgreement;
+    @ColumnDefault("false")
+    @Builder.Default
+    private Boolean termsAgreement = false;
 
     // 개인정보 수집 동의
     @Column(name = "privacy_agreement")
-    @ColumnDefault("true")
-    private Boolean privacyAgreement;
+    @ColumnDefault("false")
+    @Builder.Default
+    private Boolean privacyAgreement = false;
 
     // 광고성 정보 수신 동의
     @Column(name = "marketing_agreement")
     @ColumnDefault("false")
-    private Boolean marketingAgreement;
+    @Builder.Default
+    private Boolean marketingAgreement = false;
 
     // 2차 인증 (전화번호)
     @Column(name = "two_factor_authentication")
     @ColumnDefault("false")
-    private Boolean twoFactorAuthentication;
+    @Builder.Default
+    private Boolean twoFactorAuthentication = false;
 
     /*
     * 추가할 사항
@@ -81,35 +90,44 @@ public class Members extends BaseEntity {
     * friend_info
     * */
 
+    public boolean hasKakaoId(){
+        return kakaoId != null;
+    }
+
+    public boolean hasGoogleId(){
+        return googleId != null;
+    }
+
     public void updateEmail(String email) {
         this.email = email;
     }
 
-    public static Members of(UserSignUpRequestDto dto){
-        return Members.builder()
-                //.profilePicture(dto.profilePicture())
-                .email(dto.email())
-                .nickname(dto.nickName())
-                .realName(dto.realName())
-                .studentNumber(dto.studentNumber())
-                //.phoneNumber(dto.phoneNumber())
-                .kakaoId(dto.kakaoId())
-                .googleId(dto.googleId())
-                .role(Role.MEMBER)
-                .status(UserStatus.ACTIVE)
-                .gender(dto.gender())
-                .termsAgreement(dto.termsAgreement())
-                .privacyAgreement(dto.privacyAgreement())
-                .marketingAgreement(dto.marketingAgreement())
-                .twoFactorAuthentication(dto.twoFactorAuthentication())
-                .build();
+    public void updateKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
+    public void updateGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public void updateAgreement(MemberAgreementRequestDto dto) {
+        this.termsAgreement = dto.termsAgreement();
+        this.privacyAgreement = dto.privacyAgreement();
+        this.marketingAgreement = dto.marketingAgreement();
+    }
+
+    public void updateSupplment(MemberSupplmentRequestDto dto) {
+        this.profilePicture = dto.profilePicture();
+        this.nickname = dto.nickname();
+        this.realName = dto.realName();
+        this.studentNumber = dto.studentNumber();
+        this.gender = dto.gender();
+        this.status = UserStatus.ACTIVE;
     }
 
     public static Members ofKakaoId(Long kakaoId){
         return Members.builder()
                 .kakaoId(kakaoId)
-                .status(UserStatus.INACTIVE)
-                .role(Role.MEMBER)
                 .build();
     }
 
@@ -133,5 +151,11 @@ public class Members extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(studentNumber, kakaoId);
+    }
+
+    public static Members ofGoogleId(String googleId){
+        return Members.builder()
+                .googleId(googleId)
+                .build();
     }
 }
