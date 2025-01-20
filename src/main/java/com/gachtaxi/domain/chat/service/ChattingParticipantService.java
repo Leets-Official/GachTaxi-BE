@@ -12,7 +12,6 @@ import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,13 +25,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChattingParticipantService {
 
     private final ChattingParticipantRepository chattingParticipantRepository;
-    private final ChatRedisService chatRedisService;
+    private final ChattingRedisService chattingRedisService;
     private final MongoTemplate mongoTemplate;
     private final RedisChatPublisher redisChatPublisher;
 
@@ -84,8 +82,7 @@ public class ChattingParticipantService {
     }
 
     private void checkDuplicateSubscription(long roomId, long memberId) {
-        if (chatRedisService.isActive(roomId, memberId)) {
-            log.info("memberId {}", memberId);
+        if (chattingRedisService.isActive(roomId, memberId)) {
             throw new DuplicateSubscribeException();
         }
     }

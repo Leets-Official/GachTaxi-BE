@@ -36,7 +36,7 @@ public class ChattingRoomService {
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
     private final RedisChatPublisher redisChatPublisher;
-    private final ChatRedisService chatRedisService;
+    private final ChattingRedisService chattingRedisService;
 
     @Value("${chat.topic}")
     public String chatTopic;
@@ -67,12 +67,12 @@ public class ChattingRoomService {
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
 
         if (chattingParticipantService.checkSubscription(chattingRoom, members)) {
-            chatRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+            chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
 
             return;
         }
 
-        chatRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+        chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
 
         ChattingParticipant newParticipant = ChattingParticipant.of(chattingRoom, members);
         chattingParticipantService.save(newParticipant);

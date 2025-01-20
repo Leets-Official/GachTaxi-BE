@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ChatRedisService {
+public class ChattingRedisService {
     public static final String REDIS_CHAT_KEY_PREFIX = "ROOM:";
 
     private final RedisTemplate<String, Object> chatRoomRedisTemplate;
