@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "matching_room_tag_info")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public class MatchingRoomTagInfo extends BaseEntity {
 
   @ManyToOne
@@ -24,6 +24,13 @@ public class MatchingRoomTagInfo extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   private Tags tags;
+
+  public static MatchingRoomTagInfo of(MatchingRoom matchingRoom, Tags tag) {
+    return MatchingRoomTagInfo.builder()
+        .matchingRoom(matchingRoom)
+        .tags(tag)
+        .build();
+  }
 
   public boolean matchesTag(Tags tag) {
     return this.tags == tag;

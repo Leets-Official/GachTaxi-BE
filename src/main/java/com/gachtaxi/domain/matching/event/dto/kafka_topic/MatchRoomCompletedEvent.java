@@ -1,18 +1,12 @@
 package com.gachtaxi.domain.matching.event.dto.kafka_topic;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record MatchMemberJoinedEvent(
+public record MatchRoomCompletedEvent(
     Long roomId,
-    Long memberId,
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime joinedAt,
 
     String topic
 ) implements MatchingEvent{
@@ -27,10 +21,9 @@ public record MatchMemberJoinedEvent(
     return this.topic;
   }
 
-  public static MatchMemberJoinedEvent of(Long roomId, Long memberId, String topic) {
-    return MatchMemberJoinedEvent.builder()
+  public static MatchRoomCompletedEvent of(Long roomId, String topic) {
+    return MatchRoomCompletedEvent.builder()
         .roomId(roomId)
-        .memberId(memberId)
         .topic(topic)
         .build();
   }

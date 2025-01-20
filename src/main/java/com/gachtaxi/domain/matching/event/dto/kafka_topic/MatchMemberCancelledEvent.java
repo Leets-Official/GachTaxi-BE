@@ -7,14 +7,14 @@ import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record MatchMemberJoinedEvent(
-    Long roomId,
-    Long memberId,
+public record MatchMemberCancelledEvent(
+  Long roomId,
+  Long memberId,
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime joinedAt,
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  LocalDateTime canceledAt,
 
-    String topic
+  String topic
 ) implements MatchingEvent{
 
   @Override
@@ -27,8 +27,8 @@ public record MatchMemberJoinedEvent(
     return this.topic;
   }
 
-  public static MatchMemberJoinedEvent of(Long roomId, Long memberId, String topic) {
-    return MatchMemberJoinedEvent.builder()
+  public static MatchMemberCancelledEvent of(Long roomId, Long memberId, String topic) {
+    return MatchMemberCancelledEvent.builder()
         .roomId(roomId)
         .memberId(memberId)
         .topic(topic)
