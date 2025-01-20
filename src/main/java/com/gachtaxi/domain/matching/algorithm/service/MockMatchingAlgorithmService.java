@@ -50,7 +50,7 @@ public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
       ACTIVE 상태인 방만 필터링
      */
     matchingRooms = matchingRooms.stream()
-            .filter(MatchingRoom::isActiveMatchingRoom)
+            .filter(MatchingRoom::isActive)
             .toList();
     /*
      태그 조건이 있는 경우에 태그정보까지 필터링

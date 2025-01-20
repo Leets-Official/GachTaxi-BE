@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "route")
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Route extends BaseEntity {
@@ -23,13 +23,4 @@ public class Route extends BaseEntity {
   private double endLongitude;
   private double endLatitude;
   private String endLocationName;
-
-  public static Route from(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    return Route.builder()
-        .startLocationCoordinate(matchRoomCreatedEvent.startPoint())
-        .startLocationName(matchRoomCreatedEvent.startName())
-        .endLocationCoordinate(matchRoomCreatedEvent.destinationPoint())
-        .endLocationName(matchRoomCreatedEvent.destinationName())
-        .build();
-  }
 }
