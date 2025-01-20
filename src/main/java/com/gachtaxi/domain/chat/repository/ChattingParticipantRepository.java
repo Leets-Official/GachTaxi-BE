@@ -12,4 +12,6 @@ public interface ChattingParticipantRepository extends JpaRepository<ChattingPar
     Optional<ChattingParticipant> findByChattingRoomAndMembers(ChattingRoom chattingRoom, Members member);
 
     Optional<ChattingParticipant> findByChattingRoomIdAndMembersId(long roomId, long memberId);
+
+    long countByChattingRoomId(long chattingRoomId);
 }
