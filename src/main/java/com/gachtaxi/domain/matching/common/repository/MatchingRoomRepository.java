@@ -23,6 +23,8 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
     );
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
             "FROM MatchingRoom r JOIN r.memberMatchingRoomChargingInfo m " +
-            "WHERE m.members = :user")
+            "WHERE m.members = :user "+
+            "AND r.matchingRoomStatus = 'ACTIVE' "+
+            "AND m.paymentStatus != 'LEFT'")
     boolean existsByMemberInMatchingRoom(@Param("user") Members user);
 }
