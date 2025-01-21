@@ -9,6 +9,7 @@ import com.gachtaxi.domain.notification.exception.MemberNotMatchException;
 import com.gachtaxi.domain.notification.exception.NotificationNotFoundException;
 import com.gachtaxi.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -17,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.gachtaxi.domain.notification.entity.enums.NotificationStatus.UNREAD;
-import static com.gachtaxi.domain.notification.entity.enums.NotificationStatus.UNSENT;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -31,14 +32,17 @@ public class NotificationService {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createDate"));
 
         Slice<Notification> notifications = notificationRepository.findAllByReceiverId(receiverId, pageable);
-        notifications.forEach(Notification::read);
+
+        notifications.stream()
+                .filter(notification -> notification.getStatus() == UNREAD)
+                .forEach(Notification::read);
 
         return notifications
                 .map(NotificationResponse::from);
     }
 
     public NotificationInfoResponse getInfo(Long receiverId) {
-        Integer count = notificationRepository.countAllByReceiverIdAndStatusAndStatus(receiverId, UNREAD, UNSENT);
+        Integer count = notificationRepository.countAllByReceiverIdAndStatus(receiverId, UNREAD);
 
         if (count > 0) {
             return new NotificationInfoResponse(count, true);
