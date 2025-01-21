@@ -1,12 +1,13 @@
 package com.gachtaxi.domain.notification.exception;
 
 import com.gachtaxi.global.common.exception.BaseException;
-import org.springframework.http.HttpStatus;
 
-import static com.gachtaxi.domain.notification.exception.ErrorMessage.*;
+import static com.gachtaxi.domain.notification.exception.ErrorMessage.FCM_TOKEN_NOT_FOUND;
+import static org.springframework.http.HttpStatus.valueOf;
+
 
 public class FcmTokenNotFoundException extends BaseException {
     public FcmTokenNotFoundException(int statusCode, String statusMessage) {
-        super(HttpStatus.valueOf(statusCode), statusMessage + FCM_TOKEN_NOT_FOUND.getMessage());
+        super(valueOf(statusCode), statusMessage + FCM_TOKEN_NOT_FOUND.getMessage());
     }
 }
