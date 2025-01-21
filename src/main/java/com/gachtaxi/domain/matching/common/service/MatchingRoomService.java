@@ -49,7 +49,7 @@ public class MatchingRoomService {
   // event factory
   private final MatchingEventFactory matchingEventFactory;
 
-  public void createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
+  public Long createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
@@ -59,7 +59,9 @@ public class MatchingRoomService {
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
     this.saveRoomMasterChargingInfo(matchingRoom, members);
 
-    this.matchingRoomRepository.save(matchingRoom);
+    MatchingRoom savedMatchingRoom = this.matchingRoomRepository.save(matchingRoom);
+
+    return savedMatchingRoom.getId();
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
