@@ -63,7 +63,7 @@ public class ChattingParticipantService {
 
             Pair<String, String> pair = getUpdatedMessageRange(chattingRoom.getId(), chattingParticipant.getLastReadAt(), members.getId());
 
-            reEnterEvent(chattingRoom.getId(), members.getId(), members.getNickname(), ReadMessageRange.of(pair));
+            reEnterEvent(chattingRoom.getId(), members.getId(), members.getNickname(), ReadMessageRange.from(pair));
 
             chattingParticipant.reSubscribe();
 

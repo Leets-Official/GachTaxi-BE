@@ -6,7 +6,7 @@ public record ReadMessageRange(
         String startMessageId,
         String endMessageId
 ) {
-    public static ReadMessageRange of(Pair<String, String> pair) {
+    public static ReadMessageRange from(Pair<String, String> pair) {
         return new ReadMessageRange(pair.getFirst(), pair.getSecond());
     }
 }
