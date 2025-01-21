@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MockMatchingAlgorithmService implements MatchingAlgorithmService {
+public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
 
   private final MatchingRoomRepository matchingRoomRepository;
   private final MemberService memberService;
