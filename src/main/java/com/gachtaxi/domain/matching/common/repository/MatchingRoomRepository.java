@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long> {
     @Query("SELECT r FROM MatchingRoom r " +
-            "WHERE " +
-            "FUNCTION('ST_Distance_Sphere', FUNCTION('POINT', :startLongitude, :startLatitude), FUNCTION('POINT', r.route.startLongitude, r.route.startLatitude)) <= :radius " +
-            "AND FUNCTION('ST_Distance_Sphere', FUNCTION('POINT', :destinationLongitude, :destinationLatitude), FUNCTION('POINT', r.route.endLongitude, r.route.endLatitude)) <= :radius ")
+        "WHERE " +
+        "FUNCTION('ST_Distance_Sphere', FUNCTION('POINT', :startLatitude, :startLongitude), FUNCTION('POINT', r.route.startLatitude, r.route.startLongitude)) <= :radius " +
+        "AND FUNCTION('ST_Distance_Sphere', FUNCTION('POINT', :destinationLatitude, :destinationLongitude), FUNCTION('POINT', r.route.endLatitude, r.route.endLongitude)) <= :radius ")
     List<MatchingRoom> findRoomsByStartAndDestination(
             @Param("startLongitude") double startLongitude,
             @Param("startLatitude") double startLatitude,

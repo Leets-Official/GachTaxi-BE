@@ -66,12 +66,12 @@ public class MatchingRoomService {
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     String[] startCoordinates = matchRoomCreatedEvent.startPoint().split(",");
-    double startLongitude = Double.parseDouble(startCoordinates[0]);
-    double startLatitude = Double.parseDouble(startCoordinates[1]);
+    double startLatitude = Double.parseDouble(startCoordinates[0]);
+    double startLongitude = Double.parseDouble(startCoordinates[1]);
 
     String[] endCoordinates = matchRoomCreatedEvent.destinationPoint().split(",");
-    double endLongitude = Double.parseDouble(endCoordinates[0]);
-    double endLatitude = Double.parseDouble(endCoordinates[1]);
+    double endLatitude = Double.parseDouble(endCoordinates[0]);
+    double endLongitude = Double.parseDouble(endCoordinates[1]);
 
     Route route = Route.builder()
             .startLongitude(startLongitude)
