@@ -45,10 +45,10 @@ public class NotificationService {
         Integer count = notificationRepository.countAllByReceiverIdAndStatus(receiverId, UNREAD);
 
         if (count > 0) {
-            return new NotificationInfoResponse(count, true);
+            return NotificationInfoResponse.of(count, true);
         }
 
-        return new NotificationInfoResponse(count, false);
+        return NotificationInfoResponse.of(count, false);
     }
 
     @Transactional
