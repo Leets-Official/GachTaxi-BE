@@ -51,7 +51,7 @@ public class ChattingParticipantService {
         if (optionalParticipant.isPresent()) {
             ChattingParticipant chattingParticipant = optionalParticipant.get();
 
-            checkDuplicateSubscription(chattingRoom.getId(), members.getId());
+//            checkDuplicateSubscription(chattingRoom.getId(), members.getId());
 
             Pair<String, String> pair = chattingMessageMongoRepository.updateUnreadCount(chattingRoom.getId(), chattingParticipant.getLastReadAt(), members.getId());
 
