@@ -42,7 +42,7 @@ dependencies {
 	implementation 'software.amazon.awssdk:ses:2.29.46'
 
 	// S3 Client
-	implementation 'software.amazon.awssdk:s3:2.20.126'
+	implementation 'software.amazon.awssdk:s3:2.29.46'
 
 	// MongoDB, Redis, MySQL
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'

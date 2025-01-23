@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AutoMatchingStatus {
   REQUESTED("REQUESTED"),
-  REJECTED("REJECTED");
-
+  REJECTED("REJECTED"),
+  CANCELLED("CANCELLED");
   private final String value;
 }

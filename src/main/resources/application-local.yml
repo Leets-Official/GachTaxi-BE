@@ -46,6 +46,12 @@ gachtaxi:
       redirect: ${KAKAO_REDIRECT_URL}
       token_uri: ${KAKAO_TOKEN_URI}
       user_profile: ${KAKAO_USER_PROFILE}
+    google:
+      client: ${GOOGLE_CLIENT_ID}
+      client-secret: ${GOOGLE_CLIENT_SECRET}
+      redirect: ${GOOGLE_REDIRECT_URL}
+      token_uri: ${GOOGLE_TOKEN_URI}
+      user_profile: ${GOOGLE_USER_PROFILE}
     jwt:
       key: ${JWT_SECRET_KEY}
       accessTokenExpiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
@@ -62,8 +68,13 @@ gachtaxi:
       match-member-joined: ${KAFKA_TOPIC_MATCH_MEMBER_JOINED}
       match-member-cancelled: ${KAFKA_TOPIC_MATCH_MEMBER_CANCELLED}
       match-room-cancelled: ${KAFKA_TOPIC_MATCH_ROOM_CANCELLED}
+      match-room-completed: ${KAFKA_TOPIC_MATCH_ROOM_COMPLETED}
     partition-count: ${KAFKA_PARTITION_COUNT}
     replication-factor: ${KAFKA_REPLICATION_FACTOR}
+  matching:
+    auto-matching-max-capacity: ${AUTO_MATCHING_MAX_CAPACITY}
+    auto-matching-description: ${AUTO_MATCHING_DESCRIPTION}
+
 
 firebase:
   adminSdk: ${FIREBASE_ADMIN_SDK_PATH}

@@ -38,6 +38,8 @@ out/
 
 src/main/resources/.env
 
+docker-compose.yml
+
 ### firebase ###
 /src/main/resources/serviceAccountKey.json
 

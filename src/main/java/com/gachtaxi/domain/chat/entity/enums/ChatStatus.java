@@ -1,5 +1,5 @@
 package com.gachtaxi.domain.chat.entity.enums;
 
-public enum Status {
+public enum ChatStatus {
     ACTIVE, INACTIVE
 }

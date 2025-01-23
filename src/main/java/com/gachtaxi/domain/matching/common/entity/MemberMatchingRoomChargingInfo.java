@@ -14,6 +14,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -26,10 +27,11 @@ import lombok.Setter;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public class MemberMatchingRoomChargingInfo extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @Getter
   private Members members;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -40,5 +42,27 @@ public class MemberMatchingRoomChargingInfo extends BaseEntity {
   private Integer charge;
 
   @Enumerated(EnumType.STRING)
-  private PaymentStatus paymentStatus = PaymentStatus.NOT_PAYED;
+  private PaymentStatus paymentStatus;
+
+  public void leftMatchingRoom() {
+    this.paymentStatus = PaymentStatus.LEFT;
+  }
+
+  public boolean isAlreadyLeft() {
+    return this.paymentStatus == PaymentStatus.LEFT;
+  }
+
+  public MemberMatchingRoomChargingInfo joinMatchingRoom() {
+    this.paymentStatus = PaymentStatus.NOT_PAYED;
+    return this;
+  }
+
+  public static MemberMatchingRoomChargingInfo notPayedOf(MatchingRoom matchingRoom, Members members) {
+    return MemberMatchingRoomChargingInfo.builder()
+        .matchingRoom(matchingRoom)
+        .members(members)
+        .charge(matchingRoom.getTotalCharge())
+        .paymentStatus(PaymentStatus.NOT_PAYED)
+        .build();
+  }
 }

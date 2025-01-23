@@ -1,6 +1,9 @@
 package com.gachtaxi.global.config.kafka;
 
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +71,81 @@ public class KafkaConsumerConfig {
     ConcurrentKafkaListenerContainerFactory<String, MatchMemberJoinedEvent> factory
         = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(matchMemberJoinedEventConsumerFactory());
+    factory.setConcurrency(3);
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+    return factory;
+  }
+
+  // MatchMemberCanceledEvent
+  @Bean
+  public ConsumerFactory<String, MatchMemberCancelledEvent> matchMemberCancelledEventConsumerFactory() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+    JsonDeserializer<MatchMemberCancelledEvent> jsonDeserializer =
+        new JsonDeserializer<>(MatchMemberCancelledEvent.class);
+    jsonDeserializer.addTrustedPackages("com.gachtaxi.domain.matching.event.dto");
+
+    return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), jsonDeserializer);
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, MatchMemberCancelledEvent> matchMemberCancelledEventListenerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, MatchMemberCancelledEvent> factory
+        = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(matchMemberCancelledEventConsumerFactory());
+    factory.setConcurrency(3);
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+    return factory;
+  }
+
+  // MatchRoomCancelledEvent
+  @Bean
+  public ConsumerFactory<String, MatchRoomCancelledEvent> matchRoomCancelledEventConsumerFactory() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+    JsonDeserializer<MatchRoomCancelledEvent> jsonDeserializer =
+        new JsonDeserializer<>(MatchRoomCancelledEvent.class);
+    jsonDeserializer.addTrustedPackages("com.gachtaxi.domain.matching.event.dto");
+
+    return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), jsonDeserializer);
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, MatchRoomCancelledEvent> matchRoomCancelledEventListenerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, MatchRoomCancelledEvent> factory
+        = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(matchRoomCancelledEventConsumerFactory());
+    factory.setConcurrency(3);
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+    return factory;
+  }
+
+  // MatchRoomCompleted
+  @Bean
+  public ConsumerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventConsumerFactory() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+    JsonDeserializer<MatchRoomCompletedEvent> jsonDeserializer =
+        new JsonDeserializer<>(MatchRoomCompletedEvent.class);
+    jsonDeserializer.addTrustedPackages("com.gachtaxi.domain.matching.event.dto");
+
+    return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), jsonDeserializer);
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, MatchRoomCompletedEvent> matchRoomCompletedEventListenerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, MatchRoomCompletedEvent> factory
+        = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(matchRoomCompletedEventConsumerFactory());
     factory.setConcurrency(3);
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;

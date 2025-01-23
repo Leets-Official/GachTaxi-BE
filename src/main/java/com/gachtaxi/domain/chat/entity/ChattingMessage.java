@@ -1,8 +1,11 @@
 package com.gachtaxi.domain.chat.entity;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
+import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import jakarta.persistence.Id;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,6 +29,8 @@ public class ChattingMessage {
 
     private String message;
 
+    private MessageType messageType;
+
     private LocalDateTime timeStamp;
 
     @LastModifiedDate
@@ -38,6 +43,7 @@ public class ChattingMessage {
                 .roomId(chatMessage.roomId())
                 .message(chatMessage.message())
                 .timeStamp(chatMessage.timeStamp())
+                .messageType(chatMessage.messageType())
                 .build();
     }
 }

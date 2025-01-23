@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.entity;
 
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -15,9 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Route extends BaseEntity {
 
-  private String startLocationCoordinate;
+  private double startLongitude;
+  private double startLatitude;
   private String startLocationName;
 
-  private String endLocationCoordinate;
+  private double endLongitude;
+  private double endLatitude;
   private String endLocationName;
 }
