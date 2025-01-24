@@ -1,6 +1,7 @@
 package com.gachtaxi.global.auth.jwt.service;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
+import com.gachtaxi.domain.members.dto.request.MemberTokenDto;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.exception.CookieNotFoundException;
 import com.gachtaxi.global.auth.jwt.exception.TokenExpiredException;
@@ -23,11 +24,11 @@ public class JwtService {
     private final JwtExtractor jwtExtractor;
 
     // JwtToken 생성 + Redis 저장
-    public JwtTokenDto generateJwtToken(Long userId, String email, String role) {
-        String accessToken = jwtProvider.generateAccessToken(userId, email, role);
-        String refreshToken = jwtProvider.generateRefreshToken(userId, email, role);
+    public JwtTokenDto generateJwtToken(MemberTokenDto dto) {
+        String accessToken = jwtProvider.generateAccessToken(dto.id(), dto.email(), dto.role());
+        String refreshToken = jwtProvider.generateRefreshToken(dto.id(), dto.email(), dto.role());
 
-        redisUtil.setRefreshToken(userId, refreshToken);
+        redisUtil.setRefreshToken(dto.id(), refreshToken);
         return JwtTokenDto.of(accessToken, refreshToken);
     }
 
@@ -49,7 +50,7 @@ public class JwtService {
 
         String email = jwtExtractor.getEmail(refreshToken);
         String role = jwtExtractor.getRole(refreshToken);
-        return generateJwtToken(userId, email, role);
+        return generateJwtToken(MemberTokenDto.of(userId, email, role));
     }
 
     /*

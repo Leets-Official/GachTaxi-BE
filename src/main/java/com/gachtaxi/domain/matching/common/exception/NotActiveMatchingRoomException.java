@@ -1,11 +1,13 @@
 package com.gachtaxi.domain.matching.common.exception;
 
+import static com.gachtaxi.domain.matching.common.exception.ErrorMessage.NOT_ACTIVE_MATCHING_ROOM;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 import com.gachtaxi.global.common.exception.BaseException;
-import org.springframework.http.HttpStatus;
 
 public class NotActiveMatchingRoomException extends BaseException {
 
   public NotActiveMatchingRoomException() {
-    super(HttpStatus.BAD_REQUEST, ErrorMessage.NOT_ACTIVE_MATCHING_ROOM.getMessage());
+    super(BAD_REQUEST, NOT_ACTIVE_MATCHING_ROOM.getMessage());
   }
 }
