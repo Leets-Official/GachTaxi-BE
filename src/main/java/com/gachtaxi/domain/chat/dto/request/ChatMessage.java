@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.chat.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gachtaxi.domain.chat.dto.response.ReadMessageRange;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
@@ -8,6 +9,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ChatMessage(
         String messageId,
         Long roomId,
