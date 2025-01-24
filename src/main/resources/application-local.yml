@@ -74,3 +74,7 @@ gachtaxi:
   matching:
     auto-matching-max-capacity: ${AUTO_MATCHING_MAX_CAPACITY}
     auto-matching-description: ${AUTO_MATCHING_DESCRIPTION}
+
+
+firebase:
+  adminSdk: ${FIREBASE_ADMIN_SDK_PATH}
