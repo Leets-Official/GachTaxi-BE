@@ -5,8 +5,8 @@ import com.gachtaxi.domain.chat.dto.response.ChattingRoomResponse;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
-import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
+import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
@@ -31,12 +31,12 @@ public class ChattingRoomService {
     private static final String ENTER_MESSAGE =" 님이 입장하셨습니다.";
     private static final String EXIT_MESSAGE =" 님이 퇴장하셨습니다.";
 
-
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingMessageRepository chattingMessageRepository;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
     private final RedisChatPublisher redisChatPublisher;
+    private final ChattingRedisService chattingRedisService;
 
     @Value("${chat.topic}")
     public String chatTopic;
@@ -67,8 +67,12 @@ public class ChattingRoomService {
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
 
         if (chattingParticipantService.checkSubscription(chattingRoom, members)) {
+            chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+
             return;
         }
+
+        chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
 
         ChattingParticipant newParticipant = ChattingParticipant.of(chattingRoom, members);
         chattingParticipantService.save(newParticipant);
@@ -94,13 +98,14 @@ public class ChattingRoomService {
     }
 
     private void publishMessage(long roomId, long senderId, String senderName, String message, MessageType messageType) {
-        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
-        ChatMessage chatMessage = ChatMessage.of(roomId, senderId, senderName, senderName + message, messageType);
-        ChattingMessage chattingMessage = ChattingMessage.from(chatMessage);
+        ChattingMessage chattingMessage = ChattingMessage.of(roomId, senderId, senderName, senderName + message, messageType);
 
         chattingMessageRepository.save(chattingMessage);
+
+        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
+        ChatMessage chatMessage = ChatMessage.from(chattingMessage);
+
         redisChatPublisher.publish(topic, chatMessage);
     }
-
 
 }
