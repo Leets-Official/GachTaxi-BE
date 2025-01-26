@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
+import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
@@ -63,6 +64,13 @@ public class MemberService {
     public Optional<Members> findByKakaoId(Long kakaoId) {return memberRepository.findByKakaoId(kakaoId);}
 
     public Optional<Members> findByGoogleId(String googleId) {return memberRepository.findByGoogleId(googleId);}
+
+    @Transactional
+    public void updateFcmToken(Long userId, FcmTokenRequest request) {
+        Members member = findById(userId);
+
+        member.updateToken(request.fcmToken());
+    }
 
     /*
     * refactor

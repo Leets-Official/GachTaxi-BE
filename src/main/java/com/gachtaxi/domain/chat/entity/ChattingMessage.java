@@ -1,6 +1,6 @@
 package com.gachtaxi.domain.chat.entity;
 
-import com.gachtaxi.domain.chat.dto.request.ChatMessage;
+import com.gachtaxi.domain.chat.dto.request.ChatMessageRequest;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -29,6 +29,8 @@ public class ChattingMessage {
 
     private String message;
 
+    private Long unreadCount;
+
     private MessageType messageType;
 
     private LocalDateTime timeStamp;
@@ -36,14 +38,26 @@ public class ChattingMessage {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public static ChattingMessage from(ChatMessage chatMessage) {
+    public static ChattingMessage of(ChatMessageRequest request, long roomId, long senderId, String senderName, long unreadCount) {
         return ChattingMessage.builder()
-                .senderId(chatMessage.senderId())
-                .senderName(chatMessage.senderName())
-                .roomId(chatMessage.roomId())
-                .message(chatMessage.message())
-                .timeStamp(chatMessage.timeStamp())
-                .messageType(chatMessage.messageType())
+                .senderId(senderId)
+                .senderName(senderName)
+                .roomId(roomId)
+                .message(request.message())
+                .unreadCount(unreadCount)
+                .messageType(MessageType.MESSAGE)
+                .timeStamp(LocalDateTime.now())
+                .build();
+    }
+
+    public static ChattingMessage of(long roomId, Long senderId, String senderName, String message, MessageType messageType) {
+        return ChattingMessage.builder()
+                .senderId(senderId)
+                .senderName(senderName)
+                .roomId(roomId)
+                .message(message)
+                .messageType(messageType)
+                .timeStamp(LocalDateTime.now())
                 .build();
     }
 }

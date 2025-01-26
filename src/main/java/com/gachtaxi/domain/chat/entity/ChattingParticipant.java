@@ -1,12 +1,12 @@
 package com.gachtaxi.domain.chat.entity;
 
-import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
-import com.gachtaxi.domain.chat.exception.UnSubscriptionException;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -28,15 +28,12 @@ public class ChattingParticipant extends BaseEntity {
     @JoinColumn(name = "members_id")
     private Members members;
 
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private ChatStatus status = ChatStatus.ACTIVE;
-
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime joinedAt;
 
-    private LocalDateTime disconnectedAt;
+    @CreatedDate
+    private LocalDateTime lastReadAt;
 
     public static ChattingParticipant of(ChattingRoom chattingRoom, Members members) {
         return ChattingParticipant.builder()
@@ -45,25 +42,15 @@ public class ChattingParticipant extends BaseEntity {
                 .build();
     }
 
-    public void checkSubscriptionStatus() {
-        if (this.status == ChatStatus.INACTIVE) {
-            throw new UnSubscriptionException();
-        }
-    }
-
-    public void subscribe() {
-        this.status = ChatStatus.ACTIVE;
+    public void reSubscribe() {
+        this.lastReadAt = LocalDateTime.now();
     }
 
     public void unsubscribe() {
-        this.status = ChatStatus.INACTIVE;
-        this.disconnectedAt = LocalDateTime.now();
+        this.lastReadAt = LocalDateTime.now();
     }
 
     public void disconnect() {
-        if (this.status == ChatStatus.ACTIVE) {
-            this.status = ChatStatus.INACTIVE;
-            this.disconnectedAt = LocalDateTime.now();
-        }
+        this.lastReadAt = LocalDateTime.now();
     }
 }

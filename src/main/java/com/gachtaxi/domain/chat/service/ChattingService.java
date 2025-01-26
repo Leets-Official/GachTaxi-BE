@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,21 +41,30 @@ public class ChattingService {
     private final ChattingRoomService chattingRoomService;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
+    private final ChattingRedisService chattingRedisService;
 
     @Value("${chat.topic}")
     public String chatTopic;
 
+    @Transactional
     public void chat(ChatMessageRequest request, SimpMessageHeaderAccessor accessor) {
         long roomId = getSessionAttribute(accessor, CHAT_ROOM_ID, Long.class);
         long userId = getSessionAttribute(accessor, CHAT_USER_ID, Long.class);
         String senderName = getSessionAttribute(accessor, CHAT_USER_NAME, String.class);
 
-        ChatMessage chatMessage = ChatMessage.of(request, roomId, userId, senderName);
-        ChannelTopic topic = new ChannelTopic(chatTopic + chatMessage.roomId());
-        ChattingMessage chattingMessage = ChattingMessage.from(chatMessage);
+        long unreadCount = getUnreadCount(roomId);
+
+        ChattingMessage chattingMessage = ChattingMessage.of(request, roomId, userId, senderName, unreadCount);
 
         chattingMessageRepository.save(chattingMessage);
+
+        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
+        ChatMessage chatMessage = ChatMessage.from(chattingMessage);
+
         redisChatPublisher.publish(topic, chatMessage);
+        /*
+        todo 채팅에 알림이 도입되면 redis에 참여하지 않은 사람 리스트를 가져와서 푸시알림 보내기. 참여하고 있다면 X
+         */
     }
 
     public ChatResponse getMessage(long roomId, long senderId, int pageNumber, int pageSize, LocalDateTime lastMessageTimeStamp) {
@@ -62,7 +72,7 @@ public class ChattingService {
         Members members = memberService.findById(senderId);
         ChattingParticipant chattingParticipant = chattingParticipantService.find(chattingRoom, members);
 
-        chattingParticipant.checkSubscriptionStatus();
+        chattingRedisService.checkSubscriptionStatus(roomId, senderId);
 
         Slice<ChattingMessage> chattingMessages = loadMessage(roomId, chattingParticipant, pageNumber, pageSize, lastMessageTimeStamp);
 
@@ -89,7 +99,7 @@ public class ChattingService {
     }
 
     private Slice<ChattingMessage> loadInitialMessage(long roomId, ChattingParticipant chattingParticipant, int pageSize) {
-        int chattingCount = chattingMessageRepository.countAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getDisconnectedAt());
+        int chattingCount = chattingMessageRepository.countAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getLastReadAt());
 
         int effectivePageSize = Math.max(chattingCount, pageSize);
         Pageable pageable = PageRequest.of(0, effectivePageSize, Sort.by(Sort.Direction.DESC, "timeStamp"));
@@ -101,5 +111,12 @@ public class ChattingService {
         return Optional.ofNullable(accessor.getSessionAttributes())
                 .map(attrs -> type.cast(attrs.get(attributeName)))
                 .orElseThrow(() -> new WebSocketSessionException(attributeName));
+    }
+
+    private long getUnreadCount(long roomId) {
+        long totalCount = chattingParticipantService.getParticipantCount(roomId);
+        long nowCount = chattingRedisService.getSubscriberCount(roomId);
+
+        return totalCount - nowCount;
     }
 }
