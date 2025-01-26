@@ -22,6 +22,8 @@ public class PermitUrlConfig {
     public String[] getMemberUrl(){
         return new String[]{
                 "/auth/code/**",
+                "/api/friends",
+                "/api/friends/**"
         };
     }
 
