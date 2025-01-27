@@ -4,7 +4,7 @@ import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberTokenDto;
+import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
@@ -51,14 +51,14 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberTokenDto updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
+    public MemberResponseDto updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
         checkDuplicatedNickName(dto.nickname());
         checkDuplicatedStudentNumber(dto.studentNumber());
 
         Members members = findById(userId);
         members.updateSupplment(dto);
 
-        return MemberTokenDto.from(members);
+        return MemberResponseDto.from(members);
     }
 
     public Optional<Members> findByKakaoId(Long kakaoId) {return memberRepository.findByKakaoId(kakaoId);}

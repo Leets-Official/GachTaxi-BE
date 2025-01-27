@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.dto.request;
 
+import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
 import lombok.Builder;
 
@@ -22,6 +23,14 @@ public record MemberTokenDto(
                 .id(id)
                 .email(email)
                 .role(role)
+                .build();
+    }
+
+    public static MemberTokenDto from(MemberResponseDto dto){
+        return MemberTokenDto.builder()
+                .id(dto.userId())
+                .email(dto.email())
+                .role(dto.role())
                 .build();
     }
 }
