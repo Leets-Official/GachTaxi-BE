@@ -1,6 +1,5 @@
 package com.gachtaxi.domain.chat.service;
 
-import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
 import com.gachtaxi.domain.chat.exception.UnSubscriptionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,22 +12,22 @@ public class ChattingRedisService {
 
     private final RedisTemplate<String, Object> chatRoomRedisTemplate;
 
-    public void saveSubscribeMember(long roomId, long senderId) {
+    public void saveSubscribeMember(long roomId, long senderId, String profilePicture) {
         String key = getKey(roomId);
 
-        chatRoomRedisTemplate.opsForSet().add(key, senderId);
+        chatRoomRedisTemplate.opsForHash().put(key, String.valueOf(senderId), profilePicture);
     }
 
     public boolean isActive(long roomId, long senderId) {
         String key = getKey(roomId);
 
-        return Boolean.TRUE.equals(chatRoomRedisTemplate.opsForSet().isMember(key, senderId));
+        return Boolean.TRUE.equals(chatRoomRedisTemplate.opsForHash().hasKey(key, String.valueOf(senderId)));
     }
 
     public void removeSubscribeMember(long roomId, long senderId) {
         String key = getKey(roomId);
 
-        chatRoomRedisTemplate.opsForSet().remove(key, senderId);
+        chatRoomRedisTemplate.opsForHash().delete(key, String.valueOf(senderId));
     }
 
     public void checkSubscriptionStatus(long roomId, long senderId) {
@@ -40,13 +39,19 @@ public class ChattingRedisService {
     public long getSubscriberCount(long roomId) {
         String key = getKey(roomId);
 
-        Long size = chatRoomRedisTemplate.opsForSet().size(key);
+        return chatRoomRedisTemplate.opsForHash().size(key);
+    }
 
-        if (size == null) {
-            throw new ChattingRoomNotFoundException();
+    public String getProfilePicture(long roomId, long senderId) {
+        String key = getKey(roomId);
+
+        Object profileImageUrl = chatRoomRedisTemplate.opsForHash().get(key, String.valueOf(senderId));
+
+        if (profileImageUrl == null) {
+            return null;
         }
 
-        return size;
+        return profileImageUrl.toString();
     }
 
     private String getKey(long roomId) {

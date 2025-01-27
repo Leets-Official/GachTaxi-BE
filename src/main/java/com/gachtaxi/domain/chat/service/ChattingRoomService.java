@@ -67,12 +67,12 @@ public class ChattingRoomService {
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
 
         if (chattingParticipantService.checkSubscription(chattingRoom, members)) {
-            chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+            chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId(), members.getProfilePicture());
 
             return;
         }
 
-        chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+        chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId(), members.getProfilePicture());
 
         ChattingParticipant newParticipant = ChattingParticipant.of(chattingRoom, members);
         chattingParticipantService.save(newParticipant);

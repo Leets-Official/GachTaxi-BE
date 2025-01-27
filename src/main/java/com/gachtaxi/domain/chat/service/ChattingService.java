@@ -53,8 +53,9 @@ public class ChattingService {
         String senderName = getSessionAttribute(accessor, CHAT_USER_NAME, String.class);
 
         long unreadCount = getUnreadCount(roomId);
+        String profilePicture = chattingRedisService.getProfilePicture(roomId, userId);
 
-        ChattingMessage chattingMessage = ChattingMessage.of(request, roomId, userId, senderName, unreadCount);
+        ChattingMessage chattingMessage = ChattingMessage.of(request, roomId, userId, senderName, unreadCount, profilePicture);
 
         chattingMessageRepository.save(chattingMessage);
 
