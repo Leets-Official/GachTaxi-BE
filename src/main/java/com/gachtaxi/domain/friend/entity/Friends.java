@@ -15,8 +15,10 @@ import static com.gachtaxi.domain.friend.entity.enums.FriendStatus.PENDING;
 
 @Entity
 @Getter
-@Table(name="Friends")
-@SuperBuilder
+@Table(
+        name = "Friends",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"sender_id", "receiver_id"})
+)@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Friends extends BaseEntity {
 
@@ -37,5 +39,9 @@ public class Friends extends BaseEntity {
                 .sender(sender)
                 .receiver(receiver)
                 .build();
+    }
+
+    public void updateStatus(FriendStatus status){
+        this.status = status;
     }
 }
