@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
+import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
 import com.gachtaxi.domain.chat.dto.response.ChattingRoomResponse;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
@@ -54,6 +55,13 @@ public class ChattingRoomService {
         ChattingRoom chattingRoom = find(chattingRoomId);
 
         chattingRoom.delete();
+    }
+
+    public ChattingRoomCountResponse getCount(Long memberId, Long roomId) {
+        chattingParticipantService.find(roomId, memberId);
+        Long count = chattingParticipantService.getParticipantCount(roomId);
+
+        return ChattingRoomCountResponse.of(roomId, count);
     }
 
     @Transactional
