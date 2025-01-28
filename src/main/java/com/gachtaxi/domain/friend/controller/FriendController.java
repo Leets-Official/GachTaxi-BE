@@ -1,15 +1,16 @@
 package com.gachtaxi.domain.friend.controller;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
+import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
 import com.gachtaxi.domain.friend.service.FriendService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static com.gachtaxi.domain.friend.controller.ResponseMessage.FRIEND_LIST_SUCCESS;
 import static com.gachtaxi.domain.friend.controller.ResponseMessage.FRIEND_REQUEST_SUCCESS;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -29,5 +30,14 @@ public class FriendController {
         return ApiResponse.response(OK, FRIEND_REQUEST_SUCCESS.getMessage());
     }
 
+    // 나의 친구를 반환하는 API
+    @GetMapping
+    public ApiResponse<List<FriendsResponseDto>> getFriendsList(
+            @CurrentMemberId Long memberId
+    ){
+
+        List<FriendsResponseDto> response = friendService.getFriendsList(memberId);
+        return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
+    }
 
 }
