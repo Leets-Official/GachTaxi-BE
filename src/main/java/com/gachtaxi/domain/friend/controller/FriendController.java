@@ -1,7 +1,6 @@
 package com.gachtaxi.domain.friend.controller;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
-import com.gachtaxi.domain.friend.dto.request.FriendStatusUpdateReqeustDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
 import com.gachtaxi.domain.friend.service.FriendService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -42,10 +41,10 @@ public class FriendController {
 
     @PatchMapping
     public ApiResponse<Void> acceptFriendRequest(
-            @CurrentMemberId Long receiverId,
-            @RequestBody FriendStatusUpdateReqeustDto dto
+            @CurrentMemberId Long currentId,
+            @RequestBody FriendRequestDto dto
     ){
-        friendService.updateFriendStatus(receiverId, dto);
+        friendService.updateFriendStatus(dto.memberId(), currentId); // 친구 요청 보낸 사람(dto), 받은 사람(토큰 추출)
         return ApiResponse.response(OK, FRIEND_STATUS_ACCEPTED.getMessage());
     }
 
@@ -54,7 +53,7 @@ public class FriendController {
             @CurrentMemberId Long memberId,
             @RequestBody FriendRequestDto dto
     ) {
-        friendService.deleteFriend(memberId, dto.receiverId());
+        friendService.deleteFriend(memberId, dto.memberId());
 
         return ApiResponse.response(OK, FRIEND_DELETE.getMessage());
     }

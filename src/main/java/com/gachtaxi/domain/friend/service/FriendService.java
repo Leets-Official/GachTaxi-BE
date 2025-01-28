@@ -1,7 +1,6 @@
 package com.gachtaxi.domain.friend.service;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
-import com.gachtaxi.domain.friend.dto.request.FriendStatusUpdateReqeustDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
 import com.gachtaxi.domain.friend.entity.Friends;
 import com.gachtaxi.domain.friend.entity.enums.FriendStatus;
@@ -37,14 +36,14 @@ public class FriendService {
     @Transactional
     public void sendFriendRequest(Long senderId, FriendRequestDto dto) {
         Members sender = memberService.findById(senderId);
-        Members recevier = memberService.findById(dto.receiverId());
+        Members receiver = memberService.findById(dto.memberId());
 
-        checkDuplicatedFriendShip(senderId, recevier.getId());
-        friendRepository.save(Friends.of(sender, recevier));
+        checkDuplicatedFriendShip(senderId, receiver.getId());
+        friendRepository.save(Friends.of(sender, receiver));
 
         notificationService.sendWithPush(
                 sender.getId(),
-                recevier,
+                receiver,
                 FRIEND_REQUEST,
                 String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
@@ -58,13 +57,13 @@ public class FriendService {
     }
 
     @Transactional
-    public void updateFriendStatus(Long receiverId, FriendStatusUpdateReqeustDto dto) {
-        Friends friendShip = findBySenderIdAndReceiverId(dto.senderId(), receiverId);
+    public void updateFriendStatus(Long senderId, Long receiverId) {
+        Friends friendShip = findBySenderIdAndReceiverId(senderId, receiverId);
         friendShip.updateStatus();
     }
 
-    public void deleteFriend(Long memberId, Long receiverId) {
-        Friends friendShip = getFriendShip(memberId, receiverId);
+    public void deleteFriend(Long currentId, Long memberId) {
+        Friends friendShip = getFriendShip(currentId, memberId);
         friendRepository.delete(friendShip);
     }
 
