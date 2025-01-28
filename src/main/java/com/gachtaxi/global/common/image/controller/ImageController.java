@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.gachtaxi.global.common.image.controller.ResponseMessage.PRESIGNED_URL_GENERATE_SUCCESS;
@@ -22,8 +23,8 @@ public class ImageController {
 
     @GetMapping()
     @Operation(summary = "Presigned Url 반환을 위한 요청 API 입니다.")
-    public ApiResponse<String> getPutUrl() {
-        String putUrl = imageUtil.generateUrl();
+    public ApiResponse<String> getPutUrl(@RequestParam String fileName) {
+        String putUrl = imageUtil.generateUrl(fileName);
 
         return ApiResponse.response(OK, PRESIGNED_URL_GENERATE_SUCCESS.getMessage(), putUrl);
     }
