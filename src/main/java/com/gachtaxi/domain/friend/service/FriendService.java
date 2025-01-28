@@ -1,9 +1,11 @@
 package com.gachtaxi.domain.friend.service;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
+import com.gachtaxi.domain.friend.dto.request.FriendStatusUpdateReqeustDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
 import com.gachtaxi.domain.friend.entity.Friends;
 import com.gachtaxi.domain.friend.entity.enums.FriendStatus;
+import com.gachtaxi.domain.friend.exception.FriendNotExistsException;
 import com.gachtaxi.domain.friend.exception.FriendShipDoesNotSendMySelfException;
 import com.gachtaxi.domain.friend.exception.FriendShipExistsException;
 import com.gachtaxi.domain.friend.exception.FriendShipPendingException;
@@ -55,6 +57,11 @@ public class FriendService {
                 .toList();
     }
 
+    @Transactional
+    public void updateFriendStatus(Long receiverId, FriendStatusUpdateReqeustDto dto) {
+        Friends friendShip = findBySenderIdAndReceiverId(dto.senderId(), receiverId);
+        friendShip.updateStatus();
+    }
 
 
     public void checkDuplicatedFriendShip(Long senderId, Long receiverId) {
@@ -77,5 +84,15 @@ public class FriendService {
         return friendRepository.findAcceptedFriendsByMemberId(memberId);
     }
 
+    // A와 B 중 누가 sender이고 receiver인지 정확히 아는 경우 (ex Notification에 저장된 친구 요청)
+    public Friends findBySenderIdAndReceiverId(Long senderId, Long receiverId) {
+        return friendRepository.findBySenderIdAndReceiverId(senderId, receiverId)
+                .orElseThrow(FriendNotExistsException::new);
+    }
 
+    // A와 B 중 누가 sender이고 receiver인지 모르는 경우 (ex A와B가 친구인 지 확인할 때)
+    public Friends getFriendShip(Long senderId, Long receiverId) {
+        return friendRepository.findFriendShip(senderId, receiverId)
+                .orElseThrow(FriendNotExistsException::new);
+    }
 }

@@ -23,4 +23,6 @@ public interface FriendRepository extends JpaRepository<Friends, Long> {
             "(f.sender.id = :member1Id AND f.receiver.id = :member2Id) OR" +
             "(f.sender.id = :member2Id AND f.receiver.id = :member1Id)")
     Optional<Friends> findFriendShip(Long member1Id, Long member2Id);
+
+    Optional<Friends> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
 }

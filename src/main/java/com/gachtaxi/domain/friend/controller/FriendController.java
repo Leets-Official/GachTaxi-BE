@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.friend.controller;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
+import com.gachtaxi.domain.friend.dto.request.FriendStatusUpdateReqeustDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
 import com.gachtaxi.domain.friend.service.FriendService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.gachtaxi.domain.friend.controller.ResponseMessage.FRIEND_LIST_SUCCESS;
-import static com.gachtaxi.domain.friend.controller.ResponseMessage.FRIEND_REQUEST_SUCCESS;
+import static com.gachtaxi.domain.friend.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -38,6 +38,15 @@ public class FriendController {
 
         List<FriendsResponseDto> response = friendService.getFriendsList(memberId);
         return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
+    }
+
+    @PatchMapping
+    public ApiResponse<Void> acceptFriendRequest(
+            @CurrentMemberId Long receiverId,
+            @RequestBody FriendStatusUpdateReqeustDto dto
+    ){
+        friendService.updateFriendStatus(receiverId, dto);
+        return ApiResponse.response(OK, FRIEND_STATUS_ACCEPTED.getMessage());
     }
 
 }
