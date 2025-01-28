@@ -1,7 +1,6 @@
 package com.gachtaxi.domain.notification.dto.response;
 
 import com.gachtaxi.domain.notification.entity.Notification;
-import com.gachtaxi.domain.notification.entity.enums.NotificationStatus;
 import com.gachtaxi.domain.notification.entity.enums.NotificationType;
 import lombok.Builder;
 
@@ -13,7 +12,6 @@ public record NotificationResponse(
         long senderId,
         long receiverId,
         NotificationType type,
-        NotificationStatus status,
         String title,
         String content,
         LocalDateTime createdAt
@@ -24,7 +22,6 @@ public record NotificationResponse(
                 .senderId(notification.getSenderId())
                 .receiverId(notification.getReceiverId())
                 .type(notification.getType())
-                .status(notification.getStatus())
                 .title(notification.getTitle())
                 .content(notification.getContent())
                 .createdAt(notification.getCreateDate())

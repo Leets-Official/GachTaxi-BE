@@ -2,6 +2,8 @@ package com.gachtaxi.domain.notification.service;
 
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.notification.dto.response.NotificationInfoResponse;
+import com.gachtaxi.domain.notification.dto.response.NotificationListResponse;
+import com.gachtaxi.domain.notification.dto.response.NotificationPageableResponse;
 import com.gachtaxi.domain.notification.dto.response.NotificationResponse;
 import com.gachtaxi.domain.notification.entity.Notification;
 import com.gachtaxi.domain.notification.entity.enums.NotificationType;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.gachtaxi.domain.notification.entity.enums.NotificationStatus.UNREAD;
 
 @Slf4j
@@ -28,7 +32,7 @@ public class NotificationService {
     private final FcmService fcmService;
 
     @Transactional
-    public Slice<NotificationResponse> getNotifications(Long receiverId, int pageNum, int pageSize) {
+    public NotificationListResponse getNotifications(Long receiverId, int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createDate"));
 
         Slice<Notification> notifications = notificationRepository.findAllByReceiverId(receiverId, pageable);
@@ -37,8 +41,13 @@ public class NotificationService {
                 .filter(notification -> notification.getStatus() == UNREAD)
                 .forEach(Notification::read);
 
-        return notifications
-                .map(NotificationResponse::from);
+        List<NotificationResponse> responses = notifications.stream()
+                .map(NotificationResponse::from)
+                .toList();
+
+        NotificationPageableResponse pageableResponse = NotificationPageableResponse.from(notifications);
+
+        return NotificationListResponse.of(responses, pageableResponse);
     }
 
     public NotificationInfoResponse getInfo(Long receiverId) {
@@ -52,11 +61,11 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendWithPush(Long senderId, Members receiver, NotificationType type, String content) {
+    public void sendWithPush(Long senderId, Members receiver, NotificationType type, String title, String content) {
         Notification notification = Notification.of(senderId, receiver.getId(), type, content);
 
         notificationRepository.save(notification);
-        fcmService.sendNotification(receiver.getFcmToken(), notification.getTitle(), notification.getContent());
+        fcmService.sendNotification(receiver.getFcmToken(), title, notification.getContent());
     }
 
     @Transactional
