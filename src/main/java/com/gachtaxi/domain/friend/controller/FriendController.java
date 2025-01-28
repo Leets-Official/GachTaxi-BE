@@ -49,4 +49,14 @@ public class FriendController {
         return ApiResponse.response(OK, FRIEND_STATUS_ACCEPTED.getMessage());
     }
 
+    @DeleteMapping
+    public ApiResponse<Void> deleteFriend(
+            @CurrentMemberId Long memberId,
+            @RequestBody FriendRequestDto dto
+    ) {
+        friendService.deleteFriend(memberId, dto.receiverId());
+
+        return ApiResponse.response(OK, FRIEND_DELETE.getMessage());
+    }
+
 }

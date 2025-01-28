@@ -63,6 +63,14 @@ public class FriendService {
         friendShip.updateStatus();
     }
 
+    public void deleteFriend(Long memberId, Long receiverId) {
+        Friends friendShip = getFriendShip(memberId, receiverId);
+        friendRepository.delete(friendShip);
+    }
+
+    /*
+    * refactoring
+    * */
 
     public void checkDuplicatedFriendShip(Long senderId, Long receiverId) {
         if(senderId.equals(receiverId)) { // 자기 자신한테 친구 요청을 보낼 경우
