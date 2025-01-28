@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import static com.gachtaxi.domain.friend.entity.enums.FriendStatus.ACCEPTED;
 import static com.gachtaxi.domain.friend.entity.enums.FriendStatus.PENDING;
 
 
@@ -41,7 +42,7 @@ public class Friends extends BaseEntity {
                 .build();
     }
 
-    public void updateStatus(FriendStatus status){
-        this.status = status;
+    public void updateStatus(){
+        this.status = ACCEPTED;
     }
 }
