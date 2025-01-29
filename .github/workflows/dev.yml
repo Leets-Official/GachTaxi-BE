@@ -2,9 +2,9 @@ name: GachTaxi-BE dev CI/CD
 
 on:
   push:
-    branches: [ "dev" ]  # develop 브랜치에 push 시 트리거
+    branches: [ "dev" , "feat/#57/OCICICD파이프라인구축"]  # develop 브랜치에 push 시 트리거
   pull_request:
-    branches: [ "dev" ]  # develop 브랜치에 대한 PR 시 트리거
+    branches: [ "dev", "feat/#57/OCICICD파이프라인구축" ]  # develop 브랜치에 대한 PR 시 트리거
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push'
+#    if: github.event_name == 'push'
 
     steps:
       # SSH를 사용하여 원격 서버에 배포
@@ -59,13 +59,13 @@ jobs:
         with:
           host: ${{ secrets.DEV_SSH_SECRET_HOST }}
           username: ${{ secrets.DEV_SSH_SECRET_USER }}
-          port: 30922
+          port: 22
           key: ${{ secrets.DEV_SSH_SECRET_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:latest
+            sudo docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:latest
             
-            docker compose up -d --no-deps gachtaxi 
+            sudo docker compose up -d --no-deps gachtaxi 
             
             # 사용하지 않는 이미지 정리
             echo "** 사용하지 않는 Docker 이미지 정리"
-            echo "${{ secrets.DEV_SSH_SECRET_PASSWORD }}" | sudo docker image prune -f
+            sudo docker image prune -f
