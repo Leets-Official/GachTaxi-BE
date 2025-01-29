@@ -59,7 +59,7 @@ jobs:
         with:
           host: ${{ secrets.DEV_SSH_SECRET_HOST }}
           username: ${{ secrets.DEV_SSH_SECRET_USER }}
-          port: 30922
+          port: 22
           key: ${{ secrets.DEV_SSH_SECRET_PRIVATE_KEY }}
           script: |
             docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:latest
