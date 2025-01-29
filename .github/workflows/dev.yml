@@ -62,10 +62,12 @@ jobs:
           port: 22
           key: ${{ secrets.DEV_SSH_SECRET_PRIVATE_KEY }}
           script: |
+            sudo su
             docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:latest
             
             docker compose up -d --no-deps gachtaxi 
             
             # 사용하지 않는 이미지 정리
             echo "** 사용하지 않는 Docker 이미지 정리"
-            echo "${{ secrets.DEV_SSH_SECRET_PASSWORD }}" | sudo docker image prune -f
+#            echo "${{ secrets.DEV_SSH_SECRET_PASSWORD }}" | sudo docker image prune -f
+            sudo docker image prune -f
