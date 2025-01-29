@@ -50,7 +50,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push'
+#    if: github.event_name == 'push'
 
     steps:
       # SSH를 사용하여 원격 서버에 배포
