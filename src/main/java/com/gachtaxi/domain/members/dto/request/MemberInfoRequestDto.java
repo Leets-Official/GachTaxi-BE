@@ -1,8 +1,10 @@
 package com.gachtaxi.domain.members.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+
 public record MemberInfoRequestDto(
-        String profilePicture,
-        String nickName,
-        String accountNumber
+        @NotNull String profilePicture,
+        @NotNull String nickName,
+        @NotNull String accountNumber
 ) {
 }
