@@ -20,8 +20,8 @@ public class ImageUtil {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String generateUrl() {
-        String key = UUID.randomUUID().toString();
+    public String generateUrl(String fileName) {
+        String key = generateKey(fileName);
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
@@ -36,5 +36,12 @@ public class ImageUtil {
         PresignedPutObjectRequest presignedUrlRequest = s3Presigner.presignPutObject(request);
 
         return presignedUrlRequest.url().toString();
+    }
+
+    private String generateKey(String fileName) {
+        String key = UUID.randomUUID().toString();
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+        return key + "." + extension;
     }
 }

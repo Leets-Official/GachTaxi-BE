@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.event.service.sse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 사용자별 SSE Emitter 관리
  */
+@Slf4j
 @Service
 public class SseService {
 
@@ -23,6 +25,19 @@ public class SseService {
     emitter.onCompletion(() -> emitterMap.remove(memberId));
     emitter.onTimeout(() -> emitterMap.remove(memberId));
     this.emitterMap.put(memberId, emitter);
+
+    Map<String, String> initMessage = new ConcurrentHashMap<>(
+        Map.of("message", "member %s Connection established".formatted(memberId))
+    );
+
+    try {
+      emitter.send(SseEmitter.event()
+          .name("init")
+          .data(initMessage));
+    } catch (IOException e) {
+      emitter.completeWithError(e);
+    }
+
     return emitter;
   }
 
