@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ResponseMessage {
     // MemberController
     REGISTER_SUCCESS("회원가입에 성공했습니다."),
+    MEMBER_INFO_UPDATE("유저 정보를 성공적으로 수정했습니다!"),
     FCM_TOKEN_UPDATE_SUCCESS("FCM 토큰 업데이트에 성공했습니다."),
 
     // AuthController
