@@ -35,7 +35,8 @@ public class FriendService {
     @Transactional
     public void sendFriendRequest(Long senderId, FriendRequestDto dto) {
         Members sender = memberService.findById(senderId);
-        Members receiver = memberService.findById(dto.memberId());
+        Members receiver = memberService.findByNickname(dto.nickName());
+
 
         checkDuplicatedFriendShip(senderId, receiver.getId());
         friendRepository.save(Friends.of(sender, receiver));
@@ -47,21 +48,8 @@ public class FriendService {
                 String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
 
-//    public List<FriendsResponseDto> getFriendsList(Long memberId){
-//        List<Friends> friendsList = getAcceptedFriendsList(memberId);
-//
-//        return friendsList.stream()
-//                .map(friends -> FriendsMapper.toResponseDto(friends, memberId))
-//                .toList();
-//    }
-
     public List<FriendsResponseDto> getFriendsList(Long memberId){
         return friendRepository.findAcceptedFriendsByMemberId(memberId);
-//        List<Friends> friendsList = getAcceptedFriendsList(memberId);
-//
-//        return friendsList.stream()
-//                .map(friends -> FriendsMapper.toResponseDto(friends, memberId))
-//                .toList();
     }
 
     @Transactional
@@ -94,10 +82,6 @@ public class FriendService {
                     }
                 });
     }
-
-//    public List<Friends> getAcceptedFriendsList(Long memberId) {
-//        return friendRepository.findAcceptedFriendsByMemberId(memberId);
-//    }
 
     // A와 B 중 누가 sender이고 receiver인지 정확히 아는 경우 (ex Notification에 저장된 친구 요청)
     public Friends findBySenderIdAndReceiverId(Long senderId, Long receiverId) {
