@@ -33,7 +33,7 @@ public class MemberController {
     }
 
     @GetMapping("/info")
-    public ApiResponse<MemberResponseDto> getMemberInfo(@CurrentMemberId Long currentId) {
+    public ApiResponse<MemberResponseDto> memberInfoDetails(@CurrentMemberId Long currentId) {
         MemberResponseDto response = memberService.getMember(currentId);
         return ApiResponse.response(OK, MEMBER_INFO_RESPONSE.getMessage(), response);
     }
