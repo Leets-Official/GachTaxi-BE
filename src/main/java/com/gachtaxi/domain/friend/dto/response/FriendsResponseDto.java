@@ -19,4 +19,12 @@ public record FriendsResponseDto(
                 .gender(friends.getGender())
                 .build();
     }
+
+    // Constructor for JPQL Result - DTO Mapping
+    public FriendsResponseDto(Long friendsId, String friendsNickName, String friendsProfileUrl, Gender gender) {
+        this.friendsId = friendsId;
+        this.friendsNickName = friendsNickName;
+        this.friendsProfileUrl = friendsProfileUrl;
+        this.gender = gender;
+    }
 }

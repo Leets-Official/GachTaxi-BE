@@ -8,7 +8,6 @@ import com.gachtaxi.domain.friend.exception.FriendNotExistsException;
 import com.gachtaxi.domain.friend.exception.FriendShipDoesNotSendMySelfException;
 import com.gachtaxi.domain.friend.exception.FriendShipExistsException;
 import com.gachtaxi.domain.friend.exception.FriendShipPendingException;
-import com.gachtaxi.domain.friend.mapper.FriendsMapper;
 import com.gachtaxi.domain.friend.repository.FriendRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -48,12 +47,21 @@ public class FriendService {
                 String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
 
-    public List<FriendsResponseDto> getFriendsList(Long memberId){
-        List<Friends> friendsList = getAcceptedFriendsList(memberId);
+//    public List<FriendsResponseDto> getFriendsList(Long memberId){
+//        List<Friends> friendsList = getAcceptedFriendsList(memberId);
+//
+//        return friendsList.stream()
+//                .map(friends -> FriendsMapper.toResponseDto(friends, memberId))
+//                .toList();
+//    }
 
-        return friendsList.stream()
-                .map(friends -> FriendsMapper.toResponseDto(friends, memberId))
-                .toList();
+    public List<FriendsResponseDto> getFriendsList(Long memberId){
+        return friendRepository.findAcceptedFriendsByMemberId(memberId);
+//        List<Friends> friendsList = getAcceptedFriendsList(memberId);
+//
+//        return friendsList.stream()
+//                .map(friends -> FriendsMapper.toResponseDto(friends, memberId))
+//                .toList();
     }
 
     @Transactional
@@ -87,9 +95,9 @@ public class FriendService {
                 });
     }
 
-    public List<Friends> getAcceptedFriendsList(Long memberId) {
-        return friendRepository.findAcceptedFriendsByMemberId(memberId);
-    }
+//    public List<Friends> getAcceptedFriendsList(Long memberId) {
+//        return friendRepository.findAcceptedFriendsByMemberId(memberId);
+//    }
 
     // A와 B 중 누가 sender이고 receiver인지 정확히 아는 경우 (ex Notification에 저장된 친구 요청)
     public Friends findBySenderIdAndReceiverId(Long senderId, Long receiverId) {
