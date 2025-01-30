@@ -1,9 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
-import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
-import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
-import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
+import com.gachtaxi.domain.members.dto.request.*;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
@@ -29,6 +26,14 @@ public class MemberService {
         Members tmpMember = Members.ofKakaoId(kakaoId);
         memberRepository.save(tmpMember);
         return InactiveMemberDto.of(tmpMember);
+    }
+
+    @Transactional
+    public MemberResponseDto updateMemberInfo(Long currentId, MemberInfoRequestDto dto){
+        Members member = findById(currentId);
+        member.updateMemberInfo(dto);
+
+        return MemberResponseDto.from(member);
     }
 
     @Transactional
