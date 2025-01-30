@@ -28,6 +28,11 @@ public class MemberService {
         return InactiveMemberDto.of(tmpMember);
     }
 
+    public MemberResponseDto getMember(Long currentId){
+        Members members = findById(currentId);
+        return MemberResponseDto.from(members);
+    }
+
     @Transactional
     public MemberResponseDto updateMemberInfo(Long currentId, MemberInfoRequestDto dto){
         Members member = findById(currentId);

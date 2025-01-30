@@ -10,13 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static com.gachtaxi.domain.members.controller.ResponseMessage.FCM_TOKEN_UPDATE_SUCCESS;
-import static com.gachtaxi.domain.members.controller.ResponseMessage.MEMBER_INFO_UPDATE;
+import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "MEMBER")
@@ -34,6 +30,12 @@ public class MemberController {
         memberService.updateFcmToken(memberId, request);
 
         return ApiResponse.response(OK, FCM_TOKEN_UPDATE_SUCCESS.getMessage());
+    }
+
+    @GetMapping("/info")
+    public ApiResponse<MemberResponseDto> getMemberInfo(@CurrentMemberId Long currentId) {
+        MemberResponseDto response = memberService.getMember(currentId);
+        return ApiResponse.response(OK, MEMBER_INFO_RESPONSE.getMessage(), response);
     }
 
     @PatchMapping("/info")
