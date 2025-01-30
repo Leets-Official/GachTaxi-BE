@@ -48,12 +48,12 @@ public class FriendController {
         return ApiResponse.response(OK, FRIEND_STATUS_ACCEPTED.getMessage());
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{memberId}")
     public ApiResponse<Void> deleteFriend(
-            @CurrentMemberId Long memberId,
-            @RequestBody FriendRequestDto dto
+            @CurrentMemberId Long currentId,
+            @PathVariable Long memberId
     ) {
-        friendService.deleteFriend(memberId, dto.memberId());
+        friendService.deleteFriend(currentId, memberId);
 
         return ApiResponse.response(OK, FRIEND_DELETE.getMessage());
     }
