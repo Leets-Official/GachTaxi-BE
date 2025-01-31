@@ -20,9 +20,4 @@ public class DefaultCommandStrategy implements StompCommandStrategy{
     public Message<?> preSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel) {
         return message;
     }
-
-    @Override
-    public void postSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent) {
-
-    }
 }

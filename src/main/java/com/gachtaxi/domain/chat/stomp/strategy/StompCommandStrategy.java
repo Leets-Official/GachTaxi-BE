@@ -11,5 +11,7 @@ public interface StompCommandStrategy {
 
     Message<?> preSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel);
 
-    void postSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent);
+    default void postSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent) {
+
+    }
 }

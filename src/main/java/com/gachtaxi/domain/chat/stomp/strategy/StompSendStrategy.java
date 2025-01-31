@@ -28,9 +28,4 @@ public class StompSendStrategy implements StompCommandStrategy {
 
         return message;
     }
-
-    @Override
-    public void postSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent) {
-
-    }
 }
