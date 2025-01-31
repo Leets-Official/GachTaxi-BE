@@ -62,6 +62,7 @@ public class FriendService {
         friendShip.updateStatus();
     }
 
+    @Transactional
     public void deleteFriend(Long currentId, Long memberId) {
         Friends friendShip = getFriendShip(currentId, memberId);
         friendRepository.delete(friendShip);
@@ -71,7 +72,7 @@ public class FriendService {
     * refactoring
     * */
 
-    public void checkDuplicatedFriendShip(Long senderId, Long receiverId) {
+    private void checkDuplicatedFriendShip(Long senderId, Long receiverId) {
         if(senderId.equals(receiverId)) { // 자기 자신한테 친구 요청을 보낼 경우
             throw new FriendShipDoesNotSendMySelfException();
         }
