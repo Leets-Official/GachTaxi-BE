@@ -13,7 +13,14 @@ public enum ResponseMessage {
   // auto matching
   AUTO_MATCHING_REQUEST_ACCEPTED("자동 매칭 요청 전송에 성공했습니다."),
   NOT_SUBSCRIBED_SSE("SSE 구독 후 자동 매칭을 요청할 수 있습니다."),
-  AUTO_MATCHING_REQUEST_CANCELLED("자동 매칭 취소 요청 전송에 성공했습니다.");
+  AUTO_MATCHING_REQUEST_CANCELLED("자동 매칭 취소 요청 전송에 성공했습니다."),
+
+  // manual matching
+  CREATE_MANUAL_MATCHING_ROOM_SUCCESS("수동 매칭방 생성에 성공했습니다."),
+  JOIN_MANUAL_MATCHING_ROOM_SUCCESS("수동 매칭방 참여에 성공했습니다."),
+  LEAVE_MANUAL_MATCHING_ROOM_SUCCESS("매칭방 퇴장이 완료되었습니다."),
+  CONVERT_TO_AUTO_MATCHING_SUCCESS("자동 매칭으로 전환되었습니다.");
+
 
   private final String message;
 }
