@@ -2,8 +2,10 @@ package com.gachtaxi.domain.matching.common.controller;
 
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.CREATE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.JOIN_MANUAL_MATCHING_ROOM_SUCCESS;
+import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.LEAVE_MANUAL_MATCHING_ROOM_SUCCESS;
 
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingJoinRequest;
+import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingLeaveRequest;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.service.ManualMatchingService;
 import com.gachtaxi.global.common.response.ApiResponse;
@@ -39,5 +41,12 @@ public class ManualMatchingController {
     public ApiResponse<Void> joinManualMatchingRoom(@Valid @RequestBody ManualMatchingJoinRequest request) {
         manualMatchingService.joinManualMatchingRoom(request.userId(), request.roomId());
         return ApiResponse.response(HttpStatus.OK, JOIN_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
+    }
+
+    @Operation(summary = "수동 매칭방 퇴장 (방 삭제 포함)")
+    @PostMapping("/leave")
+    public ApiResponse<Void> leaveManualMatchingRoom(@Valid @RequestBody ManualMatchingLeaveRequest request) {
+        manualMatchingService.leaveManualMatchingRoom(request.userId(), request.roomId());
+        return ApiResponse.response(HttpStatus.OK, LEAVE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
     }
 }
