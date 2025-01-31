@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.gachtaxi.domain.notification.entity.enums.NotificationType.FRIEND_REQUEST;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,11 +39,11 @@ public class FriendService {
         checkDuplicatedFriendShip(senderId, receiver.getId());
         friendRepository.save(Friends.of(sender, receiver));
 
-        notificationService.sendWithPush(
-                sender.getId(),
-                receiver,
-                FRIEND_REQUEST,
-                String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
+//        notificationService.sendWithPush(
+//                sender.getId(),
+//                receiver,
+//                FRIEND_REQUEST,
+//                String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
 
     public List<FriendsResponseDto> getFriendsList(Long memberId){
