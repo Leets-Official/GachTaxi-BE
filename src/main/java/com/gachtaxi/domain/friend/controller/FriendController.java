@@ -33,10 +33,10 @@ public class FriendController {
     @GetMapping
     public ApiResponse<Slice<FriendsResponseDto>> getFriendsList(
             @CurrentMemberId Long memberId,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam int pageNum,
+            @RequestParam int pageSize
     ){
-        Slice<FriendsResponseDto> response = friendService.findFriendsListByMemberId(memberId, page, size);
+        Slice<FriendsResponseDto> response = friendService.findFriendsListByMemberId(memberId, pageNum, pageSize);
         return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
     }
 

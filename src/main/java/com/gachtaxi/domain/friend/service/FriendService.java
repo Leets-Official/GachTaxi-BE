@@ -48,8 +48,8 @@ public class FriendService {
 //                String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
 
-    public Slice<FriendsResponseDto> findFriendsListByMemberId(Long memberId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Slice<FriendsResponseDto> findFriendsListByMemberId(Long memberId, int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
 
         Slice<Friends> friendsList = friendRepository.findFriendsListByMemberId(memberId, pageable);
 
