@@ -2,9 +2,9 @@ name: GachTaxi-BE dev CI/CD
 
 on:
   push:
-    branches: [ "dev" , "feat/#57/OCICICD파이프라인구축"]  # develop 브랜치에 push 시 트리거
+    branches: [ "main"]  # develop 브랜치에 push 시 트리거
   pull_request:
-    branches: [ "dev", "feat/#57/OCICICD파이프라인구축" ]  # develop 브랜치에 대한 PR 시 트리거
+    branches: [ "main"]  # develop 브랜치에 대한 PR 시 트리거
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -50,19 +50,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-#    if: github.event_name == 'push'
+    if: github.event_name == 'push'
 
     steps:
       # SSH를 사용하여 원격 서버에 배포
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.DEV_SSH_SECRET_HOST }}
-          username: ${{ secrets.DEV_SSH_SECRET_USER }}
+          host: ${{ secrets.PROD_SSH_SECRET_HOST }}
+          username: ${{ secrets.PROD_SSH_SECRET_USER }}
           port: 22
-          key: ${{ secrets.DEV_SSH_SECRET_PRIVATE_KEY }}
+          key: ${{ secrets.PROD_SSH_SECRET_PRIVATE_KEY }}
           script: |
-            sudo docker pull ${{ secrets.DEV_DOCKER_USER_NAME }}/gachtaxi:${{ secrets.DEV_DOCKER_TAG }}
+            sudo docker pull ${{ secrets.PROD_DOCKER_USER_NAME }}/gachtaxi:${{ secrets.PROD_DOCKER_TAG }}
             
             sudo docker compose up -d --no-deps gachtaxi 
             
