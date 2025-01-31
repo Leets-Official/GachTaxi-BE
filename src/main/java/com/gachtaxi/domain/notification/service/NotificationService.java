@@ -7,6 +7,7 @@ import com.gachtaxi.domain.notification.dto.response.NotificationPageableRespons
 import com.gachtaxi.domain.notification.dto.response.NotificationResponse;
 import com.gachtaxi.domain.notification.entity.Notification;
 import com.gachtaxi.domain.notification.entity.enums.NotificationType;
+import com.gachtaxi.domain.notification.entity.payload.NotificationPayload;
 import com.gachtaxi.domain.notification.exception.MemberNotMatchException;
 import com.gachtaxi.domain.notification.exception.NotificationNotFoundException;
 import com.gachtaxi.domain.notification.repository.NotificationRepository;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,7 +31,6 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final FcmService fcmService;
 
-    @Transactional
     public NotificationListResponse getNotifications(Long receiverId, int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createDate"));
 
@@ -40,6 +39,8 @@ public class NotificationService {
         notifications.stream()
                 .filter(notification -> notification.getStatus() == UNREAD)
                 .forEach(Notification::read);
+
+        notificationRepository.saveAll(notifications);
 
         List<NotificationResponse> responses = notifications.stream()
                 .map(NotificationResponse::from)
@@ -60,22 +61,19 @@ public class NotificationService {
         return NotificationInfoResponse.of(count, false);
     }
 
-    @Transactional
-    public void sendWithPush(Long senderId, Members receiver, NotificationType type, String title, String content) {
-        Notification notification = Notification.of(senderId, receiver.getId(), type, content);
+    public void sendWithPush(Long senderId, Members receiver, NotificationType type, String title, String content, NotificationPayload payload) {
+        Notification notification = Notification.of(senderId, type, content, payload);
 
         notificationRepository.save(notification);
         fcmService.sendNotification(receiver.getFcmToken(), title, notification.getContent());
     }
 
-    @Transactional
-    public void sendWithOutPush(Long senderId, Members receiver, NotificationType type, String content) {
-        Notification notification = Notification.of(senderId, receiver.getId(), type, content);
+    public void sendWithOutPush(Long senderId, Members receiver, NotificationType type, String content, NotificationPayload payload) {
+        Notification notification = Notification.of(senderId, type, content, payload);
 
         notificationRepository.save(notification);
     }
 
-    @Transactional
     public void delete(Long receiverId, Long notificationId) {
         validateMember(receiverId, notificationId);
 
