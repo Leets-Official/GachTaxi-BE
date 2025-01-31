@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,9 +25,7 @@ public class FirebaseConfig {
     public void initialize() {
 
         try {
-            ClassPathResource resource = new ClassPathResource(adminSdkPath);
-
-            InputStream inputStream = resource.getInputStream();
+            InputStream inputStream = getInputStream(adminSdkPath);
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(inputStream))
@@ -38,6 +38,14 @@ public class FirebaseConfig {
 
         } catch (IOException e) {
             log.warn("Firebase 설정 중 예외 발생", e);
+        }
+    }
+
+    private InputStream getInputStream(String path) throws IOException {
+        if (new File(path).exists()) {
+            return new FileInputStream(path);
+        } else {
+            return new ClassPathResource(path).getInputStream();
         }
     }
 }
