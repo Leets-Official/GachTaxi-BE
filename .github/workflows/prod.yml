@@ -2,9 +2,9 @@ name: GachTaxi-BE prod CI/CD
 
 on:
   push:
-    branches: [ "main"]  # develop 브랜치에 push 시 트리거
+    branches: [ "main"]
   pull_request:
-    branches: [ "main"]  # develop 브랜치에 대한 PR 시 트리거
+    branches: [ "main"]  
     types: [opened, synchronize, reopened]
 
 jobs:
