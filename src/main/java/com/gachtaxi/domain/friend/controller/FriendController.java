@@ -7,9 +7,8 @@ import com.gachtaxi.domain.friend.service.FriendService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.gachtaxi.domain.friend.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
@@ -32,11 +31,12 @@ public class FriendController {
 
     // 나의 친구를 반환하는 API
     @GetMapping
-    public ApiResponse<List<FriendsResponseDto>> getFriendsList(
-            @CurrentMemberId Long memberId
+    public ApiResponse<Slice<FriendsResponseDto>> getFriendsList(
+            @CurrentMemberId Long memberId,
+            @RequestParam int page,
+            @RequestParam int size
     ){
-
-        List<FriendsResponseDto> response = friendService.getFriendsList(memberId);
+        Slice<FriendsResponseDto> response = friendService.findFriendsListByMemberId(memberId, page, size);
         return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
     }
 

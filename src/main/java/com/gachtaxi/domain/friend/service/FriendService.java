@@ -8,6 +8,7 @@ import com.gachtaxi.domain.friend.exception.FriendNotExistsException;
 import com.gachtaxi.domain.friend.exception.FriendShipDoesNotSendMySelfException;
 import com.gachtaxi.domain.friend.exception.FriendShipExistsException;
 import com.gachtaxi.domain.friend.exception.FriendShipPendingException;
+import com.gachtaxi.domain.friend.mapper.FriendsMapper;
 import com.gachtaxi.domain.friend.repository.FriendRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -15,9 +16,10 @@ import com.gachtaxi.domain.notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -46,8 +48,12 @@ public class FriendService {
 //                String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
 
-    public List<FriendsResponseDto> getFriendsList(Long memberId){
-        return friendRepository.findAcceptedFriendsByMemberId(memberId);
+    public Slice<FriendsResponseDto> findFriendsListByMemberId(Long memberId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Slice<Friends> friendsList = friendRepository.findFriendsListByMemberId(memberId, pageable);
+
+        return friendsList.map(f -> FriendsMapper.toResponseDto(f, memberId));
     }
 
     @Transactional
