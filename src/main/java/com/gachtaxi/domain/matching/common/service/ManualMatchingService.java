@@ -6,6 +6,8 @@ import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo
 import com.gachtaxi.domain.matching.common.entity.Route;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.exception.DuplicatedMatchingRoomException;
+import com.gachtaxi.domain.matching.common.exception.MatchingRoomNotJoinOwnException;
+import com.gachtaxi.domain.matching.common.exception.MemberAlreadyJoinedException;
 import com.gachtaxi.domain.matching.common.exception.MemberAlreadyLeftMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.MemberNotInMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
@@ -72,6 +74,14 @@ public class ManualMatchingService {
 
         if (!matchingRoom.isActive()) {
             throw new NotActiveMatchingRoomException();
+        }
+
+        if (matchingRoom.getRoomMaster().equals(user)) {
+            throw new MatchingRoomNotJoinOwnException();
+        }
+
+        if (this.memberMatchingRoomChargingInfoRepository.existsByMembersAndMatchingRoom(user, matchingRoom)) {
+            throw new MemberAlreadyJoinedException();
         }
 
         Optional<MemberMatchingRoomChargingInfo> joinedInPast = this.memberMatchingRoomChargingInfoRepository
