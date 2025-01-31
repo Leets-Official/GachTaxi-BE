@@ -14,4 +14,8 @@ public class FriendRequestPayload extends NotificationPayload {
 //    private FriendStatus status = FriendStatus.PENDING;
 
     private Long senderId;
+
+    public static FriendRequestPayload from(Long senderId) {
+        return FriendRequestPayload.builder().senderId(senderId).build();
+    }
 }
