@@ -13,9 +13,11 @@ import com.gachtaxi.domain.matching.common.exception.MemberNotInMatchingRoomExce
 import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
+import com.gachtaxi.domain.matching.common.repository.MatchingRoomTagInfoRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,11 +33,13 @@ public class ManualMatchingService {
     private final MemberService memberService;
     private final MatchingRoomService matchingRoomService;
     private final MatchingRoomRepository matchingRoomRepository;
+    private final MatchingRoomTagInfoRepository matchingRoomTagInfoRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
     /*
       수동 매칭 방 생성
     */
+    @Transactional
     public Long createManualMatchingRoom(ManualMatchingRequest request) {
         Members roomMaster = memberService.findById(request.userId());
 
@@ -66,6 +70,7 @@ public class ManualMatchingService {
     /*
       수동 매칭방 참여
      */
+    @Transactional
     public void joinManualMatchingRoom(Long userId, Long roomId) {
         Members user = memberService.findById(userId);
 
@@ -113,6 +118,7 @@ public class ManualMatchingService {
     /*
       todo 수동 매칭 → 자동 매칭 전환 : 추후 고도화시, 10분전에 유저에게 알림을 주고 자동 매칭으로 전환
     */
+    @Transactional
     public void convertToAutoMatching(Long roomId) {
         MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
                 .orElseThrow(NoSuchMatchingRoomException::new);
@@ -136,6 +142,7 @@ public class ManualMatchingService {
     /*
       방장 취소 + 방 삭제
     */
+    @Transactional
     public void leaveManualMatchingRoom(Long userId, Long roomId) {
         Members user = this.memberService.findById(userId);
          MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
@@ -157,7 +164,8 @@ public class ManualMatchingService {
                      this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
              if (remainingMembers.isEmpty()) {
-                 this.matchingRoomRepository.delete(matchingRoom);
+                 matchingRoom.cancelMatchingRoom();
+                 this.matchingRoomRepository.save(matchingRoom);
              } else {
                  Members newRoomMaster = remainingMembers.get(0).getMembers();
                  matchingRoom.changeRoomMaster(newRoomMaster);
