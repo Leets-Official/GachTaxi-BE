@@ -83,15 +83,26 @@ public class MatchingRoomService {
             .build();
     return this.routeRepository.save(route);
   }
+  public Route saveRoute(String departure, String destination) {
+    Route route = Route.builder()
+            .startLocationName(departure)
+            .endLocationName(destination)
+            .build();
 
+    return this.routeRepository.save(route);
+  }
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {
     tags.forEach(tag -> this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag)));
   }
-
+  public void saveMatchingRoomTagInfoForManual(MatchingRoom matchingRoom, List<Tags> tags) {
+    tags.forEach(tag -> this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag)));
+  }
   private void saveRoomMasterChargingInfo(MatchingRoom matchingRoom, Members members) {
     this.memberMatchingRoomChargingInfoRepository.save(MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members));
   }
-
+  public void saveRoomMasterChargingInfoForManual(MatchingRoom matchingRoom, Members members) {
+    this.memberMatchingRoomChargingInfoRepository.save(MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, members));
+  }
   public void joinMemberToMatchingRoom(MatchMemberJoinedEvent matchMemberJoinedEvent) {
     Members members = this.memberService.findById(matchMemberJoinedEvent.memberId());
     MatchingRoom matchingRoom = this.matchingRoomRepository.findById(matchMemberJoinedEvent.roomId()).orElseThrow(NoSuchMatchingRoomException::new);
@@ -134,7 +145,12 @@ public class MatchingRoomService {
     }
     this.memberMatchingRoomChargingInfoRepository.saveAll(existMembers);
   }
-
+  public void updateExistMembersChargeForManual(List<MemberMatchingRoomChargingInfo> existMembers, int charge) {
+    for (MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo : existMembers) {
+      memberMatchingRoomChargingInfo.setCharge(charge);
+    }
+    this.memberMatchingRoomChargingInfoRepository.saveAll(existMembers);
+  }
   public void leaveMemberFromMatchingRoom(MatchMemberCancelledEvent matchMemberCancelledEvent) {
     Members members = this.memberService.findById(matchMemberCancelledEvent.memberId());
     MatchingRoom matchingRoom = this.matchingRoomRepository.findById(matchMemberCancelledEvent.roomId()).orElseThrow(NoSuchMatchingRoomException::new);
