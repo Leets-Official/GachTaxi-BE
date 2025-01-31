@@ -4,9 +4,9 @@ import com.gachtaxi.domain.notification.entity.Notification;
 import com.gachtaxi.domain.notification.entity.enums.NotificationStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends MongoRepository<Notification, Long> {
 
     Integer countAllByReceiverIdAndStatus(Long receiverId, NotificationStatus status);
 
