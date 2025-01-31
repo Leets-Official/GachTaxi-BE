@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ChattingRedisService {
@@ -45,13 +47,9 @@ public class ChattingRedisService {
     public String getProfilePicture(long roomId, long senderId) {
         String key = getKey(roomId);
 
-        Object profileImageUrl = chatRoomRedisTemplate.opsForHash().get(key, String.valueOf(senderId));
-
-        if (profileImageUrl == null) {
-            return null;
-        }
-
-        return profileImageUrl.toString();
+        return Optional.ofNullable(chatRoomRedisTemplate.opsForHash().get(key, String.valueOf(senderId)))
+                .map(Object::toString)
+                .orElse(null);
     }
 
     private String getKey(long roomId) {
