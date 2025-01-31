@@ -16,4 +16,6 @@ public interface MemberMatchingRoomChargingInfoRepository extends JpaRepository<
   Optional<MemberMatchingRoomChargingInfo> findByMembersAndMatchingRoom(Members members, MatchingRoom matchingRoom);
 
   int countByMatchingRoomAndPaymentStatus(MatchingRoom matchingRoom, PaymentStatus paymentStatus);
+
+  boolean existsByMembersAndMatchingRoom(Members members, MatchingRoom matchingRoom);
 }
