@@ -108,6 +108,7 @@ public class MatchingRoom extends BaseEntity {
     return FindRoomResult.builder()
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
+            .chattingRoomId(this.getChattingRoom().getId())
             .build();
   }
 }

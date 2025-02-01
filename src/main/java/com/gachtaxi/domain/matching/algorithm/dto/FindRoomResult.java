@@ -6,7 +6,8 @@ import lombok.Builder;
 public record FindRoomResult(
     Long roomId,
     Integer currentMembers,
-    Integer maxCapacity
+    Integer maxCapacity,
+    Long chattingRoomId
 ) {
 
 }
