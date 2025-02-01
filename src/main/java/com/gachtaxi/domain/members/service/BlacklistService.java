@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
+import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.members.dto.response.BlacklistGetResponse;
 import com.gachtaxi.domain.members.dto.response.BlacklistPostResponse;
 import com.gachtaxi.domain.members.entity.Blacklists;
@@ -60,6 +61,16 @@ public class BlacklistService {
     Page<Blacklists> blacklistsPage = this.blacklistsRepository.findAllByRequester(requester, pageRequest);
 
     return BlacklistGetResponse.of(blacklistsPage);
+  }
+
+  public boolean isBlacklistInMatchingRoom(Long requesterId, MatchingRoom matchingRoom) {
+    Members requester = this.memberService.findById(requesterId);
+
+    boolean existBlacklist = matchingRoom.getMemberMatchingRoomChargingInfo().stream()
+        .anyMatch(memberMatchingRoomChargingInfo -> this.blacklistsRepository.existsByRequesterAndReceiver(
+                requester, memberMatchingRoomChargingInfo.getMembers()));
+
+    return existBlacklist;
   }
 
   private void checkRequesterAndReceiver(Members requester, Members receiver) {

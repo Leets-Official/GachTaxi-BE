@@ -7,6 +7,7 @@ import com.gachtaxi.domain.matching.common.exception.AlreadyInMatchingRoomExcept
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.domain.members.service.BlacklistService;
 import com.gachtaxi.domain.members.service.MemberService;
 import java.util.List;
 import java.util.Optional;
@@ -22,12 +23,14 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
 
   private final MatchingRoomRepository matchingRoomRepository;
   private final MemberService memberService;
+  private final BlacklistService blacklistService;
 
   private static final double SEARCH_RADIUS = 300.0;
 
   @Override
-  public Optional<FindRoomResult> findRoom(Long userId, double startLongitude, double startLatitude, double destinationLongitude, double destinationLatitude,
-                                           List<Tags> criteria) {
+  public Optional<FindRoomResult> findRoom(Long userId, double startLongitude, double startLatitude,
+      double destinationLongitude, double destinationLatitude,
+      List<Tags> criteria) {
     /*
      사용자 ID로 사용자 정보 조회(이미 방에 참여하고 있는지 중복체크)
      */
@@ -37,28 +40,30 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
       throw new AlreadyInMatchingRoomException(); // * 추후 논의 후 리팩토링 필요 * 똑같은 조건으로 방 생성시 예외 던져주기
     }
     /*
-     위치 정보를 이용한 방 검색(300M 이내)
+     위치 정보를 이용한 방 검색(300M 이내)ø
      */
     List<MatchingRoom> matchingRooms = matchingRoomRepository.findRoomsByStartAndDestination(
-              startLongitude,
-              startLatitude,
-              destinationLongitude,
-              destinationLatitude,
-              SEARCH_RADIUS
-      );
+        startLongitude,
+        startLatitude,
+        destinationLongitude,
+        destinationLatitude,
+        SEARCH_RADIUS
+    );
     /*
-      ACTIVE 상태인 방만 필터링
+      ACTIVE 상태인 방 && 블랙리스트가 없는 방만 필터링
      */
     matchingRooms = matchingRooms.stream()
-            .filter(MatchingRoom::isActive)
-            .toList();
+        .filter(MatchingRoom::isActive)
+        .filter(room -> !this.blacklistService.isBlacklistInMatchingRoom(userId, room))
+        .toList();
+
     /*
      태그 조건이 있는 경우에 태그정보까지 필터링
      */
     if (criteria != null && !criteria.isEmpty()) {
       matchingRooms = matchingRooms.stream()
-              .filter(room -> criteria.stream().anyMatch(room::containsTag))
-              .toList();
+          .filter(room -> criteria.stream().anyMatch(room::containsTag))
+          .toList();
     }
     /*
      조건에 맞는 방이 있으면 첫 번째 방의 상세 정보 반환
@@ -72,6 +77,7 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
      */
     return Optional.empty();
   }
+
   @Override
   public Page<MatchingRoom> findMatchingRooms(int pageNumber, int pageSize) {
 

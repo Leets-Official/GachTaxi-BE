@@ -39,6 +39,7 @@ public class MatchingRoom extends BaseEntity {
 
   // 팀원들 정보
   @OneToMany(mappedBy = "matchingRoom", fetch = FetchType.LAZY)
+  @Getter
   private List<MemberMatchingRoomChargingInfo> memberMatchingRoomChargingInfo;
 
   @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
