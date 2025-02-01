@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
 @Builder(access = AccessLevel.PRIVATE)
@@ -22,6 +23,7 @@ public record MatchRoomCreatedEvent(
     String destinationName,
     List<Tags> criteria,
     Integer expectedTotalCharge,
+    Long roomId,
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt,
@@ -37,6 +39,24 @@ public record MatchRoomCreatedEvent(
   @Override
   public String getTopic() {
     return this.topic;
+  }
+
+  public static MatchRoomCreatedEvent of(MatchRoomCreatedEvent event, Long roomId) {
+    return MatchRoomCreatedEvent.builder()
+        .roomMasterId(event.roomMasterId())
+        .maxCapacity(event.maxCapacity())
+        .title(event.title())
+        .description(event.description())
+        .startPoint(event.startPoint())
+        .startName(event.startName())
+        .destinationPoint(event.destinationPoint())
+        .destinationName(event.destinationName())
+        .criteria(event.criteria())
+        .expectedTotalCharge(event.expectedTotalCharge())
+        .roomId(roomId)
+        .createdAt(event.createdAt())
+        .topic(event.topic())
+        .build();
   }
 
   public static MatchRoomCreatedEvent of(

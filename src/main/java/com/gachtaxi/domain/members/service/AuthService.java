@@ -2,11 +2,12 @@ package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
 import com.gachtaxi.domain.members.dto.request.MemberTokenDto;
+import com.gachtaxi.domain.members.dto.response.LoginDto;
+import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.auth.google.dto.GoogleTokenResponse;
 import com.gachtaxi.global.auth.google.dto.GoogleUserInfoResponse;
 import com.gachtaxi.global.auth.google.utils.GoogleUtils;
-import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.auth.kakao.util.KakaoUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,38 +28,52 @@ public class AuthService {
     private final JwtService jwtService;
     private final MemberService memberService;
 
-    public JwtTokenDto kakaoLogin(String authCode) {
+    public LoginDto kakaoLogin(String authCode) {
         KakaoUserInfoResponse userInfo = getKakaoUserInfoResponse(authCode);
         Long kakaoId = userInfo.id();
 
         Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
         if(optionalMember.isEmpty()) {
-            return jwtService.generateTmpAccessToken(memberService.saveTmpKakaoMember(kakaoId));
+            return LoginDto.from(
+                    jwtService.generateTmpAccessToken(memberService.saveTmpKakaoMember(kakaoId))
+            );
         }
 
         Members members = optionalMember.get();
         if(members.getStatus() == INACTIVE){
-            return jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()));
+            return LoginDto.from(
+                    jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()))
+            );
         }
 
-        return jwtService.generateJwtToken(MemberTokenDto.from(members));
+        return LoginDto.of(
+                jwtService.generateJwtToken(MemberTokenDto.from(members)),
+                MemberResponseDto.from(members)
+        );
     }
 
-    public JwtTokenDto googleLogin(String authCode) {
+    public LoginDto googleLogin(String authCode) {
         GoogleUserInfoResponse userInfo = getGoogleUserInfoResponse(authCode);
         String googleId = userInfo.id();
 
         Optional<Members> optionalMember = memberService.findByGoogleId(googleId);
         if(optionalMember.isEmpty()) {
-            return jwtService.generateTmpAccessToken(memberService.saveTmpGoogleMember(googleId));
+            return LoginDto.from(
+                    jwtService.generateTmpAccessToken(memberService.saveTmpGoogleMember(googleId))
+            );
         }
 
         Members members = optionalMember.get();
         if(members.getStatus() == INACTIVE){
-            return jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()));
+            return LoginDto.from(
+                    jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()))
+            );
         }
 
-        return jwtService.generateJwtToken(MemberTokenDto.from(members));
+        return LoginDto.of(
+                jwtService.generateJwtToken(MemberTokenDto.from(members)),
+                MemberResponseDto.from(members)
+        );
     }
 
 

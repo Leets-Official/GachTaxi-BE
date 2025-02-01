@@ -2,61 +2,51 @@ package com.gachtaxi.domain.notification.entity;
 
 import com.gachtaxi.domain.notification.entity.enums.NotificationStatus;
 import com.gachtaxi.domain.notification.entity.enums.NotificationType;
-import com.gachtaxi.global.common.entity.BaseEntity;
+import com.gachtaxi.domain.notification.entity.payload.NotificationPayload;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 import static com.gachtaxi.domain.notification.entity.enums.NotificationStatus.*;
 
 @Getter
-@Entity
+@Document(collection = "notifications")
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification extends BaseEntity {
+public class Notification {
 
-    private Long senderId;
+    @Id
+    private String id;
 
     private Long receiverId;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
-    private String title;
-
     @Column(columnDefinition = "text")
     private String content;
+
+    private NotificationPayload payload;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private NotificationStatus status = UNREAD;
 
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createDate;
+
     private LocalDateTime readAt;
-
-    public static Notification of(Long senderId, Long receiverId, NotificationType type, String content) {
-        return Notification.builder()
-                .senderId(senderId)
-                .receiverId(receiverId)
-                .type(type)
-                .content(content)
-                .build();
-    }
-
-    public static Notification of(Long receiverId, NotificationType type, String content) {
-        return Notification.builder()
-                .receiverId(receiverId)
-                .type(type)
-                .content(content)
-                .build();
-    }
 
     public void read() {
         this.status = READ;
@@ -65,5 +55,14 @@ public class Notification extends BaseEntity {
 
     public void failToSend() {
         this.status = UNSENT;
+    }
+
+    public static Notification of(Long receiverId, NotificationType type, String content, NotificationPayload payload) {
+        return Notification.builder()
+                .receiverId(receiverId)
+                .type(type)
+                .content(content)
+                .payload(payload)
+                .build();
     }
 }
