@@ -49,6 +49,7 @@ public class MatchingRoom extends BaseEntity {
   private Members roomMaster;
 
   @Column(name = "title", nullable = false)
+  @Getter
   private String title;
 
   @Column(name = "description", nullable = false)
@@ -64,6 +65,14 @@ public class MatchingRoom extends BaseEntity {
   @Column(name = "departure_time")
   @Getter
   private LocalDateTime departureTime;
+
+  @Column(name = "departure")
+  @Getter
+  private String departure;
+
+  @Column(name = "destination")
+  @Getter
+  private String destination;
 
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
@@ -131,5 +140,16 @@ public class MatchingRoom extends BaseEntity {
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
             .build();
+  }
+  public int getCurrentMemberCount() {
+    return (int) memberMatchingRoomChargingInfo.stream()
+            .filter(info -> !info.isAlreadyLeft())
+            .count();
+  }
+
+  public List<String> getTags() {
+    return this.matchingRoomTagInfo.stream()
+            .map(tagInfo -> tagInfo.getTags().name())
+            .toList();
   }
 }
