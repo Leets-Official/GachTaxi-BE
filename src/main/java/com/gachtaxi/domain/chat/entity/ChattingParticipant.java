@@ -38,6 +38,8 @@ public class ChattingParticipant extends BaseEntity {
     @CreatedDate
     private LocalDateTime lastReadAt;
 
+    private LocalDateTime disconnectedAt;
+
     public static ChattingParticipant of(ChattingRoom chattingRoom, Members members) {
         return ChattingParticipant.builder()
                 .chattingRoom(chattingRoom)
@@ -51,9 +53,11 @@ public class ChattingParticipant extends BaseEntity {
 
     public void unsubscribe() {
         this.lastReadAt = LocalDateTime.now();
+        this.disconnectedAt = LocalDateTime.now();
     }
 
     public void disconnect() {
         this.lastReadAt = LocalDateTime.now();
+        this.disconnectedAt = LocalDateTime.now();
     }
 }

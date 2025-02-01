@@ -16,6 +16,7 @@ public record ChatMessage(
         Long senderId,
         String senderName,
         String message,
+        String profilePicture,
         ReadMessageRange range,
         Long unreadCount,
         LocalDateTime timeStamp,
@@ -28,6 +29,7 @@ public record ChatMessage(
                 .senderId(chattingMessage.getSenderId())
                 .senderName(chattingMessage.getSenderName())
                 .message(chattingMessage.getMessage())
+                .profilePicture(chattingMessage.getProfilePicture())
                 .unreadCount(chattingMessage.getUnreadCount())
                 .timeStamp(chattingMessage.getTimeStamp())
                 .messageType(chattingMessage.getMessageType())

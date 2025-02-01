@@ -12,6 +12,7 @@ public record ChattingMessageResponse(
         Long senderId,
         String senderName,
         String message,
+        String profilePicture,
         Long unreadCount,
         LocalDateTime timeStamp,
         MessageType messageType
@@ -22,6 +23,7 @@ public record ChattingMessageResponse(
                 .senderId(chattingMessage.getSenderId())
                 .senderName(chattingMessage.getSenderName())
                 .message(chattingMessage.getMessage())
+                .profilePicture(chattingMessage.getProfilePicture())
                 .unreadCount(chattingMessage.getUnreadCount())
                 .timeStamp(chattingMessage.getTimeStamp())
                 .messageType(chattingMessage.getMessageType())
