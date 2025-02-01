@@ -1,9 +1,12 @@
 package com.gachtaxi.domain.matching.common.service;
 
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
+import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
 import com.gachtaxi.domain.matching.common.entity.Route;
+import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
+import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.exception.DuplicatedMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
@@ -170,6 +173,30 @@ public class ManualMatchingService {
                  this.matchingRoomRepository.save(matchingRoom);
              }
          }
+    }
+    /*
+       수동 매칭 방 리스트 조회
+    */
+    @Transactional
+    public List<MatchingRoomResponse> getManualMatchingList() {
+        List<MatchingRoom> rooms = matchingRoomRepository.findByMatchingRoomTypeAndMatchingRoomStatus(
+                MatchingRoomType.MANUAL, MatchingRoomStatus.ACTIVE);
+
+        return rooms.stream()
+                .map(MatchingRoomResponse::from)
+                .toList();
+    }
+    /*
+       나의 매칭방 리스트 조회
+     */
+    @Transactional
+    public List<MatchingRoomResponse> getMyMatchingList(Long userId) {
+        Members user = memberService.findById(userId);
+        List<MatchingRoom> rooms = matchingRoomRepository.findByMemberInMatchingRoom(user);
+
+        return rooms.stream()
+                .map(MatchingRoomResponse::from)
+                .toList();
     }
 }
 
