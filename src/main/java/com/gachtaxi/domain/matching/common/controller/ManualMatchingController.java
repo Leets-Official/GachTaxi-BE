@@ -31,8 +31,8 @@ public class ManualMatchingController {
 
     @Operation(summary = "수동 매칭방 생성")
     @PostMapping("/creation")
-    public ApiResponse<Long> createManualMatchingRoom(@Valid @RequestBody ManualMatchingRequest request) {
-        Long roomId = manualMatchingService.createManualMatchingRoom(request);
+    public ApiResponse<Long> createManualMatchingRoom(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingRequest request) {
+        Long roomId = manualMatchingService.createManualMatchingRoom(userId, request);
         return ApiResponse.response(HttpStatus.OK, CREATE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage(), roomId);
     }
 
