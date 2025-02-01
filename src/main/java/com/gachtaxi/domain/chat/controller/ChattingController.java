@@ -29,14 +29,6 @@ public class ChattingController {
     private final ChattingService chattingService;
     private final ChattingRoomService chattingRoomService;
 
-    @PostMapping("/api/chat/room")
-    @Operation(summary = "채팅방을 생성하기 위한 API입니다. 임시 구현으로 차후 제거될 수 있습니다.")
-    public ApiResponse<ChattingRoomResponse> createChattingRoom() {
-        ChattingRoomResponse response = chattingRoomService.save();
-
-        return ApiResponse.response(OK, CREATE_CHATTING_ROOM_SUCCESS.getMessage(), response);
-    }
-
     @GetMapping("/api/chat/{roomId}")
     @Operation(summary = "채팅방 재입장시 이전 메시지를 조회하기 위한 API입니다.")
     public ApiResponse<ChatResponse> getChattingMessages(@PathVariable Long roomId,

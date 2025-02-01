@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.entity;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
@@ -14,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AccessLevel;
@@ -62,6 +64,9 @@ public class MatchingRoom extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
+  @OneToOne
+  private ChattingRoom chattingRoom;
+
   public boolean isActive() {
     return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
   }
@@ -82,7 +87,7 @@ public class MatchingRoom extends BaseEntity {
     return size == totalCharge;
   }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
@@ -91,6 +96,7 @@ public class MatchingRoom extends BaseEntity {
         .route(route)
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
+        .chattingRoom(chattingRoom)
         .build();
   }
   public boolean containsTag(Tags tag) {
