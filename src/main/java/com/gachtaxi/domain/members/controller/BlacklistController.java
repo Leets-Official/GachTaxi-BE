@@ -31,7 +31,7 @@ public class BlacklistController {
   private final BlacklistService blacklistService;
 
   @Operation(summary = "블랙리스트 등록 API")
-  @PostMapping("/{receiverId}")
+  @PostMapping
   public ApiResponse<BlacklistPostResponse> postBlacklist(
       @CurrentMemberId Long memberId,
       @RequestParam Long receiverId) {
@@ -51,10 +51,10 @@ public class BlacklistController {
   }
 
   @Operation(summary = "블랙리스트 조회 API")
-  @GetMapping("/{pageNum}")
+  @GetMapping
   public ApiResponse<BlacklistGetResponse> getAllBlacklist(
       @CurrentMemberId Long requesterId,
-      @PathVariable int pageNum) {
+      @RequestParam int pageNum) {
     BlacklistGetResponse blacklistPage = this.blacklistService.findBlacklistPage(requesterId,
         pageNum);
 
