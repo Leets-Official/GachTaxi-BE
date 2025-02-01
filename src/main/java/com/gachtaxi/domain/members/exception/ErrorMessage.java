@@ -11,7 +11,9 @@ public enum ErrorMessage {
     DUPLICATED_STUDENT_NUMBER("이미 가입된 학번입니다."),
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다."),
     DUPLICATED_EMAIL("이미 가입된 이메일이에요!"),
-    EMAIL_FROM_INVALID("가천대학교 이메일이 아니에요!");
+    EMAIL_FROM_INVALID("가천대학교 이메일이 아니에요!"),
+    BLACKLIST_ALREADY_EXISTS("이미 등록된 블랙리스트입니다."),
+    BLACKLIST_NOT_FOUND("블랙리스트를 찾을 수 없습니다.");
 
     private final String message;
 }
