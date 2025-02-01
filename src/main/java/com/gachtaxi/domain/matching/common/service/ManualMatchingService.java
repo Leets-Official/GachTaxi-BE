@@ -9,6 +9,7 @@ import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.exception.DuplicatedMatchingRoomException;
+import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
 import com.gachtaxi.domain.matching.common.exception.MemberAlreadyJoinedException;
 import com.gachtaxi.domain.matching.common.exception.MemberAlreadyLeftMatchingRoomException;
@@ -25,6 +26,10 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -178,25 +183,31 @@ public class ManualMatchingService {
        수동 매칭 방 리스트 조회
     */
     @Transactional
-    public List<MatchingRoomResponse> getManualMatchingList() {
-        List<MatchingRoom> rooms = matchingRoomRepository.findByMatchingRoomTypeAndMatchingRoomStatus(
-                MatchingRoomType.MANUAL, MatchingRoomStatus.ACTIVE);
+    public Page<MatchingRoomResponse> getManualMatchingList(int pageNumber, int pageSize) {
+        if (pageNumber < 0) {
+            throw new PageNotFoundException();
+        }
 
-        return rooms.stream()
-                .map(MatchingRoomResponse::from)
-                .toList();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<MatchingRoom> rooms = matchingRoomRepository.findByMatchingRoomTypeAndMatchingRoomStatus(
+                MatchingRoomType.MANUAL, MatchingRoomStatus.ACTIVE, pageable);
+
+        return rooms.map(MatchingRoomResponse::from);
     }
     /*
        나의 매칭방 리스트 조회
      */
     @Transactional
-    public List<MatchingRoomResponse> getMyMatchingList(Long userId) {
-        Members user = memberService.findById(userId);
-        List<MatchingRoom> rooms = matchingRoomRepository.findByMemberInMatchingRoom(user);
+    public Page<MatchingRoomResponse> getMyMatchingList(Long userId, int pageNumber, int pageSize) {
+        if (pageNumber < 0) {
+            throw new PageNotFoundException();
+        }
 
-        return rooms.stream()
-                .map(MatchingRoomResponse::from)
-                .toList();
+        Members user = memberService.findById(userId);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<MatchingRoom> rooms = matchingRoomRepository.findByMemberInMatchingRoom(user, pageable);
+
+        return rooms.map(MatchingRoomResponse::from);
     }
 }
 
