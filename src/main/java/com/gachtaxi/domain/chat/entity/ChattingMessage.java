@@ -25,6 +25,8 @@ public class ChattingMessage {
 
     private String senderName;
 
+    private String profilePicture;
+
     private Long roomId;
 
     private String message;
@@ -38,12 +40,13 @@ public class ChattingMessage {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public static ChattingMessage of(ChatMessageRequest request, long roomId, long senderId, String senderName, long unreadCount) {
+    public static ChattingMessage of(ChatMessageRequest request, long roomId, long senderId, String senderName, long unreadCount, String profilePicture) {
         return ChattingMessage.builder()
                 .senderId(senderId)
                 .senderName(senderName)
                 .roomId(roomId)
                 .message(request.message())
+                .profilePicture(profilePicture)
                 .unreadCount(unreadCount)
                 .messageType(MessageType.MESSAGE)
                 .timeStamp(LocalDateTime.now())

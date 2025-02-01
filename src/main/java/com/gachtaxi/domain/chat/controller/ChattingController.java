@@ -2,6 +2,7 @@ package com.gachtaxi.domain.chat.controller;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessageRequest;
 import com.gachtaxi.domain.chat.dto.response.ChatResponse;
+import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
 import com.gachtaxi.domain.chat.dto.response.ChattingRoomResponse;
 import com.gachtaxi.domain.chat.service.ChattingRoomService;
 import com.gachtaxi.domain.chat.service.ChattingService;
@@ -46,6 +47,15 @@ public class ChattingController {
         ChatResponse response = chattingService.getMessage(roomId, memberId, pageNumber, pageSize, lastMessageTimeStamp);
 
         return ApiResponse.response(OK, GET_CHATTING_MESSAGE_SUCCESS.getMessage(), response);
+    }
+
+    @GetMapping("/api/chat/count/{roomId}")
+    @Operation(summary = "채팅방의 총 참여자 수를 조회하기 위한 API입니다.")
+    public ApiResponse<ChattingRoomCountResponse> getChattingMessageCount(@CurrentMemberId Long memberId,
+                                                                          @PathVariable Long roomId) {
+        ChattingRoomCountResponse response = chattingRoomService.getCount(memberId, roomId);
+
+        return ApiResponse.response(OK, GET_CHATTING_PARTICIPANT_COUNT_SUCCESS.getMessage(), response);
     }
 
     @DeleteMapping("/api/chat/{roomId}")

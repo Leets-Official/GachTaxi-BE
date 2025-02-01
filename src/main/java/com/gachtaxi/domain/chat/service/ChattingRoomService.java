@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
+import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
 import com.gachtaxi.domain.chat.dto.response.ChattingRoomResponse;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
@@ -56,6 +57,13 @@ public class ChattingRoomService {
         chattingRoom.delete();
     }
 
+    public ChattingRoomCountResponse getCount(Long memberId, Long roomId) {
+        chattingParticipantService.find(roomId, memberId);
+        Long count = chattingParticipantService.getParticipantCount(roomId);
+
+        return ChattingRoomCountResponse.of(roomId, count);
+    }
+
     @Transactional
     public void subscribeChatRoom(long roomId, SimpMessageHeaderAccessor accessor) {
         Long senderId = (Long) accessor.getSessionAttributes().get(CHAT_USER_ID);
@@ -67,12 +75,12 @@ public class ChattingRoomService {
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
 
         if (chattingParticipantService.checkSubscription(chattingRoom, members)) {
-            chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+            chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId(), members.getProfilePicture());
 
             return;
         }
 
-        chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId());
+        chattingRedisService.saveSubscribeMember(chattingRoom.getId(), members.getId(), members.getProfilePicture());
 
         ChattingParticipant newParticipant = ChattingParticipant.of(chattingRoom, members);
         chattingParticipantService.save(newParticipant);

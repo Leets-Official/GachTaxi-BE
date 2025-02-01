@@ -16,7 +16,7 @@ public record ChatResponse(
     public static ChatResponse of(ChattingParticipant chattingParticipant, List<ChattingMessageResponse> chattingMessages, ChatPageableResponse chatPageableResponse) {
         return ChatResponse.builder()
                 .memberId(chattingParticipant.getMembers().getId())
-                .disconnectedAt(chattingParticipant.getLastReadAt())
+                .disconnectedAt(chattingParticipant.getDisconnectedAt())
                 .chattingMessage(chattingMessages)
                 .pageable(chatPageableResponse)
                 .build();
