@@ -5,8 +5,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import com.gachtaxi.global.common.exception.BaseException;
 
-public class MatchingRoomNotJoinOwnException extends BaseException {
-    public MatchingRoomNotJoinOwnException() {
+public class RoomMasterCantJoinException extends BaseException {
+    public RoomMasterCantJoinException() {
         super(BAD_REQUEST, MATCHING_ROOM_NOT_JOIN_OWN.getMessage());
     }
 }
