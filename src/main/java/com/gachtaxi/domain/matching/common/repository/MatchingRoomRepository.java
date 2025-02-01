@@ -5,6 +5,8 @@ import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.members.entity.Members;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,8 +32,8 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
             "AND m.paymentStatus != 'LEFT'")
     boolean existsByMemberInMatchingRoom(@Param("user") Members user);
 
-    List<MatchingRoom> findByMatchingRoomTypeAndMatchingRoomStatus(MatchingRoomType type, MatchingRoomStatus status);
+    Page<MatchingRoom> findByMatchingRoomTypeAndMatchingRoomStatus(MatchingRoomType type, MatchingRoomStatus status, Pageable pageable);
 
-    @Query("SELECT m.matchingRoom FROM MemberMatchingRoomChargingInfo m WHERE m.members = :user")
-    List<MatchingRoom> findByMemberInMatchingRoom(@Param("user") Members user);
+    @Query("SELECT m.matchingRoom FROM MemberMatchingRoomChargingInfo m WHERE m.members = :user ORDER BY m.matchingRoom.id DESC")
+    Page<MatchingRoom> findByMemberInMatchingRoom(@Param("user") Members user, Pageable pageable);
 }
