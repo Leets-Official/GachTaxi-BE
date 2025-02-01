@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record ManualMatchingRequest(
-        @NotNull
-        Long userId,
-
         @NotBlank
         String title,
 
