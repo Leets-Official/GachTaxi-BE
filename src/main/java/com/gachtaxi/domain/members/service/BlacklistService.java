@@ -9,6 +9,7 @@ import com.gachtaxi.domain.members.exception.BlacklistAlreadyExistsException;
 import com.gachtaxi.domain.members.exception.BlacklistNotFoundException;
 import com.gachtaxi.domain.members.exception.BlacklistRequesterEqualsReceiverException;
 import com.gachtaxi.domain.members.repository.BlacklistsRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ public class BlacklistService {
   private final BlacklistsRepository blacklistsRepository;
   private final MemberService memberService;
 
+  @Transactional
   public BlacklistPostResponse save(Long requesterId, Long receiverId) {
     Members requester = this.memberService.findById(requesterId);
     Members receiver = this.memberService.findById(receiverId);
@@ -40,6 +42,7 @@ public class BlacklistService {
     return BlacklistPostResponse.of(blacklists);
   }
 
+  @Transactional
   public void delete(Long requesterId, Long receiverId) {
     Members requester = this.memberService.findById(requesterId);
     Members receiver = this.memberService.findById(receiverId);
