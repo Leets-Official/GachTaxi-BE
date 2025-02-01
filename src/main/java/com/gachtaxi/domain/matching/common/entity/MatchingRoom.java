@@ -65,6 +65,7 @@ public class MatchingRoom extends BaseEntity {
   private MatchingRoomStatus matchingRoomStatus;
 
   @OneToOne
+  @Getter
   private ChattingRoom chattingRoom;
 
   public boolean isActive() {

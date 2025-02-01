@@ -32,12 +32,10 @@ public class AutoMatchingConsumer {
     try {
       log.info("[KAFKA CONSUMER] Received MatchRoomCreatedEvent: {}", event);
 
-      Long roomId = this.matchingRoomService.createMatchingRoom(event);
-
       this.sseService.sendToClient(
           event.roomMasterId(),
           "MATCH_ROOM_CREATED",
-          MatchRoomCreatedEvent.of(event, roomId)
+          this.matchingRoomService.createMatchingRoom(event)
       );
 
       ack.acknowledge();
