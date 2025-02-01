@@ -19,8 +19,9 @@ public enum ResponseMessage {
   CREATE_MANUAL_MATCHING_ROOM_SUCCESS("수동 매칭방 생성에 성공했습니다."),
   JOIN_MANUAL_MATCHING_ROOM_SUCCESS("수동 매칭방 참여에 성공했습니다."),
   LEAVE_MANUAL_MATCHING_ROOM_SUCCESS("매칭방 퇴장이 완료되었습니다."),
-  CONVERT_TO_AUTO_MATCHING_SUCCESS("자동 매칭으로 전환되었습니다.");
-
+  CONVERT_TO_AUTO_MATCHING_SUCCESS("자동 매칭으로 전환되었습니다."),
+  GET_MANUAL_MATCHING_LIST_SUCCESS("수동 매칭방 조회에 성공했습니다."),
+  GET_MY_MATCHING_LIST_SUCCESS("내 매칭방 조회에 성공했습니다.");
 
   private final String message;
 }
