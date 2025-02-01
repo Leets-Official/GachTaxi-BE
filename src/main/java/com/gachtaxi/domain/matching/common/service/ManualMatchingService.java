@@ -38,8 +38,8 @@ public class ManualMatchingService {
       수동 매칭 방 생성
     */
     @Transactional
-    public Long createManualMatchingRoom(ManualMatchingRequest request) {
-        Members roomMaster = memberService.findById(request.userId());
+    public Long createManualMatchingRoom(Long userId, ManualMatchingRequest request) {
+        Members roomMaster = memberService.findById(userId);
 
         if (matchingRoomRepository.existsByMemberInMatchingRoom(roomMaster)) {
             throw new DuplicatedMatchingRoomException();
