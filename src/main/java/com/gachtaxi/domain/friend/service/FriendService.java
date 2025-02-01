@@ -14,6 +14,7 @@ import com.gachtaxi.domain.friend.mapper.FriendsMapper;
 import com.gachtaxi.domain.friend.repository.FriendRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
+import com.gachtaxi.domain.notification.entity.payload.FriendRequestPayload;
 import com.gachtaxi.domain.notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.gachtaxi.domain.notification.entity.enums.NotificationType.FRIEND_REQUEST;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,7 +37,8 @@ public class FriendService {
     private final NotificationService notificationService;
     private final MemberService memberService;
 
-    public static final String FRIEND_REQUEST_MESSAGE = "%s 님이 친구 요청을 보냈어요.";
+    public static final String FRIEND_REQUEST_CONTENT = "%s 님이 친구 요청을 보냈어요.";
+    public static final String FRIEND_REQUEST_TITLE = "친구 요청";
 
     @Transactional
     public void sendFriendRequest(Long senderId, FriendRequestDto dto) {
@@ -45,11 +49,13 @@ public class FriendService {
         checkDuplicatedFriendShip(senderId, receiver.getId());
         friendRepository.save(Friends.of(sender, receiver));
 
-//        notificationService.sendWithPush(
-//                sender.getId(),
-//                receiver,
-//                FRIEND_REQUEST,
-//                String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
+        notificationService.sendWithPush(
+                sender.getId(),
+                receiver,
+                FRIEND_REQUEST,
+                FRIEND_REQUEST_TITLE,
+                String.format(FRIEND_REQUEST_CONTENT, sender.getNickname()),
+                FriendRequestPayload.from(senderId));
     }
 
     public FriendsSliceResponse findFriendsListByMemberId(Long memberId, int pageNum, int pageSize) {
