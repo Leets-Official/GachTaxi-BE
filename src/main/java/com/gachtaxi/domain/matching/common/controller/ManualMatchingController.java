@@ -8,6 +8,7 @@ import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.LEA
 
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingJoinRequest;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
+import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomListResponse;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.service.ManualMatchingService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -15,8 +16,8 @@ import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -57,15 +58,15 @@ public class ManualMatchingController {
 
     @Operation(summary = "수동 매칭방 조회")
     @GetMapping("/list")
-    public ApiResponse<List<MatchingRoomResponse>> getManualMatchingList() {
-        List<MatchingRoomResponse> rooms = manualMatchingService.getManualMatchingList();
-        return ApiResponse.response(HttpStatus.OK, GET_MANUAL_MATCHING_LIST_SUCCESS.getMessage(), rooms);
+    public ApiResponse<MatchingRoomListResponse> getManualMatchingList(int pageNumber, int pageSize) {
+        Page<MatchingRoomResponse> rooms = manualMatchingService.getManualMatchingList(pageNumber, pageSize);
+        return ApiResponse.response(HttpStatus.OK, GET_MANUAL_MATCHING_LIST_SUCCESS.getMessage(), MatchingRoomListResponse.of(rooms));
     }
 
     @Operation(summary = "나의 매칭(수동) 조회")
     @GetMapping("/my-list")
-    public ApiResponse<List<MatchingRoomResponse>> getMyMatchingList(@CurrentMemberId Long userId) {
-        List<MatchingRoomResponse> rooms = manualMatchingService.getMyMatchingList(userId);
-        return ApiResponse.response(HttpStatus.OK, GET_MY_MATCHING_LIST_SUCCESS.getMessage(), rooms);
+    public ApiResponse<MatchingRoomListResponse> getMyMatchingList(@CurrentMemberId Long userId, int pageNumber, int pageSize) {
+        Page<MatchingRoomResponse> rooms = manualMatchingService.getMyMatchingList(userId, pageNumber, pageSize);
+        return ApiResponse.response(HttpStatus.OK, GET_MY_MATCHING_LIST_SUCCESS.getMessage(), MatchingRoomListResponse.of(rooms));
     }
 }
