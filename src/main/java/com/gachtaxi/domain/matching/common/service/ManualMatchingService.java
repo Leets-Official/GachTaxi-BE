@@ -13,7 +13,6 @@ import com.gachtaxi.domain.matching.common.exception.MemberNotInMatchingRoomExce
 import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
-import com.gachtaxi.domain.matching.common.repository.MatchingRoomTagInfoRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -33,7 +32,6 @@ public class ManualMatchingService {
     private final MemberService memberService;
     private final MatchingRoomService matchingRoomService;
     private final MatchingRoomRepository matchingRoomRepository;
-    private final MatchingRoomTagInfoRepository matchingRoomTagInfoRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
     /*
