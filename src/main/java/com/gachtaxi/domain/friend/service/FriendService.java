@@ -1,7 +1,9 @@
 package com.gachtaxi.domain.friend.service;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
+import com.gachtaxi.domain.friend.dto.response.FriendsPageableResponse;
 import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
+import com.gachtaxi.domain.friend.dto.response.FriendsSliceResponse;
 import com.gachtaxi.domain.friend.entity.Friends;
 import com.gachtaxi.domain.friend.entity.enums.FriendStatus;
 import com.gachtaxi.domain.friend.exception.FriendNotExistsException;
@@ -20,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -48,12 +52,18 @@ public class FriendService {
 //                String.format(FRIEND_REQUEST_MESSAGE, sender.getNickname()));
     }
 
-    public Slice<FriendsResponseDto> findFriendsListByMemberId(Long memberId, int pageNum, int pageSize) {
+    public FriendsSliceResponse findFriendsListByMemberId(Long memberId, int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
 
         Slice<Friends> friendsList = friendRepository.findFriendsListByMemberId(memberId, pageable);
 
-        return friendsList.map(f -> FriendsMapper.toResponseDto(f, memberId));
+        List<FriendsResponseDto> friendsListDto = friendsList
+                .map(f -> FriendsMapper.toResponseDto(f, memberId))
+                .toList();
+
+        FriendsPageableResponse pageableResponse = FriendsPageableResponse.from(friendsList);
+
+        return FriendsSliceResponse.of(friendsListDto, pageableResponse);
     }
 
     @Transactional
