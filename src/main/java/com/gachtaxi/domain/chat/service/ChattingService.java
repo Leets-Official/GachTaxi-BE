@@ -53,8 +53,9 @@ public class ChattingService {
         String senderName = getSessionAttribute(accessor, CHAT_USER_NAME, String.class);
 
         long unreadCount = getUnreadCount(roomId);
+        String profilePicture = chattingRedisService.getProfilePicture(roomId, userId);
 
-        ChattingMessage chattingMessage = ChattingMessage.of(request, roomId, userId, senderName, unreadCount);
+        ChattingMessage chattingMessage = ChattingMessage.of(request, roomId, userId, senderName, unreadCount, profilePicture);
 
         chattingMessageRepository.save(chattingMessage);
 
@@ -99,7 +100,7 @@ public class ChattingService {
     }
 
     private Slice<ChattingMessage> loadInitialMessage(long roomId, ChattingParticipant chattingParticipant, int pageSize) {
-        int chattingCount = chattingMessageRepository.countAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getLastReadAt());
+        int chattingCount = chattingMessageRepository.countAllByRoomIdAndTimeStampAfterOrderByTimeStampDesc(roomId, chattingParticipant.getDisconnectedAt());
 
         int effectivePageSize = Math.max(chattingCount, pageSize);
         Pageable pageable = PageRequest.of(0, effectivePageSize, Sort.by(Sort.Direction.DESC, "timeStamp"));
