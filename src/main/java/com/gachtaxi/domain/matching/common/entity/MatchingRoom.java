@@ -120,10 +120,12 @@ public class MatchingRoom extends BaseEntity {
             .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
             .build();
   }
+
   public boolean containsTag(Tags tag) {
     return this.matchingRoomTagInfo.stream()
             .anyMatch(tagInfo -> tagInfo.matchesTag(tag));
   }
+
   public FindRoomResult toFindRoomResult() {
     return FindRoomResult.builder()
             .roomId(this.getId())
