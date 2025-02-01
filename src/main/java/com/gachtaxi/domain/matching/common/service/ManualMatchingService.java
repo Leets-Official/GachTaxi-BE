@@ -79,7 +79,7 @@ public class ManualMatchingService {
             throw new NotActiveMatchingRoomException();
         }
 
-        if (matchingRoom.getRoomMaster().equals(user)) {
+        if (user.isRoomMaster(matchingRoom)) {
             throw new RoomMasterCantJoinException();
         }
 
