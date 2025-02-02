@@ -92,4 +92,10 @@ public class NotificationService {
             throw new MemberNotMatchException();
         }
     }
+
+    public boolean hasReceivedMatchingInvite(Long userId) {
+        return notificationRepository.existsByReceiverIdAndType(
+                userId, NotificationType.MATCH_INVITE
+        );
+    }
 }
