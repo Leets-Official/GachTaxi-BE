@@ -116,12 +116,13 @@ public class MatchingRoom extends BaseEntity {
         .build();
   }
 
-  public static MatchingRoom manualOf(Members roomMaster, String title, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
+  public static MatchingRoom manualOf(Members roomMaster, Route route, String title, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
     return MatchingRoom.builder()
             .capacity(4)
             .roomMaster(roomMaster)
             .title(title)
             .description(description)
+            .route(route)
             .totalCharge(totalCharge)
             .departureTime(departureTime)
             .matchingRoomType(MatchingRoomType.MANUAL)
