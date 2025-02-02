@@ -68,7 +68,7 @@ public class ManualMatchingService {
                 request.departureTime()
         );
 
-        MatchingRoom savedMatchingRoom = matchingRoomService.saveRoute(matchingRoom);
+        MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
