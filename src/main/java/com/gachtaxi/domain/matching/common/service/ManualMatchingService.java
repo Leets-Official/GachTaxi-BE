@@ -39,6 +39,7 @@ public class ManualMatchingService {
 
     private final MemberService memberService;
     private final MatchingRoomService matchingRoomService;
+    private final MatchingInvitationService matchingInvitationService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
@@ -69,6 +70,8 @@ public class ManualMatchingService {
         );
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
+
+        matchingInvitationService.sendMatchingInvitation(roomMaster, request.friendNicknames());
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
