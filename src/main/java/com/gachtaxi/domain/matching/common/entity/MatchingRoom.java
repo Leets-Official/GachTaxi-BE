@@ -3,6 +3,7 @@ package com.gachtaxi.domain.matching.common.entity;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
+import com.gachtaxi.domain.matching.common.exception.MatchingRoomAlreadyFullException;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.members.entity.Members;
@@ -152,5 +153,13 @@ public class MatchingRoom extends BaseEntity {
     return this.matchingRoomTagInfo.stream()
             .map(tagInfo -> tagInfo.getTags().name())
             .toList();
+  }
+
+  public void addMember(Members member) {
+    if (this.getCurrentMemberCount() >= this.capacity) {
+      throw new MatchingRoomAlreadyFullException();
+    }
+    MemberMatchingRoomChargingInfo memberInfo = MemberMatchingRoomChargingInfo.notPayedOf(this, member);
+    this.memberMatchingRoomChargingInfo.add(memberInfo);
   }
 }
