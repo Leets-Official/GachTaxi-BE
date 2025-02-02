@@ -6,6 +6,7 @@ import com.gachtaxi.domain.friend.dto.response.FriendsSliceResponse;
 import com.gachtaxi.domain.friend.service.FriendService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping
+    @Operation(summary = "친구 요청을 보내는 API 받는 이의 nickName을 입력해주세요")
     public ApiResponse<Void> sendFriendRequest(
             @CurrentMemberId Long senderId,
             @RequestBody FriendRequestDto dto
@@ -30,6 +32,7 @@ public class FriendController {
 
     // 나의 친구를 반환하는 API
     @GetMapping
+    @Operation(summary = "친구 목록을 반환하는 API입니다. (무한스크롤)")
     public ApiResponse<FriendsSliceResponse> getFriendsList(
             @CurrentMemberId Long memberId,
             @RequestParam int pageNum,
@@ -40,6 +43,7 @@ public class FriendController {
     }
 
     @PatchMapping
+    @Operation(summary = "친구 요청을 수락하는 API입니다.")
     public ApiResponse<Void> acceptFriendRequest(
             @CurrentMemberId Long currentId,
             @RequestBody FriendUpdateDto dto
@@ -49,6 +53,7 @@ public class FriendController {
     }
 
     @DeleteMapping("/{memberId}")
+    @Operation(summary = "친구 요청 거절 및 친구를 삭제하는 API입니다.")
     public ApiResponse<Void> deleteFriend(
             @CurrentMemberId Long currentId,
             @PathVariable Long memberId
