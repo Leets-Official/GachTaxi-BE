@@ -4,7 +4,6 @@ import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
-import com.gachtaxi.domain.matching.common.entity.Route;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
@@ -19,7 +18,6 @@ import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException
 import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
-import com.gachtaxi.domain.matching.common.repository.RouteRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
 import jakarta.transaction.Transactional;
@@ -43,7 +41,6 @@ public class ManualMatchingService {
     private final MatchingRoomService matchingRoomService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
-    private final RouteRepository routeRepository;
 
     /*
       수동 매칭 방 생성
@@ -60,20 +57,17 @@ public class ManualMatchingService {
             throw new NotEqualStartAndDestinationException();
         }
 
-        Route route = routeRepository.findByStartLocationNameAndEndLocationName(request.departure(), request.destination())
-                .orElseGet(() -> routeRepository.save(Route.of(request.departure(), request.destination())));
-
-        MatchingRoom matchingRoom = MatchingRoom.manualOf(
+        MatchingRoom existingRoom = matchingRoomRepository.findByDepartureAndDestination(request.departure(), request.destination())
+                .orElseGet(() -> MatchingRoom.manualOf(
                 roomMaster,
-                route,
                 request.title(),
                 request.description(),
                 4,
                 request.totalCharge(),
                 request.departureTime()
-        );
+        ));
 
-        MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
+        MatchingRoom savedMatchingRoom = matchingRoomRepository.save(existingRoom);
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
