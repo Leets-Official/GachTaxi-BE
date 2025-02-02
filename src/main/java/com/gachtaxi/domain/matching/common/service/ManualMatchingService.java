@@ -4,6 +4,7 @@ import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
+import com.gachtaxi.domain.matching.common.entity.Route;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
@@ -57,17 +58,19 @@ public class ManualMatchingService {
             throw new NotEqualStartAndDestinationException();
         }
 
-        MatchingRoom existingRoom = matchingRoomRepository.findByDepartureAndDestination(request.departure(), request.destination())
-                .orElseGet(() -> MatchingRoom.manualOf(
+        Route route = matchingRoomService.saveRoute(request.departure(), request.destination());
+
+        MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
+                route,
                 request.title(),
                 request.description(),
                 4,
                 request.totalCharge(),
                 request.departureTime()
-        ));
+        );
 
-        MatchingRoom savedMatchingRoom = matchingRoomRepository.save(existingRoom);
+        MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
