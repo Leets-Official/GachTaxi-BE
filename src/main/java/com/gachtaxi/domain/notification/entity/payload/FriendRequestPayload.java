@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 public class FriendRequestPayload extends NotificationPayload {
 
     @Builder.Default
-    private FriendStatus friendStatus = FriendStatus.PENDING;
+    private FriendStatus status = FriendStatus.PENDING;
 
     private Long senderId;
 
