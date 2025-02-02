@@ -1,6 +1,5 @@
 package com.gachtaxi.domain.matching.common.entity;
 
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -23,4 +22,11 @@ public class Route extends BaseEntity {
   private double endLongitude;
   private double endLatitude;
   private String endLocationName;
+
+  public static Route of(String startLocation, String endLocation) {
+    return Route.builder()
+            .startLocationName(startLocation)
+            .endLocationName(endLocation)
+            .build();
+  }
 }
