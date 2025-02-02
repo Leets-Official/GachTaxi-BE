@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Long> {
-    Optional<Route> findByStartLocationNameAndEndLocationName(String startLocation, String endLocation);
+    Optional<Route> findByStartLocationNameAndEndLocationName(String departure, String destination);
 }
