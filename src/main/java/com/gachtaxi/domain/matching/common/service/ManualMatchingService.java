@@ -9,6 +9,7 @@ import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.exception.DuplicatedMatchingRoomException;
+import com.gachtaxi.domain.matching.common.exception.NotEqualStartAndDestinationException;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
 import com.gachtaxi.domain.matching.common.exception.MemberAlreadyJoinedException;
@@ -18,6 +19,7 @@ import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException
 import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
+import com.gachtaxi.domain.matching.common.repository.RouteRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
 import jakarta.transaction.Transactional;
@@ -41,6 +43,7 @@ public class ManualMatchingService {
     private final MatchingRoomService matchingRoomService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
+    private final RouteRepository routeRepository;
 
     /*
       수동 매칭 방 생성
@@ -53,7 +56,12 @@ public class ManualMatchingService {
             throw new DuplicatedMatchingRoomException();
         }
 
-        Route route = matchingRoomService.saveRoute(request.departure(), request.destination());
+        if (request.departure().equals(request.destination())) {
+            throw new NotEqualStartAndDestinationException();
+        }
+
+        Route route = routeRepository.findByStartLocationNameAndEndLocationName(request.departure(), request.destination())
+                .orElseGet(() -> routeRepository.save(Route.of(request.departure(), request.destination())));
 
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
