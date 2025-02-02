@@ -28,7 +28,10 @@ public record ManualMatchingRequest(
         int totalCharge,
 
         @Schema(description = "매칭 태그")
-        List<String> criteria
+        List<String> criteria,
+
+        @Schema(description = "초대할 친구 닉네임 리스트")
+        List<String> friendNicknames
 ) {
     public List<Tags> getCriteria() {
         return this.criteria.stream()
