@@ -84,6 +84,13 @@ public class MatchingRoomService {
     return this.routeRepository.save(route);
   }
   public Route saveRoute(String departure, String destination) {
+
+    List<Route> existingRoutes = routeRepository.findByStartLocationNameAndEndLocationName(departure, destination);
+
+    if (!existingRoutes.isEmpty()) {
+      return existingRoutes.get(0);
+    }
+
     Route route = Route.builder()
             .startLocationName(departure)
             .endLocationName(destination)
