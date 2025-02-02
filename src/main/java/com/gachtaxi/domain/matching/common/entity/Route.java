@@ -22,11 +22,4 @@ public class Route extends BaseEntity {
   private double endLongitude;
   private double endLatitude;
   private String endLocationName;
-
-  public static Route of(String startLocation, String endLocation) {
-    return Route.builder()
-            .startLocationName(startLocation)
-            .endLocationName(endLocation)
-            .build();
-  }
 }
