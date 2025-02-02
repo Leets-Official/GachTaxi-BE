@@ -83,19 +83,7 @@ public class MatchingRoomService {
             .build();
     return this.routeRepository.save(route);
   }
-  public MatchingRoom saveRoute(MatchingRoom matchingRoom) {
 
-    String departure = matchingRoom.getDeparture();
-    String destination = matchingRoom.getDestination();
-
-    List<MatchingRoom> existingRooms = matchingRoomRepository.findByDepartureAndDestination(departure, destination);
-
-    if (!existingRooms.isEmpty()) {
-      return existingRooms.get(0);
-    }
-
-    return matchingRoomRepository.save(matchingRoom);
-  }
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {
     tags.forEach(tag -> this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag)));
   }

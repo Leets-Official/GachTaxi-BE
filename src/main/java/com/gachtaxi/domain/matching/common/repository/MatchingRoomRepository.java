@@ -36,6 +36,4 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
 
     @Query("SELECT m.matchingRoom FROM MemberMatchingRoomChargingInfo m WHERE m.members = :user ORDER BY m.matchingRoom.id DESC")
     Page<MatchingRoom> findByMemberInMatchingRoom(@Param("user") Members user, Pageable pageable);
-
-    List<MatchingRoom> findByDepartureAndDestination(String departure, String destination);
 }
