@@ -83,20 +83,18 @@ public class MatchingRoomService {
             .build();
     return this.routeRepository.save(route);
   }
-  public Route saveRoute(String departure, String destination) {
+  public MatchingRoom saveRoute(MatchingRoom matchingRoom) {
 
-    List<Route> existingRoutes = routeRepository.findByStartLocationNameAndEndLocationName(departure, destination);
+    String departure = matchingRoom.getDeparture();
+    String destination = matchingRoom.getDestination();
 
-    if (!existingRoutes.isEmpty()) {
-      return existingRoutes.get(0);
+    List<MatchingRoom> existingRooms = matchingRoomRepository.findByDepartureAndDestination(departure, destination);
+
+    if (!existingRooms.isEmpty()) {
+      return existingRooms.get(0);
     }
 
-    Route route = Route.builder()
-            .startLocationName(departure)
-            .endLocationName(destination)
-            .build();
-
-    return this.routeRepository.save(route);
+    return matchingRoomRepository.save(matchingRoom);
   }
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {
     tags.forEach(tag -> this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag)));
