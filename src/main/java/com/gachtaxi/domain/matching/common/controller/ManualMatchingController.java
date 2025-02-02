@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.controller;
 
+import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.ACCEPT_MATCHING_INVITE_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.CREATE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.GET_MANUAL_MATCHING_LIST_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.GET_MY_MATCHING_LIST_SUCCESS;
@@ -11,6 +12,7 @@ import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomListResponse;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.service.ManualMatchingService;
+import com.gachtaxi.domain.matching.common.service.MatchingInvitationService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "MANUAL", description = "수동매칭 API")
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ManualMatchingController {
 
     private final ManualMatchingService manualMatchingService;
+    private final MatchingInvitationService matchingInvitationService;
 
     @Operation(summary = "수동 매칭방 생성")
     @PostMapping("/creation")
@@ -47,6 +51,14 @@ public class ManualMatchingController {
     public ApiResponse<Void> joinManualMatchingRoom(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingJoinRequest request) {
         manualMatchingService.joinManualMatchingRoom(userId, request.roomId());
         return ApiResponse.response(HttpStatus.OK, JOIN_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
+    }
+
+    @Operation(summary = "수동 매칭 초대 수락")
+    @PostMapping("/invite/accept")
+    public ApiResponse<Void> acceptInvitation(@CurrentMemberId Long userId, @RequestParam Long matchingRoomId
+    ) {
+        matchingInvitationService.acceptInvitation(userId, matchingRoomId);
+        return ApiResponse.response(HttpStatus.OK, ACCEPT_MATCHING_INVITE_SUCCESS.getMessage());
     }
 
     @Operation(summary = "수동 매칭방 퇴장 (방 삭제 포함)")
