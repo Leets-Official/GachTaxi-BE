@@ -61,15 +61,16 @@ public class NotificationService {
         return NotificationInfoResponse.of(count, false);
     }
 
-    public void sendWithPush(Long senderId, Members receiver, NotificationType type, String title, String content, NotificationPayload payload) {
-        Notification notification = Notification.of(senderId, type, content, payload);
+    public void sendWithPush(Members receiver, NotificationType type, String title, String content, NotificationPayload payload) {
+        Notification notification = Notification.of(receiver.getId(), type, content, payload);
 
         notificationRepository.save(notification);
-        fcmService.sendNotification(receiver.getFcmToken(), title, notification.getContent());
+        // todo : 앱으로 마이그레이션 후 주석 해제
+//        fcmService.sendNotification(receiver.getFcmToken(), title, notification.getContent());
     }
 
-    public void sendWithOutPush(Long senderId, Members receiver, NotificationType type, String content, NotificationPayload payload) {
-        Notification notification = Notification.of(senderId, type, content, payload);
+    public void sendWithOutPush(Members receiver, NotificationType type, String content, NotificationPayload payload) {
+        Notification notification = Notification.of(receiver.getId(), type, content, payload);
 
         notificationRepository.save(notification);
     }
@@ -91,11 +92,5 @@ public class NotificationService {
         if (!notification.getReceiverId().equals(receiverId)) {
             throw new MemberNotMatchException();
         }
-    }
-
-    public boolean hasReceivedMatchingInvite(Long userId) {
-        return notificationRepository.existsByReceiverIdAndType(
-                userId, NotificationType.MATCH_INVITE
-        );
     }
 }
