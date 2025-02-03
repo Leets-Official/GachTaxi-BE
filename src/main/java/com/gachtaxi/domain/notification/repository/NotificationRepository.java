@@ -13,5 +13,5 @@ public interface NotificationRepository extends MongoRepository<Notification, Lo
 
     Slice<Notification> findAllByReceiverId(Long receiverId, Pageable pageable);
 
-    boolean existsByReceiverIdAndType(Long receiverId, NotificationType type);
+    int countByReceiverIdAndType(Long receiverId, NotificationType type);
 }

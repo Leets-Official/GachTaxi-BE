@@ -9,7 +9,9 @@ import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.domain.members.service.MemberService;
+import com.gachtaxi.domain.notification.entity.enums.NotificationType;
 import com.gachtaxi.domain.notification.entity.payload.MatchingInvitePayload;
+import com.gachtaxi.domain.notification.repository.NotificationRepository;
 import com.gachtaxi.domain.notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -24,6 +26,7 @@ public class MatchingInvitationService {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final MatchingRoomRepository matchingRoomRepository;
+    private final NotificationRepository notificationRepository;
 
     /*
       수동 매칭시 친구 초대
@@ -40,7 +43,6 @@ public class MatchingInvitationService {
 
         for (Members friend : friends) {
             notificationService.sendWithPush(
-                    sender.getId(),
                     friend,
                     MATCH_INVITE,
                     MATCHING_INVITE_TITLE,
@@ -59,7 +61,7 @@ public class MatchingInvitationService {
         MatchingRoom matchingRoom = matchingRoomRepository.findById(matchingRoomId)
                 .orElseThrow(NoSuchMatchingRoomException::new);
 
-        if (!notificationService.hasReceivedMatchingInvite(userId)) {
+        if (notificationRepository.countByReceiverIdAndType(userId, NotificationType.MATCH_INVITE) == 0) {
             throw new NoSuchInvitationException();
         }
 
