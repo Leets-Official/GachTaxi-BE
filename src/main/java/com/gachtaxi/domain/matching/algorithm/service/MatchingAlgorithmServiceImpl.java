@@ -73,16 +73,4 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
      */
     return Optional.empty();
   }
-
-  @Override
-  public Page<MatchingRoom> findMatchingRooms(int pageNumber, int pageSize) {
-
-    if (pageNumber < 0) {
-      throw new PageNotFoundException();
-    }
-
-    PageRequest pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-
-    return matchingRoomRepository.findAll(pageable);
-  }
 }
