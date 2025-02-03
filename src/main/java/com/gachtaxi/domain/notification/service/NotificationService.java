@@ -81,7 +81,7 @@ public class NotificationService {
         notificationRepository.deleteById(notificationId);
     }
 
-    private Notification find(String notificationId) {
+    public Notification find(String notificationId) {
         return notificationRepository.findById(notificationId)
                 .orElseThrow(NotificationNotFoundException::new);
     }
