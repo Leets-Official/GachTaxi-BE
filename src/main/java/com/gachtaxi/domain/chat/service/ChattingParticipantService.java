@@ -6,11 +6,14 @@ import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingParticipantNotFoundException;
+import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
 import com.gachtaxi.domain.chat.exception.DuplicateSubscribeException;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
+import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -25,8 +28,10 @@ public class ChattingParticipantService {
 
     private final ChattingParticipantRepository chattingParticipantRepository;
     private final ChattingMessageMongoRepository chattingMessageMongoRepository;
+    private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingRedisService chattingRedisService;
     private final RedisChatPublisher redisChatPublisher;
+    private final ChattingRoomService chattingRoomService;
 
     @Value("${chat.topic}")
     public String chatTopic;
@@ -84,5 +89,18 @@ public class ChattingParticipantService {
         ChatMessage chatMessage = ChatMessage.of(roomId, senderId, senderName, range, MessageType.READ);
 
         redisChatPublisher.publish(topic, chatMessage);
+    }
+
+    @Transactional
+    public void joinChattingRoom(Members user, Long chattingRoomId) {
+        ChattingRoom chattingRoom = chattingRoomRepository.findById(chattingRoomId)
+                .orElseThrow(ChattingRoomNotFoundException::new);
+
+        if (chattingParticipantRepository.findByChattingRoomAndMembers(chattingRoom, user).isPresent()) {
+            return;
+        }
+
+        ChattingParticipant chattingParticipant = ChattingParticipant.of(chattingRoom, user);
+        chattingParticipantRepository.save(chattingParticipant);
     }
 }
