@@ -70,7 +70,7 @@ public class ManualMatchingService {
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
 
-        matchingInvitationService.sendMatchingInvitation(roomMaster, request.getFriendNicknames());
+        matchingInvitationService.sendMatchingInvitation(roomMaster, request.getFriendNicknames(), savedMatchingRoom.getId());
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
