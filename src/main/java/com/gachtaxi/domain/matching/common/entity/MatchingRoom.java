@@ -49,11 +49,12 @@ public class MatchingRoom extends BaseEntity {
   @Setter
   private Members roomMaster;
 
-  @Column(name = "title", nullable = false)
+  @Column(name = "title")
   @Getter
   private String title;
 
   @Column(name = "description", nullable = false)
+  @Getter
   private String description;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -117,11 +118,10 @@ public class MatchingRoom extends BaseEntity {
         .build();
   }
 
-  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String title, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
+  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
     return MatchingRoom.builder()
             .capacity(4)
             .roomMaster(roomMaster)
-            .title(title)
             .description(description)
             .departure(departure)
             .destination(destination)
