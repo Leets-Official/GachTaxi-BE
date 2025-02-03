@@ -3,9 +3,13 @@ package com.gachtaxi.domain.matching.common.service;
 import static com.gachtaxi.domain.notification.entity.enums.NotificationType.MATCH_INVITE;
 
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
+import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
+import com.gachtaxi.domain.matching.common.exception.AlreadyInMatchingRoomException;
+import com.gachtaxi.domain.matching.common.exception.MatchingRoomAlreadyFullException;
 import com.gachtaxi.domain.matching.common.exception.NoSuchInvitationException;
 import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
+import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -26,6 +30,7 @@ public class MatchingInvitationService {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final MatchingRoomRepository matchingRoomRepository;
+    private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
     private final NotificationRepository notificationRepository;
 
     /*
@@ -65,7 +70,15 @@ public class MatchingInvitationService {
             throw new NoSuchInvitationException();
         }
 
-        matchingRoom.addMember(member);
-        matchingRoomRepository.save(matchingRoom);
+        if (matchingRoom.getCurrentMemberCount() >= matchingRoom.getCapacity()) {
+            throw new MatchingRoomAlreadyFullException();
+        }
+
+        if (matchingRoomRepository.existsByMemberInMatchingRoom(member)) {
+            throw new AlreadyInMatchingRoomException();
+        }
+
+        MemberMatchingRoomChargingInfo memberInfo = MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, member);
+        memberMatchingRoomChargingInfoRepository.save(memberInfo);
     }
 }
