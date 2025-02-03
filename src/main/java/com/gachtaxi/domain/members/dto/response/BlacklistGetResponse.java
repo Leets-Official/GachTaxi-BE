@@ -4,6 +4,7 @@ import com.gachtaxi.domain.members.entity.Blacklists;
 import java.util.List;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 @Builder
 public record BlacklistGetResponse(
@@ -13,7 +14,7 @@ public record BlacklistGetResponse(
     Integer numberOfElements,
     Boolean last
 ) {
-  public static BlacklistGetResponse of(Page<Blacklists> blacklistsPage) {
+  public static BlacklistGetResponse of(Slice<Blacklists> blacklistsPage) {
     List<BlacklistInfo> responseList = blacklistsPage.stream()
         .map(BlacklistInfo::of)
         .toList();

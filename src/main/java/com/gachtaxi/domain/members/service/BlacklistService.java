@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class BlacklistService {
 
     Pageable pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Direction.ASC, "receiver.nickname"));
 
-    Page<Blacklists> blacklistsPage = this.blacklistsRepository.findAllByRequester(requester, pageRequest);
+    Slice<Blacklists> blacklistsPage = this.blacklistsRepository.findAllByRequester(requester, pageRequest);
 
     return BlacklistGetResponse.of(blacklistsPage);
   }
