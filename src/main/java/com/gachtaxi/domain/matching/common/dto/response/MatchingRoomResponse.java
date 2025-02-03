@@ -12,7 +12,8 @@ public record MatchingRoomResponse(
         LocalDateTime departureTime,
         int maxCapacity,
         int currentMembers,
-        List<String> tags
+        List<String> tags,
+        Long chattingRoomId
 ) {
     public static MatchingRoomResponse from(MatchingRoom matchingRoom) {
         return new MatchingRoomResponse(
@@ -23,7 +24,8 @@ public record MatchingRoomResponse(
                 matchingRoom.getDepartureTime(),
                 matchingRoom.getCapacity(),
                 matchingRoom.getCurrentMemberCount(),
-                matchingRoom.getTags()
+                matchingRoom.getTags(),
+                matchingRoom.getChattingRoomId()
         );
     }
 }
