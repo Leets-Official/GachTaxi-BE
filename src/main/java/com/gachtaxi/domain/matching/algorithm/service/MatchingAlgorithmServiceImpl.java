@@ -54,7 +54,7 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
      */
     matchingRooms = matchingRooms.stream()
         .filter(MatchingRoom::isActive)
-        .filter(room -> !this.blacklistService.isBlacklistInMatchingRoom(userId, room))
+        .filter(room -> !this.blacklistService.isBlacklistInMatchingRoom(user, room))
         .toList();
 
     /*

@@ -64,9 +64,7 @@ public class BlacklistService {
     return BlacklistGetResponse.of(blacklistsPage);
   }
 
-  public boolean isBlacklistInMatchingRoom(Long requesterId, MatchingRoom matchingRoom) {
-    Members requester = this.memberService.findById(requesterId);
-
+  public boolean isBlacklistInMatchingRoom(Members requester, MatchingRoom matchingRoom) {
     boolean existBlacklist = matchingRoom.getMemberMatchingRoomChargingInfo().stream()
         .anyMatch(memberMatchingRoomChargingInfo -> this.blacklistsRepository.existsByRequesterAndReceiver(
                 requester, memberMatchingRoomChargingInfo.getMembers()));
