@@ -1,6 +1,8 @@
 package com.gachtaxi.domain.members.controller;
 
 import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
+import com.gachtaxi.domain.members.dto.request.MemberInfoRequestDto;
+import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
@@ -8,12 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static com.gachtaxi.domain.members.controller.ResponseMessage.FCM_TOKEN_UPDATE_SUCCESS;
+import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "MEMBER")
@@ -31,5 +30,20 @@ public class MemberController {
         memberService.updateFcmToken(memberId, request);
 
         return ApiResponse.response(OK, FCM_TOKEN_UPDATE_SUCCESS.getMessage());
+    }
+
+    @GetMapping("/info")
+    public ApiResponse<MemberResponseDto> memberInfoDetails(@CurrentMemberId Long currentId) {
+        MemberResponseDto response = memberService.getMember(currentId);
+        return ApiResponse.response(OK, MEMBER_INFO_RESPONSE.getMessage(), response);
+    }
+
+    @PatchMapping("/info")
+    public ApiResponse<MemberResponseDto> memberInfoModify(
+            @CurrentMemberId Long currentId,
+            @RequestBody MemberInfoRequestDto dto
+    ) {
+        MemberResponseDto response = memberService.updateMemberInfo(currentId, dto);
+        return ApiResponse.response(OK, MEMBER_INFO_UPDATE.getMessage(), response);
     }
 }

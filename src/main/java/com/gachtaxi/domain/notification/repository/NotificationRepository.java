@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface NotificationRepository extends MongoRepository<Notification, Long> {
+public interface NotificationRepository extends MongoRepository<Notification, String> {
 
     Integer countAllByReceiverIdAndStatus(Long receiverId, NotificationStatus status);
 

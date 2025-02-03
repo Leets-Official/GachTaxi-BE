@@ -75,18 +75,18 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    public void delete(Long receiverId, Long notificationId) {
+    public void delete(Long receiverId, String notificationId) {
         validateMember(receiverId, notificationId);
 
         notificationRepository.deleteById(notificationId);
     }
 
-    private Notification find(Long notificationId) {
+    private Notification find(String notificationId) {
         return notificationRepository.findById(notificationId)
                 .orElseThrow(NotificationNotFoundException::new);
     }
 
-    private void validateMember(long receiverId, long notificationId) {
+    private void validateMember(long receiverId, String notificationId) {
         Notification notification = find(notificationId);
 
         if (!notification.getReceiverId().equals(receiverId)) {
