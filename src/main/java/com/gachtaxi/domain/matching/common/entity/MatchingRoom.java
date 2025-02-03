@@ -76,6 +76,10 @@ public class MatchingRoom extends BaseEntity {
   @Getter
   private String destination;
 
+  @Column(name = "chatting_room_id")
+  @Getter
+  private Long chattingRoomId;
+
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
@@ -153,5 +157,9 @@ public class MatchingRoom extends BaseEntity {
     return this.matchingRoomTagInfo.stream()
             .map(tagInfo -> tagInfo.getTags().name())
             .toList();
+  }
+
+  public void setChattingRoomId(Long chattingRoomId) {
+    this.chattingRoomId = chattingRoomId;
   }
 }
