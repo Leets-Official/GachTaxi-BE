@@ -86,6 +86,11 @@ public class MemberService {
                 .orElseThrow(MemberNotFoundException::new);
     }
 
+    public Members findByNickname(String nickname) {
+        return memberRepository.findByNicknameAndStatus(nickname, ACTIVE)
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
     private void checkDuplicatedStudentNumber(Long studentNumber) {
         memberRepository.findByStudentNumber(studentNumber).ifPresent(m -> {
             throw new DuplicatedStudentNumberException();
