@@ -1,25 +1,24 @@
 package com.gachtaxi.global.auth.jwt.filter;
 
+import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.JWT_TOKEN_EXPIRED;
+import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.JWT_TOKEN_INVALID;
+import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.JWT_TOKEN_NOT_FOUND;
+
 import com.gachtaxi.global.auth.jwt.user.JwtUserDetails;
 import com.gachtaxi.global.auth.jwt.util.JwtExtractor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import static com.gachtaxi.global.auth.jwt.exception.JwtErrorMessage.*;
-
-@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -52,14 +51,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         saveAuthentcation(accessToken);
+
         filterChain.doFilter(request, response);
     }
 
     private void saveAuthentcation(String token) {
         Long id = jwtExtractor.getId(token);
         String email = jwtExtractor.getEmail(token);
-        String role = jwtExtractor.getRole(token);
-
+        String role = new StringBuilder().append("ROLE_").append(jwtExtractor.getRole(token)).toString();
+        
         UserDetails userDetails = JwtUserDetails.of(id, email, role);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
