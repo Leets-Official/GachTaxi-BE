@@ -6,7 +6,7 @@ import java.util.List;
 
 public record MatchingRoomResponse(
         Long roomId,
-        String title,
+        String description,
         String departure,
         String destination,
         LocalDateTime departureTime,
@@ -17,7 +17,7 @@ public record MatchingRoomResponse(
     public static MatchingRoomResponse from(MatchingRoom matchingRoom) {
         return new MatchingRoomResponse(
                 matchingRoom.getId(),
-                matchingRoom.getTitle(),
+                matchingRoom.getDescription(),
                 matchingRoom.getDeparture(),
                 matchingRoom.getDestination(),
                 matchingRoom.getDepartureTime(),

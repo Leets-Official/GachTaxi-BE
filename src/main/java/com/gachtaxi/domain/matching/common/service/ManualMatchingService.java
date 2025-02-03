@@ -62,7 +62,6 @@ public class ManualMatchingService {
                 roomMaster,
                 request.departure(),
                 request.destination(),
-                request.title(),
                 request.description(),
                 4,
                 request.totalCharge(),
