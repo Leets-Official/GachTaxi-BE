@@ -55,7 +55,7 @@ public class ManualMatchingController {
 
     @Operation(summary = "수동 매칭 초대 수락")
     @PostMapping("/invite/accept")
-    public ApiResponse<Void> acceptInvitation(@RequestParam Long userId, @RequestParam Long matchingRoomId, @RequestParam String notificationId
+    public ApiResponse<Void> acceptInvitation(@CurrentMemberId Long userId, @RequestParam Long matchingRoomId, @RequestParam String notificationId
     ) {
         matchingInvitationService.acceptInvitation(userId, matchingRoomId, notificationId);
         return ApiResponse.response(OK, ACCEPT_MATCHING_INVITE_SUCCESS.getMessage());
