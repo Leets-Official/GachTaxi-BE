@@ -54,23 +54,23 @@ public class ManualMatchingService {
             throw new DuplicatedMatchingRoomException();
         }
 
-        if (request.departure().equals(request.destination())) {
+        if (request.getDeparture().equals(request.getDestination())) {
             throw new NotEqualStartAndDestinationException();
         }
 
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
-                request.departure(),
-                request.destination(),
+                request.getDeparture(),
+                request.getDestination(),
                 request.description(),
                 4,
-                request.totalCharge(),
+                request.getTotalCharge(),
                 request.departureTime()
         );
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
 
-        matchingInvitationService.sendMatchingInvitation(roomMaster, request.friendNicknames());
+        matchingInvitationService.sendMatchingInvitation(roomMaster, request.getFriendNicknames());
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
