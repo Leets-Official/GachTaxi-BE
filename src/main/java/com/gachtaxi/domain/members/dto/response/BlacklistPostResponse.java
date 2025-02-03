@@ -7,7 +7,6 @@ public record BlacklistPostResponse(
     Long receiverId,
     Long blacklistId
 ) {
-
   public static BlacklistPostResponse of (Blacklists blacklists) {
     return new BlacklistPostResponse(
         blacklists.getRequester().getId(),

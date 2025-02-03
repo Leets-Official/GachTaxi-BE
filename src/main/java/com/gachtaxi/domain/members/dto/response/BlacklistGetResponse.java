@@ -13,7 +13,6 @@ public record BlacklistGetResponse(
     Integer numberOfElements,
     Boolean last
 ) {
-
   public static BlacklistGetResponse of(Page<Blacklists> blacklistsPage) {
     List<BlacklistInfo> responseList = blacklistsPage.stream()
         .map(BlacklistInfo::of)
