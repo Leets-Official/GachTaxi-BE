@@ -30,7 +30,7 @@ public class Members extends BaseEntity {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname", unique = true)
     private String nickname;
 
     @Column(name = "real_name")
