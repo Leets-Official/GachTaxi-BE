@@ -54,9 +54,11 @@ public class BlacklistController {
   @GetMapping
   public ApiResponse<BlacklistGetResponse> getAllBlacklist(
       @CurrentMemberId Long requesterId,
-      @RequestParam int pageNum) {
+      @RequestParam int pageNum,
+      @RequestParam int pageSize
+      ) {
     BlacklistGetResponse blacklistPage = this.blacklistService.findBlacklistPage(requesterId,
-        pageNum);
+        pageNum, pageSize);
 
     return ApiResponse.response(OK, BLACKLIST_FIND_ALL_SUCCESS.getMessage(), blacklistPage);
   }

@@ -22,8 +22,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BlacklistService {
 
-  private static final int PAGE_SIZE = 10;
-
   private final BlacklistsRepository blacklistsRepository;
   private final MemberService memberService;
 
@@ -56,10 +54,10 @@ public class BlacklistService {
     this.blacklistsRepository.delete(blacklists);
   }
 
-  public BlacklistGetResponse findBlacklistPage(Long requesterId, int pageNum) {
+  public BlacklistGetResponse findBlacklistPage(Long requesterId, int pageNum, int pageSize) {
     Members requester = this.memberService.findById(requesterId);
 
-    Pageable pageRequest = PageRequest.of(pageNum, PAGE_SIZE, Sort.by(Direction.ASC, "receiver.nickname"));
+    Pageable pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Direction.ASC, "receiver.nickname"));
 
     Page<Blacklists> blacklistsPage = this.blacklistsRepository.findAllByRequester(requester, pageRequest);
 
