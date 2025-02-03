@@ -10,4 +10,8 @@ public interface StompCommandStrategy {
     boolean supports(StompCommand command);
 
     Message<?> preSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel);
+
+    default void postSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent) {
+
+    }
 }
