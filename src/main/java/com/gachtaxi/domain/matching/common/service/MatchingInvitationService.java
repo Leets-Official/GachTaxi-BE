@@ -13,6 +13,7 @@ import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomCharging
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import com.gachtaxi.domain.members.service.MemberService;
+import com.gachtaxi.domain.notification.entity.Notification;
 import com.gachtaxi.domain.notification.entity.enums.NotificationType;
 import com.gachtaxi.domain.notification.entity.payload.MatchingInvitePayload;
 import com.gachtaxi.domain.notification.repository.NotificationRepository;
@@ -39,7 +40,7 @@ public class MatchingInvitationService {
     public static final String MATCHING_INVITE_TITLE = "수동 매칭 초대";
     public static final String MATCHING_INVITE_CONTENT = "%s 님이 수동 매칭 초대를 보냈습니다.";
 
-    public void sendMatchingInvitation(Members sender, List<String> friendNicknames) {
+    public void sendMatchingInvitation(Members sender, List<String> friendNicknames, Long matchingRoomId) {
         if (friendNicknames == null || friendNicknames.isEmpty()) {
             return;
         }
@@ -52,7 +53,7 @@ public class MatchingInvitationService {
                     MATCH_INVITE,
                     MATCHING_INVITE_TITLE,
                     String.format(MATCHING_INVITE_CONTENT, sender.getNickname()),
-                    MatchingInvitePayload.from(sender.getNickname())
+                    MatchingInvitePayload.from(sender.getNickname(), matchingRoomId)
             );
         }
     }
@@ -61,10 +62,19 @@ public class MatchingInvitationService {
       수동 매칭시 친구 초대 수락
     */
     @Transactional
-    public void acceptInvitation(Long userId, Long matchingRoomId) {
+    public void acceptInvitation(Long userId, Long matchingRoomId, String notificationId) {
         Members member = memberService.findById(userId);
         MatchingRoom matchingRoom = matchingRoomRepository.findById(matchingRoomId)
                 .orElseThrow(NoSuchMatchingRoomException::new);
+
+        Notification notification = notificationService.find(notificationId);
+
+        MatchingInvitePayload payload = (MatchingInvitePayload) notification.getPayload();
+        if (!payload.getMatchingRoomId().equals(matchingRoomId)) {
+            throw new NoSuchInvitationException();
+        }
+
+        notificationRepository.save(notification);
 
         if (notificationRepository.countByReceiverIdAndType(userId, NotificationType.MATCH_INVITE) == 0) {
             throw new NoSuchInvitationException();
