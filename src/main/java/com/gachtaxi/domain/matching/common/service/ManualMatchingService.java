@@ -19,6 +19,8 @@ import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomExcept
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.domain.members.exception.BlacklistedUserCannotJoinException;
+import com.gachtaxi.domain.members.service.BlacklistService;
 import com.gachtaxi.domain.members.service.MemberService;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -40,6 +42,7 @@ public class ManualMatchingService {
     private final MemberService memberService;
     private final MatchingRoomService matchingRoomService;
     private final MatchingInvitationService matchingInvitationService;
+    private final BlacklistService blacklistService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
@@ -98,6 +101,11 @@ public class ManualMatchingService {
 
         if (this.memberMatchingRoomChargingInfoRepository.existsByMembersAndMatchingRoom(user, matchingRoom)) {
             throw new MemberAlreadyJoinedException();
+        }
+
+        boolean isBlacklisted = blacklistService.isUserBlacklistedInRoom(user, matchingRoom);
+        if (isBlacklisted) {
+            throw new BlacklistedUserCannotJoinException();
         }
 
         Optional<MemberMatchingRoomChargingInfo> joinedInPast = this.memberMatchingRoomChargingInfoRepository
