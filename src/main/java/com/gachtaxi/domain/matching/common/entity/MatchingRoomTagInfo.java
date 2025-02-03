@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -23,6 +24,7 @@ public class MatchingRoomTagInfo extends BaseEntity {
   private MatchingRoom matchingRoom;
 
   @Enumerated(EnumType.STRING)
+  @Getter
   private Tags tags;
 
   public static MatchingRoomTagInfo of(MatchingRoom matchingRoom, Tags tag) {

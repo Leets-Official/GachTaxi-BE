@@ -2,6 +2,7 @@ package com.gachtaxi.domain.matching.common.entity;
 
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
+import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.members.entity.Members;
@@ -15,6 +16,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public class MatchingRoom extends BaseEntity {
 
   // 팀원들 정보
   @OneToMany(mappedBy = "matchingRoom", fetch = FetchType.LAZY)
+  @Getter
   private List<MemberMatchingRoomChargingInfo> memberMatchingRoomChargingInfo;
 
   @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
@@ -47,6 +50,7 @@ public class MatchingRoom extends BaseEntity {
   private Members roomMaster;
 
   @Column(name = "title", nullable = false)
+  @Getter
   private String title;
 
   @Column(name = "description", nullable = false)
@@ -59,8 +63,23 @@ public class MatchingRoom extends BaseEntity {
   @Getter
   private Integer totalCharge;
 
+  @Column(name = "departure_time")
+  @Getter
+  private LocalDateTime departureTime;
+
+  @Column(name = "departure")
+  @Getter
+  private String departure;
+
+  @Column(name = "destination")
+  @Getter
+  private String destination;
+
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
+
+  @Enumerated(EnumType.STRING)
+  private MatchingRoomType matchingRoomType;
 
   public boolean isActive() {
     return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
@@ -82,6 +101,10 @@ public class MatchingRoom extends BaseEntity {
     return size == totalCharge;
   }
 
+  public void convertToAutoMatching() { this.matchingRoomType = MatchingRoomType.AUTO; }
+
+  public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
+
   public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
@@ -93,14 +116,42 @@ public class MatchingRoom extends BaseEntity {
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
         .build();
   }
+
+  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String title, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
+    return MatchingRoom.builder()
+            .capacity(4)
+            .roomMaster(roomMaster)
+            .title(title)
+            .description(description)
+            .departure(departure)
+            .destination(destination)
+            .totalCharge(totalCharge)
+            .departureTime(departureTime)
+            .matchingRoomType(MatchingRoomType.MANUAL)
+            .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
+            .build();
+  }
+
   public boolean containsTag(Tags tag) {
     return this.matchingRoomTagInfo.stream()
             .anyMatch(tagInfo -> tagInfo.matchesTag(tag));
   }
+
   public FindRoomResult toFindRoomResult() {
     return FindRoomResult.builder()
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
             .build();
+  }
+  public int getCurrentMemberCount() {
+    return (int) memberMatchingRoomChargingInfo.stream()
+            .filter(info -> !info.isAlreadyLeft())
+            .count();
+  }
+
+  public List<String> getTags() {
+    return this.matchingRoomTagInfo.stream()
+            .map(tagInfo -> tagInfo.getTags().name())
+            .toList();
   }
 }
