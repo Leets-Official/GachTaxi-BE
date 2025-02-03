@@ -43,7 +43,7 @@ public class NotificationController {
     @DeleteMapping("/{notificationId}")
     @Operation(summary = "알림을 개별 삭제하는 API입니다.")
     public ApiResponse<Void> delete(@CurrentMemberId Long memberId,
-                                    @PathVariable Long notificationId) {
+                                    @PathVariable String notificationId) {
         notificationService.delete(memberId, notificationId);
 
         return ApiResponse.response(OK, NOTIFICATION_DELETE_SUCCESS.getMessage());
