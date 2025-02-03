@@ -1,6 +1,8 @@
 package com.gachtaxi.domain.notification.entity.payload;
 
+import com.gachtaxi.domain.friend.entity.enums.FriendStatus;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -10,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FriendRequestPayload extends NotificationPayload {
 
-//    @Builder.Default
-//    private FriendStatus status = FriendStatus.PENDING;
+    @Builder.Default
+    private FriendStatus status = FriendStatus.PENDING;
 
     private Long senderId;
 

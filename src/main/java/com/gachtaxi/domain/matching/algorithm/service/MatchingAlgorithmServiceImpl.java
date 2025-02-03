@@ -4,7 +4,6 @@ import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.matching.common.exception.AlreadyInMatchingRoomException;
-import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.BlacklistService;
@@ -12,9 +11,6 @@ import com.gachtaxi.domain.members.service.MemberService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -89,5 +85,4 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
 
     return matchingRoomRepository.findAll(pageable);
   }
-
 }
