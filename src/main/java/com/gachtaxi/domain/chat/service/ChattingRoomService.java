@@ -43,9 +43,8 @@ public class ChattingRoomService {
     public String chatTopic;
 
     @Transactional
-    public ChattingRoom create(Members roomMaster) {
+    public ChattingRoom create() {
         ChattingRoom chattingRoom = ChattingRoom.builder().build();
-        chattingParticipantService.save(ChattingParticipant.of(chattingRoom, roomMaster));
 
         return chattingRoomRepository.save(chattingRoom);
     }

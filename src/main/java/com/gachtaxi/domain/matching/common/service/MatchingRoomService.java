@@ -57,7 +57,7 @@ public class MatchingRoomService {
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
 
-    ChattingRoom chattingRoom = this.chattingRoomService.create(members);
+    ChattingRoom chattingRoom = this.chattingRoomService.create();
 
     MatchingRoom matchingRoom = MatchingRoom.activeOf(matchRoomCreatedEvent, members, route, chattingRoom);
 
