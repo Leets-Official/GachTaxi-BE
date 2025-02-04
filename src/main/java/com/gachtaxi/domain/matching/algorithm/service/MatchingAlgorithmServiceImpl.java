@@ -11,6 +11,7 @@ import com.gachtaxi.domain.members.service.MemberService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,9 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
   private final MatchingRoomRepository matchingRoomRepository;
   private final MemberService memberService;
   private final BlacklistService blacklistService;
+
+  @Value("${gachtaxi.matching.auto-matching-description}")
+  private String autoMatchingDescription;
 
   private static final double SEARCH_RADIUS = 300.0;
 
@@ -32,9 +36,13 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
      */
     Members user = memberService.findById(userId);
 
-    if (matchingRoomRepository.existsByMemberInMatchingRoom(user)) {
-      throw new AlreadyInMatchingRoomException(); // * 추후 논의 후 리팩토링 필요 * 똑같은 조건으로 방 생성시 예외 던져주기
-    }
+    matchingRoomRepository.findByMemberInMatchingRoom(user)
+        .forEach(room -> {
+          if (room.getDescription().equals(autoMatchingDescription)) {
+            throw new AlreadyInMatchingRoomException(room.getChattingRoomId());
+          }
+        });
+
     /*
      위치 정보를 이용한 방 검색(300M 이내)ø
      */
