@@ -36,10 +36,10 @@ public class FriendController {
     @Operation(summary = "친구 목록을 반환하는 API입니다. (무한스크롤)")
     public ApiResponse<FriendsSliceResponse> getFriendsList(
             @CurrentMemberId Long memberId,
-            @RequestParam int pageNum,
-            @RequestParam int pageSize
+            @RequestParam String pageNum,
+            @RequestParam String pageSize
     ){
-        FriendsSliceResponse response = friendService.findFriendsListByMemberId(memberId, pageNum, pageSize);
+        FriendsSliceResponse response = friendService.findFriendsListByMemberId(memberId, Integer.parseInt(pageNum), Integer.parseInt(pageSize));
         return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
     }
 
