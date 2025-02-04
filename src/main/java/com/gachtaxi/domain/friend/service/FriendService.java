@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.friend.service;
 
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
+import com.gachtaxi.domain.friend.dto.request.FriendUpdateDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsPageableResponse;
 import com.gachtaxi.domain.friend.dto.response.FriendsResponseDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsSliceResponse;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.gachtaxi.domain.friend.entity.enums.FriendStatus.REJECTED;
 import static com.gachtaxi.domain.notification.entity.enums.NotificationType.FRIEND_REQUEST;
 
 @Slf4j
@@ -44,7 +46,6 @@ public class FriendService {
     public void sendFriendRequest(Long senderId, FriendRequestDto dto) {
         Members sender = memberService.findById(senderId);
         Members receiver = memberService.findByNickname(dto.nickName());
-
 
         checkDuplicatedFriendShip(senderId, receiver.getId());
         friendRepository.save(Friends.of(sender, receiver));
@@ -73,9 +74,15 @@ public class FriendService {
     }
 
     @Transactional
-    public void updateFriendStatus(Long senderId, Long receiverId) {
-        Friends friendShip = findBySenderIdAndReceiverId(senderId, receiverId);
-        friendShip.updateStatus();
+    public void updateFriendRequest(FriendUpdateDto dto, Long receiverId) {
+        Friends friendShip = findBySenderIdAndReceiverId(dto.memberId(), receiverId);
+        notificationService.delete(receiverId, dto.notificationId());
+
+        if(dto.status() == REJECTED){
+            friendRepository.delete(friendShip);
+        }else{
+            friendShip.updateStatus();
+        }
     }
 
     @Transactional
