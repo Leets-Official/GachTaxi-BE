@@ -122,7 +122,7 @@ public class MatchingRoom extends BaseEntity {
         .build();
   }
 
-  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
+  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime, Long chattingRoomId) {
     return MatchingRoom.builder()
             .capacity(4)
             .roomMaster(roomMaster)
@@ -131,6 +131,7 @@ public class MatchingRoom extends BaseEntity {
             .destination(destination)
             .totalCharge(totalCharge)
             .departureTime(departureTime)
+            .chattingRoomId(chattingRoomId)
             .matchingRoomType(MatchingRoomType.MANUAL)
             .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
             .build();
