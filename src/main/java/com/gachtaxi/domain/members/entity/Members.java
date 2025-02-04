@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -44,6 +45,7 @@ public class Members extends BaseEntity {
     private String phoneNumber;
 
     @Column(name = "account_number", unique = true)
+    @Setter
     private String accountNumber;
 
     @Column(name = "kakao_id", unique = true)
