@@ -2,6 +2,7 @@ package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class AccountService {
     return this.memberService.findById(memberId).getAccountNumber();
   }
 
+  @Transactional
   public void updateAccount(Long memberId, String accountNumber) {
     Members member = this.memberService.findById(memberId);
 
