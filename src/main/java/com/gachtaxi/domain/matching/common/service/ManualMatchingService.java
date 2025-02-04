@@ -1,8 +1,5 @@
 package com.gachtaxi.domain.matching.common.service;
 
-import com.gachtaxi.domain.chat.entity.ChattingRoom;
-import com.gachtaxi.domain.chat.service.ChattingParticipantService;
-import com.gachtaxi.domain.chat.service.ChattingRoomService;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
@@ -46,8 +43,6 @@ public class ManualMatchingService {
     private final MatchingRoomService matchingRoomService;
     private final MatchingInvitationService matchingInvitationService;
     private final BlacklistService blacklistService;
-    private final ChattingRoomService chattingRoomService;
-    private final ChattingParticipantService chattingParticipantService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
 
@@ -75,10 +70,6 @@ public class ManualMatchingService {
                 request.getTotalCharge(),
                 request.departureTime()
         );
-
-        ChattingRoom chattingRoom = chattingRoomService.create(roomMaster);
-
-        matchingRoom.setChattingRoomId(chattingRoom.getId());
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
 
@@ -142,8 +133,6 @@ public class ManualMatchingService {
             matchingRoom.completeMatchingRoom();
             this.matchingRoomRepository.save(matchingRoom);
         }
-
-        chattingParticipantService.joinChattingRoom(user, matchingRoom.getChattingRoomId());
     }
     /*
       todo 수동 매칭 → 자동 매칭 전환 : 추후 고도화시, 10분전에 유저에게 알림을 주고 자동 매칭으로 전환

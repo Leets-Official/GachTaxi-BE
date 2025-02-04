@@ -158,8 +158,4 @@ public class MatchingRoom extends BaseEntity {
             .map(tagInfo -> tagInfo.getTags().name())
             .toList();
   }
-
-  public void setChattingRoomId(Long chattingRoomId) {
-    this.chattingRoomId = chattingRoomId;
-  }
 }

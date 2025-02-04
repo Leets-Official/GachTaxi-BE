@@ -11,7 +11,6 @@ import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
-import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -35,7 +34,6 @@ public class ChattingRoomService {
 
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingMessageRepository chattingMessageRepository;
-    private final ChattingParticipantRepository chattingParticipantRepository;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
     private final RedisChatPublisher redisChatPublisher;
@@ -116,17 +114,5 @@ public class ChattingRoomService {
         ChatMessage chatMessage = ChatMessage.from(chattingMessage);
 
         redisChatPublisher.publish(topic, chatMessage);
-    }
-
-    @Transactional
-    public ChattingRoom create(Members roomMaster) {
-
-        ChattingRoom chattingRoom = ChattingRoom.builder().build();
-        ChattingRoom savedChattingRoom = chattingRoomRepository.save(chattingRoom);
-
-        ChattingParticipant chattingParticipant = ChattingParticipant.of(savedChattingRoom, roomMaster);
-        chattingParticipantRepository.save(chattingParticipant);
-
-        return savedChattingRoom;
     }
 }
