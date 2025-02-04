@@ -42,24 +42,24 @@ public class FriendController {
         return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
     }
 
-    @PatchMapping
-    @Operation(summary = "친구 요청을 수락하는 API입니다.")
-    public ApiResponse<Void> acceptFriendRequest(
+    @PatchMapping("")
+    @Operation(summary = "친구 요청을 수락/거절하는 API입니다.")
+    public ApiResponse<Void> updateFriendRequest(
             @CurrentMemberId Long currentId,
             @RequestBody FriendUpdateDto dto
     ){
-        friendService.updateFriendStatus(dto.memberId(), currentId); // 친구 요청 보낸 사람(dto), 받은 사람(토큰 추출)
+        System.out.println("친구요청 수락/ 거절 실행");
+        friendService.updateFriendRequest(dto, currentId); // 친구 요청 보낸 사람(dto), 받은 사람(토큰 추출)
         return ApiResponse.response(OK, FRIEND_STATUS_ACCEPTED.getMessage());
     }
 
     @DeleteMapping("/{memberId}")
-    @Operation(summary = "친구 요청 거절 및 친구를 삭제하는 API입니다.")
+    @Operation(summary = "친구를 삭제하는 API입니다.")
     public ApiResponse<Void> deleteFriend(
             @CurrentMemberId Long currentId,
             @PathVariable Long memberId
     ) {
         friendService.deleteFriend(currentId, memberId);
-
         return ApiResponse.response(OK, FRIEND_DELETE.getMessage());
     }
 
