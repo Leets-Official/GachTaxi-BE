@@ -1,5 +1,7 @@
 package com.gachtaxi.domain.matching.common.service;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
+import com.gachtaxi.domain.chat.service.ChattingRoomService;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoomTagInfo;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
@@ -39,6 +41,7 @@ public class MatchingRoomService {
   // service
   private final MemberService memberService;
   private final AutoMatchingProducer autoMatchingProducer;
+  private final ChattingRoomService chattingRoomService;
 
   // repository
   private final MatchingRoomRepository matchingRoomRepository;
@@ -49,19 +52,21 @@ public class MatchingRoomService {
   // event factory
   private final MatchingEventFactory matchingEventFactory;
 
-  public Long createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
+  public MatchRoomCreatedEvent createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
 
     Route route = this.saveRoute(matchRoomCreatedEvent);
 
-    MatchingRoom matchingRoom = MatchingRoom.activeOf(matchRoomCreatedEvent, members, route);
+    ChattingRoom chattingRoom = this.chattingRoomService.create();
+
+    MatchingRoom matchingRoom = MatchingRoom.activeOf(matchRoomCreatedEvent, members, route, chattingRoom);
 
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
     this.saveRoomMasterChargingInfo(matchingRoom, members);
 
     MatchingRoom savedMatchingRoom = this.matchingRoomRepository.save(matchingRoom);
 
-    return savedMatchingRoom.getId();
+    return MatchRoomCreatedEvent.of(matchRoomCreatedEvent, savedMatchingRoom.getId(), savedMatchingRoom.getChattingRoomId());
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {

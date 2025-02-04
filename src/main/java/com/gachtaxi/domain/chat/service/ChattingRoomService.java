@@ -43,11 +43,10 @@ public class ChattingRoomService {
     public String chatTopic;
 
     @Transactional
-    public ChattingRoomResponse save() {
+    public ChattingRoom create() {
         ChattingRoom chattingRoom = ChattingRoom.builder().build();
 
-        chattingRoomRepository.save(chattingRoom);
-        return ChattingRoomResponse.from(chattingRoom);
+        return chattingRoomRepository.save(chattingRoom);
     }
 
     @Transactional

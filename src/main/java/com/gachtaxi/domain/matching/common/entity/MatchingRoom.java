@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.entity;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
@@ -15,6 +16,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,6 +85,10 @@ public class MatchingRoom extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
+  @Column(name = "chatting_room_id")
+  @Getter
+  private Long chattingRoomId;
+
   @Enumerated(EnumType.STRING)
   private MatchingRoomType matchingRoomType;
 
@@ -106,6 +112,8 @@ public class MatchingRoom extends BaseEntity {
     return size == totalCharge;
   }
 
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
+
   public void convertToAutoMatching() { this.matchingRoomType = MatchingRoomType.AUTO; }
 
   public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
@@ -119,6 +127,7 @@ public class MatchingRoom extends BaseEntity {
         .route(route)
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
+        .chattingRoomId(chattingRoom.getId())
         .build();
   }
 
@@ -146,6 +155,7 @@ public class MatchingRoom extends BaseEntity {
     return FindRoomResult.builder()
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
+            .chattingRoomId(this.chattingRoomId)
             .build();
   }
   public int getCurrentMemberCount() {

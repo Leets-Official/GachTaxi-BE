@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 public record MatchMemberJoinedEvent(
     Long roomId,
     Long memberId,
+    Long chattingRoomId,
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime joinedAt,
@@ -27,11 +28,12 @@ public record MatchMemberJoinedEvent(
     return this.topic;
   }
 
-  public static MatchMemberJoinedEvent of(Long roomId, Long memberId, String topic) {
+  public static MatchMemberJoinedEvent of(Long roomId, Long memberId, String topic, Long chattingRoomId) {
     return MatchMemberJoinedEvent.builder()
         .roomId(roomId)
         .memberId(memberId)
         .topic(topic)
+        .chattingRoomId(chattingRoomId)
         .build();
   }
 }
