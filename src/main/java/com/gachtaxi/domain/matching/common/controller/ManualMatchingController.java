@@ -8,6 +8,7 @@ import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.JOI
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.LEAVE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static org.springframework.http.HttpStatus.OK;
 
+import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingInviteReplyRequest;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingJoinRequest;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomListResponse;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "MANUAL", description = "수동매칭 API")
@@ -53,11 +53,10 @@ public class ManualMatchingController {
         return ApiResponse.response(OK, JOIN_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
     }
 
-    @Operation(summary = "수동 매칭 초대 수락")
-    @PostMapping("/invite/accept")
-    public ApiResponse<Void> acceptInvitation(@CurrentMemberId Long userId, @RequestParam Long matchingRoomId, @RequestParam String notificationId
-    ) {
-        matchingInvitationService.acceptInvitation(userId, matchingRoomId, notificationId);
+    @Operation(summary = "수동 매칭 초대 수락/거절")
+    @PostMapping("/invite/reply")
+    public ApiResponse<Void> acceptInvitation(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingInviteReplyRequest request) {
+        matchingInvitationService.acceptInvitation(userId, request);
         return ApiResponse.response(OK, ACCEPT_MATCHING_INVITE_SUCCESS.getMessage());
     }
 

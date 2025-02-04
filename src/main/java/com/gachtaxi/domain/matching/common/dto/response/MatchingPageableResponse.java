@@ -9,14 +9,14 @@ public record MatchingPageableResponse(
         int pageNumber,
         int pageSize,
         int numberOfElements,
-        boolean isLast
+        boolean last
 ) {
-    public static MatchingPageableResponse of(Slice<?> Slice) {
+    public static MatchingPageableResponse of(Slice<?> slice) {
         return MatchingPageableResponse.builder()
-                .pageNumber(Slice.getNumber())
-                .pageSize(Slice.getSize())
-                .numberOfElements(Slice.getNumberOfElements())
-                .isLast(Slice.isLast())
+                .pageNumber(slice.getNumber())
+                .pageSize(slice.getSize())
+                .numberOfElements(slice.getNumberOfElements())
+                .last(slice.isLast())
                 .build();
     }
 }
