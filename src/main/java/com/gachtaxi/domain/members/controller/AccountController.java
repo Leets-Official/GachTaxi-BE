@@ -28,7 +28,7 @@ public class AccountController {
   public ApiResponse<AccountGetResponse> getAccount(
       @CurrentMemberId Long memberId
   ) {
-    return ApiResponse.response(OK, ACCOUNT_GET_SUCCESS.getMessage(), AccountGetResponse.of(this.accountService.getAccount(memberId)));
+    return ApiResponse.response(OK, ACCOUNT_GET_SUCCESS.getMessage(), this.accountService.getAccount(memberId));
   }
 
   @PostMapping
