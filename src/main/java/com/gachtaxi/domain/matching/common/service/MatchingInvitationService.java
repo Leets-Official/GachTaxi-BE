@@ -76,7 +76,7 @@ public class MatchingInvitationService {
         }
 
         if (request.status() == MatchingInviteStatus.REJECT) {
-            notificationRepository.save(notification);
+            notificationRepository.delete(notification);
             return;
         }
 
