@@ -26,6 +26,7 @@ import com.gachtaxi.domain.members.service.BlacklistService;
 import com.gachtaxi.domain.members.service.MemberService;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,9 @@ public class ManualMatchingService {
                 .build();
         chattingRoomRepository.save(chattingRoom);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime departureTime = LocalDateTime.parse(request.getDeparture(), formatter);
+
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
                 request.getDeparture(),
@@ -75,7 +79,7 @@ public class ManualMatchingService {
                 request.description(),
                 4,
                 request.getTotalCharge(),
-                request.departureTime(),
+                departureTime,
                 chattingRoom.getId()
         );
 
