@@ -122,7 +122,6 @@ public class Members extends BaseEntity {
     public void updateMemberInfo(MemberInfoRequestDto dto) {
         this.profilePicture = dto.profilePicture();
         this.nickname = dto.nickName();
-        this.accountNumber = dto.accountNumber();
     }
 
     public void updateAgreement(MemberAgreementRequestDto dto) {
