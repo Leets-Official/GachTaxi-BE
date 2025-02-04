@@ -85,10 +85,6 @@ public class MatchingRoom extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
-  @Column(name = "chatting_room_id")
-  @Getter
-  private Long chattingRoomId;
-
   @Enumerated(EnumType.STRING)
   private MatchingRoomType matchingRoomType;
 
