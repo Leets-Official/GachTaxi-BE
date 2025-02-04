@@ -6,14 +6,14 @@ import org.springframework.data.domain.Slice;
 
 @Builder
 public record FriendsPageableResponse(
-        int pageNum,
+        int pageNumber,
         int pageSize,
         int numberOfElements,
         boolean last
 ) {
     public static FriendsPageableResponse from(Slice<Friends> slice) {
         return FriendsPageableResponse.builder()
-                .pageNum(slice.getNumber())
+                .pageNumber(slice.getNumber())
                 .pageSize(slice.getSize())
                 .numberOfElements(slice.getNumberOfElements())
                 .last(slice.isLast())
