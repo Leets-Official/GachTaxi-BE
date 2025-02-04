@@ -1,9 +1,10 @@
 package com.gachtaxi.domain.matching.common.service;
 
 import static com.gachtaxi.domain.notification.entity.enums.NotificationType.MATCH_INVITE;
-
+import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingInviteReplyRequest;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
+import com.gachtaxi.domain.matching.common.entity.enums.MatchingInviteStatus;
 import com.gachtaxi.domain.matching.common.exception.AlreadyInMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.MatchingRoomAlreadyFullException;
 import com.gachtaxi.domain.matching.common.exception.NoSuchInvitationException;
@@ -62,16 +63,21 @@ public class MatchingInvitationService {
       수동 매칭시 친구 초대 수락
     */
     @Transactional
-    public void acceptInvitation(Long userId, Long matchingRoomId, String notificationId) {
+    public void acceptInvitation(Long userId, ManualMatchingInviteReplyRequest request) {
         Members member = memberService.findById(userId);
-        MatchingRoom matchingRoom = matchingRoomRepository.findById(matchingRoomId)
+        MatchingRoom matchingRoom = matchingRoomRepository.findById(request.matchingRoomId())
                 .orElseThrow(NoSuchMatchingRoomException::new);
 
-        Notification notification = notificationService.find(notificationId);
+        Notification notification = notificationService.find(request.notificationId());
 
         MatchingInvitePayload payload = (MatchingInvitePayload) notification.getPayload();
-        if (!payload.getMatchingRoomId().equals(matchingRoomId)) {
+        if (!payload.getMatchingRoomId().equals(request.matchingRoomId())) {
             throw new NoSuchInvitationException();
+        }
+
+        if (request.status() == MatchingInviteStatus.REJECT) {
+            notificationRepository.save(notification);
+            return;
         }
 
         notificationRepository.save(notification);
