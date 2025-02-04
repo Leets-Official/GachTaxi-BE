@@ -1,5 +1,7 @@
 package com.gachtaxi.domain.matching.common.service;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
+import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
@@ -45,6 +47,7 @@ public class ManualMatchingService {
     private final BlacklistService blacklistService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
+    private final ChattingRoomRepository chattingRoomRepository;
 
     /*
       수동 매칭 방 생성
@@ -61,6 +64,10 @@ public class ManualMatchingService {
             throw new NotEqualStartAndDestinationException();
         }
 
+        ChattingRoom chattingRoom = ChattingRoom.builder()
+                .build();
+        chattingRoomRepository.save(chattingRoom);
+
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
                 request.getDeparture(),
@@ -68,7 +75,8 @@ public class ManualMatchingService {
                 request.description(),
                 4,
                 request.getTotalCharge(),
-                request.departureTime()
+                request.departureTime(),
+                chattingRoom.getId()
         );
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
