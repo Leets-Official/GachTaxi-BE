@@ -21,7 +21,11 @@ public enum ResponseMessage {
     // BlacklistController
     BLACKLIST_SAVE_SUCCESS("블랙리스트 등록에 성공했습니다."),
     BLACKLIST_DELETE_SUCCESS("블랙리스트 삭제에 성공했습니다."),
-    BLACKLIST_FIND_ALL_SUCCESS("블랙리스트 조회에 성공했습니다.");
+    BLACKLIST_FIND_ALL_SUCCESS("블랙리스트 조회에 성공했습니다."),
+
+    // AccountController
+    ACCOUNT_GET_SUCCESS("계좌 정보를 성공적으로 가져왔습니다."),
+    ACCOUNT_UPDATE_SUCCESS("계좌 정보를 성공적으로 수정했습니다.");
 
     private final String message;
 }
