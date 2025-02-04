@@ -108,13 +108,11 @@ public class MatchingRoom extends BaseEntity {
     return size == totalCharge;
   }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
-
   public void convertToAutoMatching() { this.matchingRoomType = MatchingRoomType.AUTO; }
 
   public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
