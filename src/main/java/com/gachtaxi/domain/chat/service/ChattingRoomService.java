@@ -115,5 +115,4 @@ public class ChattingRoomService {
 
         redisChatPublisher.publish(topic, chatMessage);
     }
-
 }

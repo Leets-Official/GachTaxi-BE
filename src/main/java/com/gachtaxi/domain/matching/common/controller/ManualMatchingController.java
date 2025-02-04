@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,14 +71,14 @@ public class ManualMatchingController {
     @Operation(summary = "수동 매칭방 조회")
     @GetMapping("/list")
     public ApiResponse<MatchingRoomListResponse> getManualMatchingList(int pageNumber, int pageSize) {
-        Page<MatchingRoomResponse> rooms = manualMatchingService.getManualMatchingList(pageNumber, pageSize);
+        Slice<MatchingRoomResponse> rooms = manualMatchingService.getManualMatchingList(pageNumber, pageSize);
         return ApiResponse.response(OK, GET_MANUAL_MATCHING_LIST_SUCCESS.getMessage(), MatchingRoomListResponse.of(rooms));
     }
 
     @Operation(summary = "나의 매칭(수동) 조회")
     @GetMapping("/my-list")
     public ApiResponse<MatchingRoomListResponse> getMyMatchingList(@CurrentMemberId Long userId, int pageNumber, int pageSize) {
-        Page<MatchingRoomResponse> rooms = manualMatchingService.getMyMatchingList(userId, pageNumber, pageSize);
+        Slice<MatchingRoomResponse> rooms = manualMatchingService.getMyMatchingList(userId, pageNumber, pageSize);
         return ApiResponse.response(OK, GET_MY_MATCHING_LIST_SUCCESS.getMessage(), MatchingRoomListResponse.of(rooms));
     }
 }

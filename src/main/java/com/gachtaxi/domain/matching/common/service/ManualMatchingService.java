@@ -1,5 +1,7 @@
 package com.gachtaxi.domain.matching.common.service;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
+import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
@@ -19,6 +21,8 @@ import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomExcept
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.domain.members.exception.BlacklistedUserCannotJoinException;
+import com.gachtaxi.domain.members.service.BlacklistService;
 import com.gachtaxi.domain.members.service.MemberService;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -40,8 +44,10 @@ public class ManualMatchingService {
     private final MemberService memberService;
     private final MatchingRoomService matchingRoomService;
     private final MatchingInvitationService matchingInvitationService;
+    private final BlacklistService blacklistService;
     private final MatchingRoomRepository matchingRoomRepository;
     private final MemberMatchingRoomChargingInfoRepository memberMatchingRoomChargingInfoRepository;
+    private final ChattingRoomRepository chattingRoomRepository;
 
     /*
       수동 매칭 방 생성
@@ -58,6 +64,10 @@ public class ManualMatchingService {
             throw new NotEqualStartAndDestinationException();
         }
 
+        ChattingRoom chattingRoom = ChattingRoom.builder()
+                .build();
+        chattingRoomRepository.save(chattingRoom);
+
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
                 request.getDeparture(),
@@ -65,7 +75,8 @@ public class ManualMatchingService {
                 request.description(),
                 4,
                 request.getTotalCharge(),
-                request.departureTime()
+                request.departureTime(),
+                chattingRoom.getId()
         );
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
@@ -98,6 +109,11 @@ public class ManualMatchingService {
 
         if (this.memberMatchingRoomChargingInfoRepository.existsByMembersAndMatchingRoom(user, matchingRoom)) {
             throw new MemberAlreadyJoinedException();
+        }
+
+        boolean isBlacklisted = blacklistService.isUserBlacklistedInRoom(user, matchingRoom);
+        if (isBlacklisted) {
+            throw new BlacklistedUserCannotJoinException();
         }
 
         Optional<MemberMatchingRoomChargingInfo> joinedInPast = this.memberMatchingRoomChargingInfoRepository
