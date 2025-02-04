@@ -50,13 +50,13 @@ public class MemberService {
 
     @Transactional
     public void updateMemberEmail(String email, Long userId) {
-        Members members = findById(userId);
+        Members members = findTempUserById(userId);
         members.updateEmail(email);
     }
 
     @Transactional
     public void updateMemberAgreement(MemberAgreementRequestDto dto, Long userId) {
-        Members members = findById(userId);
+        Members members = findTempUserById(userId);
         members.updateAgreement(dto);
     }
 
@@ -65,7 +65,7 @@ public class MemberService {
         checkDuplicatedNickName(dto.nickname());
         checkDuplicatedStudentNumber(dto.studentNumber());
 
-        Members members = findById(userId);
+        Members members = findTempUserById(userId);
         members.updateSupplment(dto);
 
         return MemberResponseDto.from(members);
@@ -88,6 +88,11 @@ public class MemberService {
 
     public Members findById(Long id) {
         return memberRepository.findByIdAndStatus(id, ACTIVE)
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    public Members findTempUserById(Long id) {
+        return memberRepository.findById(id)
                 .orElseThrow(MemberNotFoundException::new);
     }
 
