@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.service;
 
+import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.members.dto.request.*;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
@@ -20,6 +21,7 @@ import static com.gachtaxi.domain.members.entity.enums.UserStatus.ACTIVE;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ChattingMessageMongoRepository chattingMessageMongoRepository;
 
     @Transactional
     public InactiveMemberDto saveTmpKakaoMember(Long kakaoId){
@@ -37,6 +39,8 @@ public class MemberService {
     public MemberResponseDto updateMemberInfo(Long currentId, MemberInfoRequestDto dto){
         Members member = findById(currentId);
         member.updateMemberInfo(dto);
+
+        chattingMessageMongoRepository.updateMemberInfo(member);
 
         return MemberResponseDto.from(member);
     }
