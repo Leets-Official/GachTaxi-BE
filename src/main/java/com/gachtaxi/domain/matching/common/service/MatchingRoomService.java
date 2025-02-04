@@ -66,7 +66,7 @@ public class MatchingRoomService {
 
     MatchingRoom savedMatchingRoom = this.matchingRoomRepository.save(matchingRoom);
 
-    return MatchRoomCreatedEvent.of(matchRoomCreatedEvent, savedMatchingRoom.getId(), savedMatchingRoom.getChattingRoom().getId());
+    return MatchRoomCreatedEvent.of(matchRoomCreatedEvent, savedMatchingRoom.getId(), savedMatchingRoom.getChattingRoomId());
   }
 
   private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {

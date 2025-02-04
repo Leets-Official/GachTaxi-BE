@@ -64,9 +64,9 @@ public class MatchingRoom extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
-  @OneToOne
+  @Column(name = "chatting_room_id")
   @Getter
-  private ChattingRoom chattingRoom;
+  private Long chattingRoomId;
 
   public boolean isActive() {
     return this.matchingRoomStatus == MatchingRoomStatus.ACTIVE;
@@ -97,7 +97,7 @@ public class MatchingRoom extends BaseEntity {
         .route(route)
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
-        .chattingRoom(chattingRoom)
+        .chattingRoomId(chattingRoom.getId())
         .build();
   }
   public boolean containsTag(Tags tag) {
@@ -108,7 +108,7 @@ public class MatchingRoom extends BaseEntity {
     return FindRoomResult.builder()
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
-            .chattingRoomId(this.getChattingRoom().getId())
+            .chattingRoomId(this.chattingRoomId)
             .build();
   }
 }
