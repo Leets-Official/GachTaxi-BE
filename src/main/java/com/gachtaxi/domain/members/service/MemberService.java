@@ -87,7 +87,7 @@ public class MemberService {
     * */
 
     public Members findById(Long id) {
-        return memberRepository.findById(id)
+        return memberRepository.findByIdAndStatus(id, ACTIVE)
                 .orElseThrow(MemberNotFoundException::new);
     }
 
