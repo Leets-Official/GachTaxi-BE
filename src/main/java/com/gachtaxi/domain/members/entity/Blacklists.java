@@ -28,6 +28,10 @@ public class Blacklists extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private Members receiver;
 
+  public String getReceiverProfilePicture() {
+    return receiver.getProfilePicture();
+  }
+
   public static Blacklists create(Members requester, Members receiver) {
     return Blacklists.builder()
         .requester(requester)

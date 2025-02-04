@@ -2,10 +2,7 @@ package com.gachtaxi.domain.chat.entity;
 
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +15,12 @@ import java.time.LocalDateTime;
 @Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        name = "chatting_participant",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"members_id", "chatting_room_id"})
+        }
+)
 public class ChattingParticipant extends BaseEntity {
 
     @ManyToOne

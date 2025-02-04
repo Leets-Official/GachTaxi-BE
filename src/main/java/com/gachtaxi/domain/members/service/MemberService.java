@@ -1,9 +1,7 @@
 package com.gachtaxi.domain.members.service;
 
-import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
-import com.gachtaxi.domain.members.dto.request.InactiveMemberDto;
-import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
+import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
+import com.gachtaxi.domain.members.dto.request.*;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
@@ -23,12 +21,28 @@ import static com.gachtaxi.domain.members.entity.enums.UserStatus.ACTIVE;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ChattingMessageMongoRepository chattingMessageMongoRepository;
 
     @Transactional
     public InactiveMemberDto saveTmpKakaoMember(Long kakaoId){
         Members tmpMember = Members.ofKakaoId(kakaoId);
         memberRepository.save(tmpMember);
         return InactiveMemberDto.of(tmpMember);
+    }
+
+    public MemberResponseDto getMember(Long currentId){
+        Members members = findById(currentId);
+        return MemberResponseDto.from(members);
+    }
+
+    @Transactional
+    public MemberResponseDto updateMemberInfo(Long currentId, MemberInfoRequestDto dto){
+        Members member = findById(currentId);
+        member.updateMemberInfo(dto);
+
+        chattingMessageMongoRepository.updateMemberInfo(member);
+
+        return MemberResponseDto.from(member);
     }
 
     @Transactional

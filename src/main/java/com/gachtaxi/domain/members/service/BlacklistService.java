@@ -11,7 +11,6 @@ import com.gachtaxi.domain.members.exception.BlacklistRequesterEqualsReceiverExc
 import com.gachtaxi.domain.members.repository.BlacklistsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -77,5 +76,10 @@ public class BlacklistService {
     if (requester.equals(receiver)) {
       throw new BlacklistRequesterEqualsReceiverException();
     }
+  }
+
+  public boolean isUserBlacklistedInRoom(Members requester, MatchingRoom matchingRoom) {
+    return matchingRoom.getMemberMatchingRoomChargingInfo().stream()
+            .anyMatch(info -> this.blacklistsRepository.existsByRequesterAndReceiver(requester, info.getMembers()));
   }
 }

@@ -19,4 +19,11 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
 
         return chatStrategyHandler.handle(message, accessor, channel);
     }
+
+    @Override
+    public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+
+        chatStrategyHandler.handle(message, accessor, channel, sent);
+    }
 }

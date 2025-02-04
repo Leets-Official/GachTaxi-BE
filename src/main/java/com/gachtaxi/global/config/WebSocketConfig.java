@@ -25,8 +25,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry
                 .setErrorHandler(stompExceptionHandler)
                 .addEndpoint("/ws")
-                .setAllowedOriginPatterns("http://localhost:3000");
-//                .withSockJS();
+                .setAllowedOriginPatterns("http://localhost:3000", "https://*.amplifyapp.com", "https://gachtaxi.site")
+                .withSockJS();
     }
 
     @Override

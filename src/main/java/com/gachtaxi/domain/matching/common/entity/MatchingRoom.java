@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.matching.common.entity;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
@@ -15,6 +16,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,11 +51,12 @@ public class MatchingRoom extends BaseEntity {
   @Setter
   private Members roomMaster;
 
-  @Column(name = "title", nullable = false)
+  @Column(name = "title")
   @Getter
   private String title;
 
   @Column(name = "description", nullable = false)
+  @Getter
   private String description;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -74,6 +77,10 @@ public class MatchingRoom extends BaseEntity {
   @Column(name = "destination")
   @Getter
   private String destination;
+
+  @Column(name = "chatting_room_id")
+  @Getter
+  private Long chattingRoomId;
 
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
@@ -105,7 +112,7 @@ public class MatchingRoom extends BaseEntity {
 
   public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
@@ -114,19 +121,20 @@ public class MatchingRoom extends BaseEntity {
         .route(route)
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
+        .chattingRoomId(chattingRoom.getId())
         .build();
   }
 
-  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String title, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime) {
+  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime, Long chattingRoomId) {
     return MatchingRoom.builder()
             .capacity(4)
             .roomMaster(roomMaster)
-            .title(title)
             .description(description)
             .departure(departure)
             .destination(destination)
             .totalCharge(totalCharge)
             .departureTime(departureTime)
+            .chattingRoomId(chattingRoomId)
             .matchingRoomType(MatchingRoomType.MANUAL)
             .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
             .build();
@@ -141,6 +149,7 @@ public class MatchingRoom extends BaseEntity {
     return FindRoomResult.builder()
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
+            .chattingRoomId(this.chattingRoomId)
             .build();
   }
   public int getCurrentMemberCount() {

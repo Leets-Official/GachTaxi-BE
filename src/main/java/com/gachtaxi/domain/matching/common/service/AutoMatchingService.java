@@ -68,7 +68,7 @@ public class AutoMatchingService {
 
   private void sendMatchMemberJoinedEvent(Long memberId, FindRoomResult roomResult) {
     Long roomId = roomResult.roomId();
-    this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchMemberJoinedEvent(roomId, memberId));
+    this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchMemberJoinedEvent(roomId, memberId, roomResult.chattingRoomId()));
   }
 
   public AutoMatchingPostResponse handlerAutoCancelMatching(Long memberId,

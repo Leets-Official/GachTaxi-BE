@@ -1,21 +1,23 @@
 package com.gachtaxi.domain.members.entity;
 
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
-import com.gachtaxi.domain.members.dto.request.UserSignUpRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
+import com.gachtaxi.domain.members.dto.request.MemberInfoRequestDto;
 import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
 import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.entity.enums.Role;
 import com.gachtaxi.domain.members.entity.enums.UserStatus;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -30,7 +32,7 @@ public class Members extends BaseEntity {
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname", unique = true)
     private String nickname;
 
     @Column(name = "real_name")
@@ -41,6 +43,10 @@ public class Members extends BaseEntity {
 
     @Column(name = "phone_number", unique = true) // 피그마 참고, 일단 null 허용
     private String phoneNumber;
+
+    @Column(name = "account_number", unique = true)
+    @Setter
+    private String accountNumber;
 
     @Column(name = "kakao_id", unique = true)
     private Long kakaoId;
@@ -111,6 +117,12 @@ public class Members extends BaseEntity {
 
     public void updateGoogleId(String googleId) {
         this.googleId = googleId;
+    }
+
+    public void updateMemberInfo(MemberInfoRequestDto dto) {
+        this.profilePicture = dto.profilePicture();
+        this.nickname = dto.nickName();
+        this.accountNumber = dto.accountNumber();
     }
 
     public void updateAgreement(MemberAgreementRequestDto dto) {

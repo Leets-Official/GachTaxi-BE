@@ -51,7 +51,6 @@ public class FriendService {
         friendRepository.save(Friends.of(sender, receiver));
 
         notificationService.sendWithPush(
-                sender.getId(),
                 receiver,
                 FRIEND_REQUEST,
                 FRIEND_REQUEST_TITLE,

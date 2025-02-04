@@ -24,6 +24,7 @@ public record MatchRoomCreatedEvent(
     List<Tags> criteria,
     Integer expectedTotalCharge,
     Long roomId,
+    Long chattingRoomId,
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdAt,
@@ -41,7 +42,7 @@ public record MatchRoomCreatedEvent(
     return this.topic;
   }
 
-  public static MatchRoomCreatedEvent of(MatchRoomCreatedEvent event, Long roomId) {
+  public static MatchRoomCreatedEvent of(MatchRoomCreatedEvent event, Long roomId, Long chattingRoomId) {
     return MatchRoomCreatedEvent.builder()
         .roomMasterId(event.roomMasterId())
         .maxCapacity(event.maxCapacity())
@@ -56,6 +57,7 @@ public record MatchRoomCreatedEvent(
         .roomId(roomId)
         .createdAt(event.createdAt())
         .topic(event.topic())
+        .chattingRoomId(chattingRoomId)
         .build();
   }
 

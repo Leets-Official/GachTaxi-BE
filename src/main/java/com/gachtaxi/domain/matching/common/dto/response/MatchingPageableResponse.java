@@ -1,7 +1,7 @@
 package com.gachtaxi.domain.matching.common.dto.response;
 
 import lombok.Builder;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 
 @Builder
@@ -11,12 +11,12 @@ public record MatchingPageableResponse(
         int numberOfElements,
         boolean last
 ) {
-    public static MatchingPageableResponse of(Page<?> page) {
+    public static MatchingPageableResponse of(Slice<?> slice) {
         return MatchingPageableResponse.builder()
-                .pageNumber(page.getNumber())
-                .pageSize(page.getSize())
-                .numberOfElements(page.getNumberOfElements())
-                .last(page.isLast())
+                .pageNumber(slice.getNumber())
+                .pageSize(slice.getSize())
+                .numberOfElements(slice.getNumberOfElements())
+                .last(slice.isLast())
                 .build();
     }
 }
