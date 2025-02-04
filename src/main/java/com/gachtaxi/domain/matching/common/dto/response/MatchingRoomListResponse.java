@@ -9,10 +9,10 @@ public record MatchingRoomListResponse(
         List<MatchingRoomResponse> rooms,
         MatchingPageableResponse pageable
 ) {
-    public static MatchingRoomListResponse of(Slice<MatchingRoomResponse> Slice) {
+    public static MatchingRoomListResponse of(Slice<MatchingRoomResponse> slice) {
         return MatchingRoomListResponse.builder()
-                .rooms(Slice.getContent())
-                .pageable(MatchingPageableResponse.of(Slice))
+                .rooms(slice.getContent().stream().toList())
+                .pageable(MatchingPageableResponse.of(slice))
                 .build();
     }
 }
