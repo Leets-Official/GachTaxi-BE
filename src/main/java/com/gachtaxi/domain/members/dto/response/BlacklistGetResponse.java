@@ -25,13 +25,15 @@ public record BlacklistGetResponse(
   record BlacklistInfo(
       Long receiverId,
       String receiverNickname,
+      String receiverProfilePicture,
       String gender
   ) {
     public static BlacklistInfo of(Blacklists blacklists) {
       return new BlacklistInfo(
           blacklists.getReceiver().getId(),
           blacklists.getReceiver().getNickname(),
-          blacklists.getReceiver().getGender().name()
+          blacklists.getReceiver().getGender().name(),
+          blacklists.getReceiverProfilePicture()
       );
     }
   }
