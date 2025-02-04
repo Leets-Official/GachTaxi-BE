@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import static com.gachtaxi.domain.friend.controller.ResponseMessage.*;
+import static com.gachtaxi.domain.friend.entity.enums.FriendStatus.REJECTED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -48,8 +49,11 @@ public class FriendController {
             @CurrentMemberId Long currentId,
             @RequestBody FriendUpdateDto dto
     ){
-        System.out.println("친구요청 수락/ 거절 실행");
         friendService.updateFriendRequest(dto, currentId); // 친구 요청 보낸 사람(dto), 받은 사람(토큰 추출)
+        if(dto.status() == REJECTED){
+            return ApiResponse.response(OK, FRIEND_STATUS_REJECTED.getMessage());
+        }
+
         return ApiResponse.response(OK, FRIEND_STATUS_ACCEPTED.getMessage());
     }
 
