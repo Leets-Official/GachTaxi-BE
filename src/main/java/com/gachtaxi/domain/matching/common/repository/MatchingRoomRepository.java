@@ -5,6 +5,7 @@ import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.members.entity.Members;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,11 +26,18 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
             @Param("destinationLatitude") double destinationLatitude,
             @Param("radius") double radius
     );
-    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
+    @Query("SELECT r " +
             "FROM MatchingRoom r JOIN r.memberMatchingRoomChargingInfo m " +
             "WHERE m.members = :user "+
             "AND r.matchingRoomStatus = 'ACTIVE' "+
             "AND m.paymentStatus != 'LEFT'")
+    List<MatchingRoom> findByMemberInMatchingRoom(@Param("user") Members user);
+
+    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
+        "FROM MatchingRoom r JOIN r.memberMatchingRoomChargingInfo m " +
+        "WHERE m.members = :user "+
+        "AND r.matchingRoomStatus = 'ACTIVE' "+
+        "AND m.paymentStatus != 'LEFT'")
     boolean existsByMemberInMatchingRoom(@Param("user") Members user);
 
     Page<MatchingRoom> findByMatchingRoomTypeAndMatchingRoomStatus(MatchingRoomType type, MatchingRoomStatus status, Pageable pageable);
