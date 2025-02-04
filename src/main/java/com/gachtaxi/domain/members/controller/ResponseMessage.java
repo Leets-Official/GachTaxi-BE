@@ -11,6 +11,7 @@ public enum ResponseMessage {
     MEMBER_INFO_UPDATE("유저 정보를 성공적으로 수정했습니다!"),
     MEMBER_INFO_RESPONSE("유저 정보를 반환합니다."),
     FCM_TOKEN_UPDATE_SUCCESS("FCM 토큰 업데이트에 성공했습니다."),
+    MEMBER_DELETE_SUCCESS("회원 탈퇴에 성공했습니다."),
 
     // AuthController
     ALREADY_SIGN_UP("이미 가입된 이메일 입니다!"),
