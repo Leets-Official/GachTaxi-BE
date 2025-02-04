@@ -19,7 +19,7 @@ public record ManualMatchingRequest(
         String destinationName,
 
         @NotNull
-        LocalDateTime departureTime,
+        String departureTime,
 
         @Schema(description = "예상 요금")
         @Min(value = 0)
