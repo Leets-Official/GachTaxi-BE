@@ -85,10 +85,6 @@ public class MatchingRoom extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MatchingRoomStatus matchingRoomStatus;
 
-  @Column(name = "chatting_room_id")
-  @Getter
-  private Long chattingRoomId;
-
   @Enumerated(EnumType.STRING)
   private MatchingRoomType matchingRoomType;
 
@@ -112,13 +108,11 @@ public class MatchingRoom extends BaseEntity {
     return size == totalCharge;
   }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
-
   public void convertToAutoMatching() { this.matchingRoomType = MatchingRoomType.AUTO; }
 
   public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route) {
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
