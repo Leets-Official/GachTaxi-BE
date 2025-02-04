@@ -4,7 +4,7 @@ import com.gachtaxi.domain.members.entity.Members;
 import lombok.Builder;
 
 @Builder
-public record AccountGetResponse(
+public record AccountPostResponse(
     Long userId,
     Long studentNumber,
     String nickName,
@@ -16,8 +16,8 @@ public record AccountGetResponse(
     String accountNumber
 ) {
 
-  public static AccountGetResponse of(Members members) {
-    return AccountGetResponse.builder()
+  public static AccountPostResponse of(Members members) {
+    return AccountPostResponse.builder()
         .userId(members.getId())
         .studentNumber(members.getStudentNumber())
         .nickName(members.getNickname())

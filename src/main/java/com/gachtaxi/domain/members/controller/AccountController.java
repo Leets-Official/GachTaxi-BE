@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 import com.gachtaxi.domain.members.dto.request.AccountPostRequest;
 import com.gachtaxi.domain.members.dto.response.AccountGetResponse;
+import com.gachtaxi.domain.members.dto.response.AccountPostResponse;
 import com.gachtaxi.domain.members.service.AccountService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
@@ -32,11 +33,11 @@ public class AccountController {
   }
 
   @PostMapping
-  public ApiResponse<Void> updateAccount(
+  public ApiResponse<AccountPostResponse> updateAccount(
       @CurrentMemberId Long memberId,
       @RequestBody @Valid AccountPostRequest accountPostRequest
   ) {
-    this.accountService.updateAccount(memberId, accountPostRequest.accountNumber());
-    return ApiResponse.response(OK, ACCOUNT_UPDATE_SUCCESS.getMessage());
+    return ApiResponse.response(OK, ACCOUNT_UPDATE_SUCCESS.getMessage(),
+        this.accountService.updateAccount(memberId, accountPostRequest.accountNumber()));
   }
 }
