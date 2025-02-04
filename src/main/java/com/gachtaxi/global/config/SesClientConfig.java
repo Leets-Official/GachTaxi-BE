@@ -10,7 +10,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
 
 @Configuration
-public class SesClinetConfig {
+public class SesClientConfig {
 
     @Value("${aws.ses.accessKey}")
     private String accessKey;

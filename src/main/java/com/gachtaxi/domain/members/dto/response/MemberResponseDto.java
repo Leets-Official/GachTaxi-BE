@@ -13,7 +13,8 @@ public record MemberResponseDto(
         String profilePicture,
         String email,
         String role,
-        Gender gender
+        Gender gender,
+        String accountNumber
 ) {
     public static MemberResponseDto from(Members members) {
         return MemberResponseDto.builder()
@@ -25,6 +26,7 @@ public record MemberResponseDto(
                 .email(members.getEmail())
                 .role(members.getRole().name())
                 .gender(members.getGender())
+                .accountNumber(members.getAccountNumber())
                 .build();
     }
 }

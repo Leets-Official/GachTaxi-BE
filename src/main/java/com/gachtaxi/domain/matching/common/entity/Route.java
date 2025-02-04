@@ -1,6 +1,5 @@
 package com.gachtaxi.domain.matching.common.entity;
 
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

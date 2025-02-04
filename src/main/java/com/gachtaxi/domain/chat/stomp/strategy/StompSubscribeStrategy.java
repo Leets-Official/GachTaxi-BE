@@ -34,7 +34,7 @@ public class StompSubscribeStrategy implements StompCommandStrategy {
 
         if (destination.startsWith(SUB_END_POINT)) {
             Long roomId = Long.valueOf(destination.replace(SUB_END_POINT, ""));
-            chattingRoomService.subscribeChatRoom(roomId, accessor);
+            accessor.getSessionAttributes().put(CHAT_ROOM_ID, roomId);
 
             return message;
         }
@@ -44,6 +44,13 @@ public class StompSubscribeStrategy implements StompCommandStrategy {
         }
 
         throw new ChatSubscribeException();
+    }
+
+    @Override
+    public void postSend(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent) {
+        if (sent) {
+            chattingRoomService.postSubscribeChatroom(accessor);
+        }
     }
 }
 

@@ -64,13 +64,13 @@ public class ChattingRoomService {
     }
 
     @Transactional
-    public void subscribeChatRoom(long roomId, SimpMessageHeaderAccessor accessor) {
+    public void postSubscribeChatroom(SimpMessageHeaderAccessor accessor) {
+        Long roomId = (Long) accessor.getSessionAttributes().get(CHAT_ROOM_ID);
         Long senderId = (Long) accessor.getSessionAttributes().get(CHAT_USER_ID);
 
         ChattingRoom chattingRoom = find(roomId);
         Members members = memberService.findById(senderId);
 
-        accessor.getSessionAttributes().put(CHAT_ROOM_ID, roomId);
         accessor.getSessionAttributes().put(CHAT_USER_NAME, members.getNickname());
 
         if (chattingParticipantService.checkSubscription(chattingRoom, members)) {
@@ -114,5 +114,4 @@ public class ChattingRoomService {
 
         redisChatPublisher.publish(topic, chatMessage);
     }
-
 }

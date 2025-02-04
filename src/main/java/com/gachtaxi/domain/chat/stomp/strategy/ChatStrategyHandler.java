@@ -25,4 +25,14 @@ public class ChatStrategyHandler {
                 .orElse(defaultCommandStrategy)
                 .preSend(message, accessor, channel);
     }
+
+    public void handle(Message<?> message, StompHeaderAccessor accessor, MessageChannel channel, boolean sent) {
+        StompCommand command = accessor.getCommand();
+
+        stompCommandStrategies.stream()
+                .filter(strategy -> strategy.supports(command))
+                .findFirst()
+                .orElse(defaultCommandStrategy)
+                .postSend(message, accessor, channel, sent);
+    }
 }
