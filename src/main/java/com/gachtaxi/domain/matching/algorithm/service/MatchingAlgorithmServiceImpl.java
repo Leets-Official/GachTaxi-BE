@@ -25,11 +25,10 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
   @Value("${gachtaxi.matching.auto-matching-description}")
   private String autoMatchingDescription;
 
-  private static final double SEARCH_RADIUS = 300.0;
+//  private static final double SEARCH_RADIUS = 300.0;
 
   @Override
-  public Optional<FindRoomResult> findRoom(Long userId, double startLongitude, double startLatitude,
-      double destinationLongitude, double destinationLatitude,
+  public Optional<FindRoomResult> findRoom(Long userId, String departure, String destination,
       List<Tags> criteria) {
     /*
      사용자 ID로 사용자 정보 조회(이미 방에 참여하고 있는지 중복체크)
@@ -43,16 +42,21 @@ public class MatchingAlgorithmServiceImpl implements MatchingAlgorithmService {
           }
         });
 
-    /*
-     위치 정보를 이용한 방 검색(300M 이내)ø
-     */
-    List<MatchingRoom> matchingRooms = matchingRoomRepository.findRoomsByStartAndDestination(
-        startLongitude,
-        startLatitude,
-        destinationLongitude,
-        destinationLatitude,
-        SEARCH_RADIUS
-    );
+      /*
+        출발지와 도착지 기준으로 방 검색
+      */
+      List<MatchingRoom> matchingRooms = matchingRoomRepository.findRoomsByDepartureAndDestination(departure, destination);
+
+//    /*
+//     위치 정보를 이용한 방 검색(300M 이내)ø
+//     */
+//    List<MatchingRoom> matchingRooms = matchingRoomRepository.findRoomsByStartAndDestination(
+//        startLongitude,
+//        startLatitude,
+//        destinationLongitude,
+//        destinationLatitude,
+//        SEARCH_RADIUS
+//    );
     /*
       ACTIVE 상태인 방 && 블랙리스트가 없는 방만 필터링
      */
