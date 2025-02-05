@@ -41,12 +41,12 @@ public class MatchingInvitationService {
     public static final String MATCHING_INVITE_TITLE = "수동 매칭 초대";
     public static final String MATCHING_INVITE_CONTENT = "%s 님이 수동 매칭 초대를 보냈습니다.";
 
-    public void sendMatchingInvitation(Members sender, List<String> friendNicknames, Long matchingRoomId) {
-        if (friendNicknames == null || friendNicknames.isEmpty()) {
+    public void sendMatchingInvitation(Members sender, List<Long> friendIds, Long matchingRoomId) {
+        if (friendIds == null || friendIds.isEmpty()) {
             return;
         }
 
-        List<Members> friends = memberRepository.findByNicknameIn(friendNicknames);
+        List<Members> friends = memberRepository.findByIdIn(friendIds);
 
         for (Members friend : friends) {
             notificationService.sendWithPush(

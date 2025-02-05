@@ -29,7 +29,7 @@ public record ManualMatchingRequest(
         List<String> criteria,
 
         @Schema(description = "초대할 친구 닉네임 리스트")
-        List<String> members
+        List<Long> members
 ) {
     public List<Tags> getCriteria() {
         return this.criteria.stream()
@@ -37,7 +37,7 @@ public record ManualMatchingRequest(
                 .toList();
     }
 
-    public List<String> getFriendNicknames() {
+    public List<Long> getFriendsId() {
         return members;
     }
 

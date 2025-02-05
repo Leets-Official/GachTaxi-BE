@@ -8,11 +8,13 @@ public record AutoMatchingPostRequest(
 //    String startName,
     String destinationPoint,
 //    String destinationName,
+
+    // 현재 사용하는 필드
     String startName,
     String destinationName,
     List<String> criteria,
-    List<Integer> members,
-    Integer expectedTotalCharge
+    List<Long> members,
+    int expectedTotalCharge
 ) {
 
   public List<Tags> getCriteria() {
