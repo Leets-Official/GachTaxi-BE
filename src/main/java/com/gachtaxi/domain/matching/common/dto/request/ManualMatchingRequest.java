@@ -22,7 +22,7 @@ public record ManualMatchingRequest(
         String departureTime,
 
         @Schema(description = "예상 요금")
-        @Min(value = 0)
+        @Min(value = 4000)
         int expectedTotalCharge,
 
         @Schema(description = "매칭 태그")
