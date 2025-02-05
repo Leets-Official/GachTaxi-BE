@@ -32,8 +32,8 @@ public record BlacklistGetResponse(
       return new BlacklistInfo(
           blacklists.getReceiver().getId(),
           blacklists.getReceiver().getNickname(),
-          blacklists.getReceiver().getGender().name(),
-          blacklists.getReceiverProfilePicture()
+          blacklists.getReceiverProfilePicture(),
+          blacklists.getReceiver().getGender().name()
       );
     }
   }

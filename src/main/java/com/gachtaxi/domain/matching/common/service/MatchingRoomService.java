@@ -55,11 +55,11 @@ public class MatchingRoomService {
   public MatchRoomCreatedEvent createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
 
-    Route route = this.saveRoute(matchRoomCreatedEvent);
+//    Route route = this.saveRoute(matchRoomCreatedEvent);
 
     ChattingRoom chattingRoom = this.chattingRoomService.create();
 
-    MatchingRoom matchingRoom = MatchingRoom.activeOf(matchRoomCreatedEvent, members, route, chattingRoom);
+    MatchingRoom matchingRoom = MatchingRoom.activeOf(matchRoomCreatedEvent, members, chattingRoom);
 
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
     this.saveRoomMasterChargingInfo(matchingRoom, members);
@@ -69,25 +69,25 @@ public class MatchingRoomService {
     return MatchRoomCreatedEvent.of(matchRoomCreatedEvent, savedMatchingRoom.getId(), savedMatchingRoom.getChattingRoomId());
   }
 
-  private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
-    String[] startCoordinates = matchRoomCreatedEvent.startPoint().split(",");
-    double startLatitude = Double.parseDouble(startCoordinates[0]);
-    double startLongitude = Double.parseDouble(startCoordinates[1]);
-
-    String[] endCoordinates = matchRoomCreatedEvent.destinationPoint().split(",");
-    double endLatitude = Double.parseDouble(endCoordinates[0]);
-    double endLongitude = Double.parseDouble(endCoordinates[1]);
-
-    Route route = Route.builder()
-            .startLongitude(startLongitude)
-            .startLatitude(startLatitude)
-            .startLocationName(matchRoomCreatedEvent.startName())
-            .endLongitude(endLongitude)
-            .endLatitude(endLatitude)
-            .endLocationName(matchRoomCreatedEvent.destinationName())
-            .build();
-    return this.routeRepository.save(route);
-  }
+//  private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
+//    String[] startCoordinates = matchRoomCreatedEvent.startPoint().split(",");
+//    double startLatitude = Double.parseDouble(startCoordinates[0]);
+//    double startLongitude = Double.parseDouble(startCoordinates[1]);
+//
+//    String[] endCoordinates = matchRoomCreatedEvent.destinationPoint().split(",");
+//    double endLatitude = Double.parseDouble(endCoordinates[0]);
+//    double endLongitude = Double.parseDouble(endCoordinates[1]);
+//
+//    Route route = Route.builder()
+//            .startLongitude(startLongitude)
+//            .startLatitude(startLatitude)
+//            .startLocationName(matchRoomCreatedEvent.startName())
+//            .endLongitude(endLongitude)
+//            .endLatitude(endLatitude)
+//            .endLocationName(matchRoomCreatedEvent.destinationName())
+//            .build();
+//    return this.routeRepository.save(route);
+//  }
 
   private void saveMatchingRoomTagInfo(MatchingRoom matchingRoom, List<Tags> tags) {
     tags.forEach(tag -> this.matchingRoomTagInfoRepository.save(MatchingRoomTagInfo.of(matchingRoom, tag)));

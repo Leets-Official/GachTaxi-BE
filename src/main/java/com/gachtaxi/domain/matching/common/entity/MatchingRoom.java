@@ -16,9 +16,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -68,7 +66,7 @@ public class MatchingRoom extends BaseEntity {
 
   @Column(name = "departure_time")
   @Getter
-  private LocalDateTime departureTime;
+  private String departureTime;
 
   @Column(name = "departure")
   @Getter
@@ -112,20 +110,22 @@ public class MatchingRoom extends BaseEntity {
 
   public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, ChattingRoom chattingRoom) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
         .title(matchRoomCreatedEvent.title())
         .description(matchRoomCreatedEvent.description())
-        .route(route)
+//        .route(route)
+        .departure(matchRoomCreatedEvent.startName())
+        .destination(matchRoomCreatedEvent.destinationName())
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
         .chattingRoomId(chattingRoom.getId())
         .build();
   }
 
-  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime, Long chattingRoomId) {
+  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, String departureTime, Long chattingRoomId) {
     return MatchingRoom.builder()
             .capacity(4)
             .roomMaster(roomMaster)

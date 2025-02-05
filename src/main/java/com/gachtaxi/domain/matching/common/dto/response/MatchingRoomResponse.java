@@ -1,7 +1,6 @@
 package com.gachtaxi.domain.matching.common.dto.response;
 
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record MatchingRoomResponse(
@@ -10,7 +9,7 @@ public record MatchingRoomResponse(
         String description,
         String departure,
         String destination,
-        LocalDateTime departureTime,
+        String departureTime,
         int maxCapacity,
         int currentMembers,
         List<String> tags

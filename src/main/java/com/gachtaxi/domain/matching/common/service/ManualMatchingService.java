@@ -25,8 +25,6 @@ import com.gachtaxi.domain.members.exception.BlacklistedUserCannotJoinException;
 import com.gachtaxi.domain.members.service.BlacklistService;
 import com.gachtaxi.domain.members.service.MemberService;
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +67,6 @@ public class ManualMatchingService {
                 .build();
         chattingRoomRepository.save(chattingRoom);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime departureTime = LocalDateTime.parse(request.getDeparture(), formatter);
-
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
                 request.getDeparture(),
@@ -79,13 +74,13 @@ public class ManualMatchingService {
                 request.description(),
                 4,
                 request.getTotalCharge(),
-                departureTime,
+                request.departureTime(),
                 chattingRoom.getId()
         );
 
         MatchingRoom savedMatchingRoom = matchingRoomRepository.save(matchingRoom);
 
-        matchingInvitationService.sendMatchingInvitation(roomMaster, request.getFriendNicknames(), savedMatchingRoom.getId());
+        matchingInvitationService.sendMatchingInvitation(roomMaster, request.getFriendsId(), savedMatchingRoom.getId());
 
         matchingRoomService.saveMatchingRoomTagInfoForManual(savedMatchingRoom, request.getCriteria());
         matchingRoomService.saveRoomMasterChargingInfoForManual(savedMatchingRoom, roomMaster);
@@ -151,23 +146,6 @@ public class ManualMatchingService {
     */
     @Transactional
     public void convertToAutoMatching(Long roomId) {
-        MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
-                .orElseThrow(NoSuchMatchingRoomException::new);
-
-        if (!matchingRoom.isActive()) {
-            throw new NotActiveMatchingRoomException();
-        }
-
-        if (LocalDateTime.now().isAfter(matchingRoom.getDepartureTime().minusMinutes(10))) {
-
-            int currentMembers = this.memberMatchingRoomChargingInfoRepository
-                    .countByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
-
-            if (matchingRoom.isAutoConvertible(currentMembers)) {
-                matchingRoom.convertToAutoMatching();
-                matchingRoomRepository.save(matchingRoom);
-            }
-        }
     }
 
     /*

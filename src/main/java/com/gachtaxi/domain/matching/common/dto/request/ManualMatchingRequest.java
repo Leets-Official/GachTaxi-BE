@@ -22,14 +22,14 @@ public record ManualMatchingRequest(
         String departureTime,
 
         @Schema(description = "예상 요금")
-        @Min(value = 0)
+        @Min(value = 4000)
         int expectedTotalCharge,
 
         @Schema(description = "매칭 태그")
         List<String> criteria,
 
-        @Schema(description = "초대할 친구 닉네임 리스트")
-        List<String> members
+        @Schema(description = "초대할 친구 아이디 리스트")
+        List<Long> members
 ) {
     public List<Tags> getCriteria() {
         return this.criteria.stream()
@@ -37,7 +37,7 @@ public record ManualMatchingRequest(
                 .toList();
     }
 
-    public List<String> getFriendNicknames() {
+    public List<Long> getFriendsId() {
         return members;
     }
 
