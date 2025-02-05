@@ -4,9 +4,9 @@ import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import java.util.List;
 
 public record AutoMatchingPostRequest(
-//    String startPoint,
+    String startPoint,
 //    String startName,
-//    String destinationPoint,
+    String destinationPoint,
 //    String destinationName,
     String startName,
     String destinationName,
