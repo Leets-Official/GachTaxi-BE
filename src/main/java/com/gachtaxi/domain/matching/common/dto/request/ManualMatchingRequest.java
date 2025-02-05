@@ -28,7 +28,7 @@ public record ManualMatchingRequest(
         @Schema(description = "매칭 태그")
         List<String> criteria,
 
-        @Schema(description = "초대할 친구 닉네임 리스트")
+        @Schema(description = "초대할 친구 아이디 리스트")
         List<Long> members
 ) {
     public List<Tags> getCriteria() {
