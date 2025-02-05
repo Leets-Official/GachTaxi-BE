@@ -17,6 +17,9 @@ public class CookieUtil {
     @Value("${gachtaxi.auth.jwt.cookiePathOption}")
     private String cookiePathOption;
 
+    @Value("${gachtaxi.auth.jwt.cookieDomain}")
+    private String cookieDomain;
+
     public void setCookie( String name, String value, HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .maxAge(cookieMaxAge)
@@ -24,6 +27,7 @@ public class CookieUtil {
                 .secure(secureOption) //https 적용 시 true
                 .httpOnly(true)
                 .sameSite("None")
+                .domain(cookieDomain)
                 .build();
 
         response.setHeader("Set-Cookie", cookie.toString());
