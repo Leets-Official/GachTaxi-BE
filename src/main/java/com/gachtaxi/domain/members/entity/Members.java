@@ -153,6 +153,10 @@ public class Members extends BaseEntity {
         return this.equals(matchingRoom.getRoomMaster());
     }
 
+    public void delete() {
+        this.status = UserStatus.DELETED;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
