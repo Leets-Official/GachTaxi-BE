@@ -18,10 +18,8 @@ public record AutoMatchingPostRequest(
     @NotNull
     String destinationName,
 
-    @NotNull
     List<String> criteria,
     
-    @NotNull
     List<Long> members,
 
     @Min(value = 4000)
