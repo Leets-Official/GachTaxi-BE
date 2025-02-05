@@ -28,17 +28,17 @@ public class AutoMatchingConsumer {
       topics = "${gachtaxi.kafka.topics.match-room-created}",
       containerFactory = "matchRoomCreatedEventListenerFactory"
   )
-  public void onMatchRoomCreated(MatchRoomCreatedEvent event, Acknowledgment ack) {
-    try {
-      log.info("[KAFKA CONSUMER] Received MatchRoomCreatedEvent: {}", event);
+    public void onMatchRoomCreated(MatchRoomCreatedEvent event, Acknowledgment ack) {
+      try {
+        log.info("[KAFKA CONSUMER] Received MatchRoomCreatedEvent: {}", event);
 
-      this.sseService.sendToClient(
-          event.roomMasterId(),
-          "MATCH_ROOM_CREATED",
-          this.matchingRoomService.createMatchingRoom(event)
-      );
+        this.sseService.sendToClient(
+            event.roomMasterId(),
+            "MATCH_ROOM_CREATED",
+            this.matchingRoomService.createMatchingRoom(event)
+        );
 
-      ack.acknowledge();
+        ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchRoomCreatedEvent", e);
       this.sseService.sendToClient(event.roomMasterId(), "MATCH_ROOM_CREATED", e.getMessage());

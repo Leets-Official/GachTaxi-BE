@@ -12,9 +12,15 @@ public record AutoMatchingPostRequest(
 //    String destinationName,
 
     // 현재 사용하는 필드
+    @NotNull
     String startName,
+
+    @NotNull
     String destinationName,
+
+    @NotNull
     List<String> criteria,
+    
     @NotNull
     List<Long> members,
 

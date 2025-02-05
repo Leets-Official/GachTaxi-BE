@@ -37,8 +37,8 @@ public class MatchingEventFactory {
     return MatchMemberCancelledEvent.of(roomId, memberId, this.matchMemberCancelledTopic);
   }
 
-  public MatchMemberJoinedEvent createMatchMemberJoinedEvent(Long roomId, Long memberId, Long chattingRoomId) {
-    return MatchMemberJoinedEvent.of(roomId, memberId, this.matchMemberJoinedTopic, chattingRoomId);
+  public MatchMemberJoinedEvent createMatchMemberJoinedEvent(Long roomId, Long memberId, Long chattingRoomId, Integer nowMemberCount, Integer autoMaxCapacity) {
+    return MatchMemberJoinedEvent.of(roomId, memberId, this.matchMemberJoinedTopic, chattingRoomId, nowMemberCount, autoMaxCapacity);
   }
 
   public MatchRoomCancelledEvent createMatchRoomCancelledEvent(Long roomId) {
