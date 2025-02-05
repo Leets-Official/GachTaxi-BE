@@ -150,6 +150,7 @@ public class MatchingRoom extends BaseEntity {
             .roomId(this.getId())
             .maxCapacity(this.getCapacity())
             .chattingRoomId(this.chattingRoomId)
+            .currentMembers(this.getCurrentMemberCount())
             .build();
   }
   public int getCurrentMemberCount() {
