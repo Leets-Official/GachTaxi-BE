@@ -96,5 +96,7 @@ public class MatchingInvitationService {
 
         MemberMatchingRoomChargingInfo memberInfo = MemberMatchingRoomChargingInfo.notPayedOf(matchingRoom, member);
         memberMatchingRoomChargingInfoRepository.save(memberInfo);
+
+        notificationRepository.delete(notification);
     }
 }

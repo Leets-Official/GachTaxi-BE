@@ -11,6 +11,8 @@ public record MatchMemberJoinedEvent(
     Long roomId,
     Long memberId,
     Long chattingRoomId,
+    Integer nowMemberCount,
+    Integer maxCapacity,
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime joinedAt,
@@ -28,12 +30,14 @@ public record MatchMemberJoinedEvent(
     return this.topic;
   }
 
-  public static MatchMemberJoinedEvent of(Long roomId, Long memberId, String topic, Long chattingRoomId) {
+  public static MatchMemberJoinedEvent of(Long roomId, Long memberId, String topic, Long chattingRoomId, Integer nowMemberCount, Integer autoMaxCapacity) {
     return MatchMemberJoinedEvent.builder()
         .roomId(roomId)
         .memberId(memberId)
         .topic(topic)
         .chattingRoomId(chattingRoomId)
+        .nowMemberCount(nowMemberCount)
+        .maxCapacity(autoMaxCapacity)
         .build();
   }
 }

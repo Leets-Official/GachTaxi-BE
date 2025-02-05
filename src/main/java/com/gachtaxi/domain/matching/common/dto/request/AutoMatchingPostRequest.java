@@ -12,10 +12,14 @@ public record AutoMatchingPostRequest(
 //    String destinationName,
 
     // 현재 사용하는 필드
-    String startName,
-    String destinationName,
-    List<String> criteria,
     @NotNull
+    String startName,
+
+    @NotNull
+    String destinationName,
+
+    List<String> criteria,
+    
     List<Long> members,
 
     @Min(value = 4000)
