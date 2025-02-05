@@ -60,7 +60,6 @@ gachtaxi:
       cookieMaxAge: ${JWT_COOKIE_MAX_AGE}
       secureOption: ${COOKIE_SECURE_OPTION}
       cookiePathOption: ${COOKIE_PATH_OPTION}
-      cookieDomain: ${COOKIE_DOMAIN_ADDRESS}
     redis:
       emailAuthCodeExpiration: ${REDIS_EMAIL_AUTH_CODE_EXPIRATION}
   kafka:
