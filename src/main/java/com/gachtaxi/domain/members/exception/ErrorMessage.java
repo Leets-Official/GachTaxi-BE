@@ -12,6 +12,7 @@ public enum ErrorMessage {
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다."),
     DUPLICATED_EMAIL("이미 가입된 이메일이에요!"),
     EMAIL_FROM_INVALID("가천대학교 이메일이 아니에요!"),
+    MEMBER_ID_NOT_FOUND("토큰에서 회원 id를 찾을 수 없습니다."),
 
     // Blacklist
     BLACKLIST_ALREADY_EXISTS("이미 등록된 블랙리스트입니다."),

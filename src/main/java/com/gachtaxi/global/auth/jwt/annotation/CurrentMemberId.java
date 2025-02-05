@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-@AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : id")
+@AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? T(com.gachtaxi.domain.members.exception.MemberIdNotFoundException).throwException() : id")
 public @interface CurrentMemberId {
     /*
      * AuthenticationPrincipal의 id 필드를 반환
