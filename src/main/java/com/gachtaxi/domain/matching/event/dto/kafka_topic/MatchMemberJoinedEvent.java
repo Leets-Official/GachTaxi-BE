@@ -36,7 +36,7 @@ public record MatchMemberJoinedEvent(
         .memberId(memberId)
         .topic(topic)
         .chattingRoomId(chattingRoomId)
-        .nowMemberCount(nowMemberCount)
+        .nowMemberCount(nowMemberCount + 1)
         .maxCapacity(autoMaxCapacity)
         .build();
   }
