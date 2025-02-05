@@ -4,10 +4,12 @@ import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import java.util.List;
 
 public record AutoMatchingPostRequest(
-    String startPoint,
-    String startName,
-    String destinationPoint,
-    String destinationName,
+//    String startPoint,
+//    String startName,
+//    String destinationPoint,
+//    String destinationName,
+    String departure,
+    String destination,
     List<String> criteria,
     List<Integer> members,
     Integer expectedTotalCharge

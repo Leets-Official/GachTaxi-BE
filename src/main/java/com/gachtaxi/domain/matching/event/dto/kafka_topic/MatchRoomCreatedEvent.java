@@ -17,9 +17,9 @@ public record MatchRoomCreatedEvent(
     Integer maxCapacity,
     String title,
     String description,
-    String startPoint,
+//    String startPoint,
     String startName,
-    String destinationPoint,
+//    String destinationPoint,
     String destinationName,
     List<Tags> criteria,
     Integer expectedTotalCharge,
@@ -48,9 +48,9 @@ public record MatchRoomCreatedEvent(
         .maxCapacity(event.maxCapacity())
         .title(event.title())
         .description(event.description())
-        .startPoint(event.startPoint())
+//        .startPoint(event.startPoint())
         .startName(event.startName())
-        .destinationPoint(event.destinationPoint())
+//        .destinationPoint(event.destinationPoint())
         .destinationName(event.destinationName())
         .criteria(event.criteria())
         .expectedTotalCharge(event.expectedTotalCharge())
@@ -70,10 +70,12 @@ public record MatchRoomCreatedEvent(
       ) {
     return MatchRoomCreatedEvent.builder()
         .roomMasterId(roomMasterId)
-        .startPoint(autoMatchingPostRequest.startPoint())
-        .startName(autoMatchingPostRequest.startName())
-        .destinationPoint(autoMatchingPostRequest.destinationPoint())
-        .destinationName(autoMatchingPostRequest.destinationName())
+//        .startPoint(autoMatchingPostRequest.startPoint())
+//        .startName(autoMatchingPostRequest.startName())
+//        .destinationPoint(autoMatchingPostRequest.destinationPoint())
+//        .destinationName(autoMatchingPostRequest.destinationName())
+        .startName(autoMatchingPostRequest.departure())
+        .destinationName(autoMatchingPostRequest.destination())
         .maxCapacity(maxCapacity)
         .title(UUID.randomUUID().toString())
         .description(description)

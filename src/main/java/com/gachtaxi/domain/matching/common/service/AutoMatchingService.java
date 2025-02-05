@@ -40,18 +40,28 @@ public class AutoMatchingService {
       AutoMatchingPostRequest autoMatchingPostRequest
   ) {
     List<Tags> criteria = autoMatchingPostRequest.getCriteria();
+//    String[] startCoordinates = autoMatchingPostRequest.startPoint().split(",");
+//    double startLongitude = Double.parseDouble(startCoordinates[0]);
+//    double startLatitude = Double.parseDouble(startCoordinates[1]);
+//
+//    String[] destinationCoordinates = autoMatchingPostRequest.destinationPoint().split(",");
+//    double destinationLongitude = Double.parseDouble(destinationCoordinates[0]);
+//    double destinationLatitude = Double.parseDouble(destinationCoordinates[1]);
 
-    String[] startCoordinates = autoMatchingPostRequest.startPoint().split(",");
-    double startLongitude = Double.parseDouble(startCoordinates[0]);
-    double startLatitude = Double.parseDouble(startCoordinates[1]);
+//    Optional<FindRoomResult> optionalRoom =
+//        this.matchingAlgorithmService.findRoom(memberId, startLongitude, startLatitude, destinationLongitude, destinationLatitude, criteria);
 
-    String[] destinationCoordinates = autoMatchingPostRequest.destinationPoint().split(",");
-    double destinationLongitude = Double.parseDouble(destinationCoordinates[0]);
-    double destinationLatitude = Double.parseDouble(destinationCoordinates[1]);
+
 
     Optional<FindRoomResult> optionalRoom =
-        this.matchingAlgorithmService.findRoom(memberId, startLongitude, startLatitude, destinationLongitude, destinationLatitude, criteria);
-
+        this.matchingAlgorithmService.findRoom(
+                memberId,
+                autoMatchingPostRequest.departure(),
+                autoMatchingPostRequest.destination(),
+                criteria
+        );
+//    Optional<FindRoomResult> optionalRoom =
+//        this.matchingAlgorithmService.findRoom(memberId, autoMatchingPostRequest.startPoint(), autoMatchingPostRequest.destinationPoint(), criteria);
     optionalRoom
         .ifPresentOrElse(
             roomResult -> this.sendMatchMemberJoinedEvent(memberId, roomResult),

@@ -110,13 +110,15 @@ public class MatchingRoom extends BaseEntity {
 
   public boolean isAutoConvertible(int currentMembers) { return currentMembers < this.capacity; }
 
-  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, Route route, ChattingRoom chattingRoom) {
+  public static MatchingRoom activeOf(MatchRoomCreatedEvent matchRoomCreatedEvent, Members members, ChattingRoom chattingRoom) {
     return MatchingRoom.builder()
         .capacity(matchRoomCreatedEvent.maxCapacity())
         .roomMaster(members)
         .title(matchRoomCreatedEvent.title())
         .description(matchRoomCreatedEvent.description())
-        .route(route)
+//        .route(route)
+        .departure(matchRoomCreatedEvent.startName())
+        .destination(matchRoomCreatedEvent.destinationName())
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
         .chattingRoomId(chattingRoom.getId())
