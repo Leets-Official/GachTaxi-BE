@@ -8,8 +8,8 @@ public record AutoMatchingPostRequest(
 //    String startName,
 //    String destinationPoint,
 //    String destinationName,
-    String departure,
-    String destination,
+    String startName,
+    String destinationName,
     List<String> criteria,
     List<Integer> members,
     Integer expectedTotalCharge
@@ -19,5 +19,11 @@ public record AutoMatchingPostRequest(
     return this.criteria.stream()
         .map(Tags::valueOf)
         .toList();
+  }
+  public String getDeparture() {
+    return startName;
+  }
+  public String getDestination() {
+    return destinationName;
   }
 }

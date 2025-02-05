@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record MatchRoomCreatedEvent(
@@ -74,8 +72,8 @@ public record MatchRoomCreatedEvent(
 //        .startName(autoMatchingPostRequest.startName())
 //        .destinationPoint(autoMatchingPostRequest.destinationPoint())
 //        .destinationName(autoMatchingPostRequest.destinationName())
-        .startName(autoMatchingPostRequest.departure())
-        .destinationName(autoMatchingPostRequest.destination())
+        .startName(autoMatchingPostRequest.getDeparture())
+        .destinationName(autoMatchingPostRequest.getDestination())
         .maxCapacity(maxCapacity)
         .title(UUID.randomUUID().toString())
         .description(description)

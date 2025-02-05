@@ -56,8 +56,8 @@ public class AutoMatchingService {
     Optional<FindRoomResult> optionalRoom =
         this.matchingAlgorithmService.findRoom(
                 memberId,
-                autoMatchingPostRequest.departure(),
-                autoMatchingPostRequest.destination(),
+                autoMatchingPostRequest.getDeparture(),
+                autoMatchingPostRequest.getDestination(),
                 criteria
         );
 //    Optional<FindRoomResult> optionalRoom =
