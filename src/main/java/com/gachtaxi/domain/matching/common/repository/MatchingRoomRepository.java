@@ -33,7 +33,7 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
             "WHERE r.departure = :departure " +
             "AND r.destination = :destination " +
             "AND r.matchingRoomStatus = 'ACTIVE'" +
-            "AND r.matchingRoomType != 'MANUAL' ")
+            "AND r.matchingRoomType = 'AUTO' ")
     List<MatchingRoom> findRoomsByDepartureAndDestination(@Param("departure") String departure, @Param("destination") String destination);
 
     @Query("SELECT r " +
