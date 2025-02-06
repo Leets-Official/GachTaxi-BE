@@ -38,7 +38,7 @@ public class MemberService {
     @Transactional
     public MemberResponseDto updateMemberInfo(Long currentId, MemberInfoRequestDto dto){
         Members member = findById(currentId);
-        checkDuplicatedNickName(dto.nickName());
+        checkDuplicatedNickName(dto.nickName(), member);
 
         member.updateMemberInfo(dto);
 
@@ -121,6 +121,14 @@ public class MemberService {
     private void checkDuplicatedNickName(String nickName) {
         memberRepository.findByNickname(nickName).ifPresent(m -> {
             throw new DuplicatedNickNameException();
+        });
+    }
+
+    private void checkDuplicatedNickName(String nickName, Members member) {
+        memberRepository.findByNickname(nickName).ifPresent(m -> {
+            if (!m.equals(member)) {
+                throw new DuplicatedNickNameException();
+            }
         });
     }
 
