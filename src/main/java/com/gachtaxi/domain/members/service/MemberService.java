@@ -38,6 +38,8 @@ public class MemberService {
     @Transactional
     public MemberResponseDto updateMemberInfo(Long currentId, MemberInfoRequestDto dto){
         Members member = findById(currentId);
+        checkDuplicatedNickName(dto.nickName());
+
         member.updateMemberInfo(dto);
 
         chattingMessageMongoRepository.updateMemberInfo(member);
