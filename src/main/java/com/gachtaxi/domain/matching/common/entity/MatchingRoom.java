@@ -4,26 +4,14 @@ import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.matching.algorithm.dto.FindRoomResult;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "matching_room")
@@ -120,6 +108,7 @@ public class MatchingRoom extends BaseEntity {
         .departure(matchRoomCreatedEvent.startName())
         .destination(matchRoomCreatedEvent.destinationName())
         .totalCharge(matchRoomCreatedEvent.expectedTotalCharge())
+        .matchingRoomType(MatchingRoomType.AUTO)
         .matchingRoomStatus(MatchingRoomStatus.ACTIVE)
         .chattingRoomId(chattingRoom.getId())
         .build();
