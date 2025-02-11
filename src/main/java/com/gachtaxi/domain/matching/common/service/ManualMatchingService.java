@@ -9,7 +9,6 @@ import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
-import com.gachtaxi.domain.matching.common.exception.DuplicatedMatchingRoomException;
 import com.gachtaxi.domain.matching.common.exception.NotEqualStartAndDestinationException;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
@@ -54,10 +53,6 @@ public class ManualMatchingService {
     @Transactional
     public Long createManualMatchingRoom(Long userId, ManualMatchingRequest request) {
         Members roomMaster = memberService.findById(userId);
-
-        if (matchingRoomRepository.existsByMemberInMatchingRoom(roomMaster)) {
-            throw new DuplicatedMatchingRoomException();
-        }
 
         if (request.getDeparture().equals(request.getDestination())) {
             throw new NotEqualStartAndDestinationException();
