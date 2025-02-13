@@ -1,12 +1,7 @@
 package com.gachtaxi.global.config.kafka;
 
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberCancelledEvent;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
-import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
-import java.util.HashMap;
-import java.util.Map;
+import com.gachtaxi.domain.chat.dto.request.ChatMessage;
+import com.gachtaxi.domain.matching.event.dto.kafka_topic.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +13,9 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class KafkaConsumerConfig {
 
@@ -25,6 +23,8 @@ public class KafkaConsumerConfig {
   private String bootstrapServers;
   @Value("${spring.kafka.consumer.group-id}")
   private String groupId;
+  @Value("${spring.kafka.consumer.chat-group-id}")
+  private String chatGroupId;
 
   // MatchRoomCreatedEvent
   @Bean
@@ -146,6 +146,32 @@ public class KafkaConsumerConfig {
     ConcurrentKafkaListenerContainerFactory<String, MatchRoomCompletedEvent> factory
         = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(matchRoomCompletedEventConsumerFactory());
+    factory.setConcurrency(3);
+    factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+    return factory;
+  }
+
+  // 채팅
+  @Bean
+  public ConsumerFactory<String, ChatMessage> chatMessageConsumerFactory() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configs.put(ConsumerConfig.GROUP_ID_CONFIG, chatGroupId);
+    configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+    JsonDeserializer<ChatMessage> jsonDeserializer =
+            new JsonDeserializer<>(ChatMessage.class);
+    jsonDeserializer.addTrustedPackages("com.gachtaxi.domain.matching.chat.dto");
+
+    return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), jsonDeserializer);
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, ChatMessage> chatMessageListenerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, ChatMessage> factory
+            = new ConcurrentKafkaListenerContainerFactory<>();
+
+    factory.setConsumerFactory(chatMessageConsumerFactory());
     factory.setConcurrency(3);
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;

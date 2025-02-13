@@ -9,6 +9,7 @@ import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
+import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
@@ -37,6 +38,7 @@ public class ChattingRoomService {
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
     private final RedisChatPublisher redisChatPublisher;
+    private final KafkaChatPublisher kafkaChatPublisher;
     private final ChattingRedisService chattingRedisService;
 
     @Value("${chat.topic}")
@@ -112,6 +114,6 @@ public class ChattingRoomService {
         ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.from(chattingMessage);
 
-        redisChatPublisher.publish(topic, chatMessage);
+        kafkaChatPublisher.publish(chatMessage);
     }
 }
