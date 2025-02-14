@@ -10,6 +10,7 @@ public record MatchingRoomResponse(
         String departure,
         String destination,
         String departureTime,
+        String departureDate,
         int maxCapacity,
         int currentMembers,
         List<String> tags
@@ -22,6 +23,7 @@ public record MatchingRoomResponse(
                 matchingRoom.getDeparture(),
                 matchingRoom.getDestination(),
                 matchingRoom.getDepartureTime(),
+                matchingRoom.getDepartureDate(),
                 matchingRoom.getCapacity(),
                 matchingRoom.getCurrentMemberCount(),
                 matchingRoom.getTags()
