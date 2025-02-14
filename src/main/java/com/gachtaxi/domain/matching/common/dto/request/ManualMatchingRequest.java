@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record ManualMatchingRequest(
@@ -20,6 +19,9 @@ public record ManualMatchingRequest(
 
         @NotNull
         String departureTime,
+
+        @NotNull
+        String departureDate,
 
         @Schema(description = "예상 요금")
         @Min(value = 4000)
