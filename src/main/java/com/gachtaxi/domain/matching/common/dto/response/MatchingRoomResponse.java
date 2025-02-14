@@ -6,6 +6,8 @@ import java.util.List;
 public record MatchingRoomResponse(
         Long roomId,
         Long chattingRoomId,
+        String nickname,
+        String profilePicture,
         String description,
         String departure,
         String destination,
@@ -19,6 +21,8 @@ public record MatchingRoomResponse(
         return new MatchingRoomResponse(
                 matchingRoom.getId(),
                 matchingRoom.getChattingRoomId(),
+                matchingRoom.getRoomMaster().getNickname(),
+                matchingRoom.getRoomMaster().getProfilePicture(),
                 matchingRoom.getDescription(),
                 matchingRoom.getDeparture(),
                 matchingRoom.getDestination(),
