@@ -70,6 +70,7 @@ public class ManualMatchingService {
                 4,
                 request.getTotalCharge(),
                 request.departureTime(),
+                request.departureDate(),
                 chattingRoom.getId()
         );
 
