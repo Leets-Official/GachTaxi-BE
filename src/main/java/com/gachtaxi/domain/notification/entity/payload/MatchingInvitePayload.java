@@ -11,10 +11,12 @@ import lombok.experimental.SuperBuilder;
 public class MatchingInvitePayload extends NotificationPayload {
     private String senderNickname;
     private Long matchingRoomId;
+    private String profilePicture;
 
-    public static MatchingInvitePayload from(String senderNickname, Long matchingRoomId) {
+    public static MatchingInvitePayload from(String senderNickname, String profilePicture, Long matchingRoomId) {
         return MatchingInvitePayload.builder()
                 .senderNickname(senderNickname)
+                .profilePicture(profilePicture)
                 .matchingRoomId(matchingRoomId)
                 .build();
     }

@@ -54,7 +54,7 @@ public class ManualMatchingService {
     public Long createManualMatchingRoom(Long userId, ManualMatchingRequest request) {
         Members roomMaster = memberService.findById(userId);
 
-        if (request.getDeparture().equals(request.getDestination())) {
+        if (request.departure().equals(request.destination())) {
             throw new NotEqualStartAndDestinationException();
         }
 
@@ -64,12 +64,13 @@ public class ManualMatchingService {
 
         MatchingRoom matchingRoom = MatchingRoom.manualOf(
                 roomMaster,
-                request.getDeparture(),
-                request.getDestination(),
+                request.departure(),
+                request.destination(),
                 request.description(),
                 4,
-                request.getTotalCharge(),
+                request.totalCharge(),
                 request.departureTime(),
+                request.departureDate(),
                 chattingRoom.getId()
         );
 

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,17 +14,20 @@ public record ManualMatchingRequest(
         String description,
 
         @NotBlank
-        String startName,
+        String departure,
 
         @NotBlank
-        String destinationName,
+        String destination,
 
         @NotNull
-        String departureTime,
+        LocalDateTime departureTime,
+
+        @NotNull
+        LocalDate departureDate,
 
         @Schema(description = "예상 요금")
         @Min(value = 4000)
-        int expectedTotalCharge,
+        int totalCharge,
 
         @Schema(description = "매칭 태그")
         List<String> criteria,
@@ -39,17 +43,5 @@ public record ManualMatchingRequest(
 
     public List<Long> getFriendsId() {
         return members;
-    }
-
-    public int getTotalCharge() {
-        return expectedTotalCharge;
-    }
-
-    public String getDeparture() {
-        return startName;
-    }
-
-    public String getDestination() {
-        return destinationName;
     }
 }
