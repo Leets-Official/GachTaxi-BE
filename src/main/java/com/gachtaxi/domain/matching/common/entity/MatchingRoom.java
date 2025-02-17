@@ -9,6 +9,8 @@ import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.*;
 
 import java.util.List;
@@ -54,11 +56,11 @@ public class MatchingRoom extends BaseEntity {
 
   @Column(name = "departure_time")
   @Getter
-  private String departureTime;
+  private LocalDateTime departureTime;
 
   @Column(name = "departure_date")
   @Getter
-  private String departureDate;
+  private LocalDate departureDate;
 
   @Column(name = "departure")
   @Getter
@@ -118,7 +120,7 @@ public class MatchingRoom extends BaseEntity {
         .build();
   }
 
-  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, String departureTime, String departureDate,Long chattingRoomId) {
+  public static MatchingRoom manualOf(Members roomMaster, String departure, String destination, String description, int maxCapacity, int totalCharge, LocalDateTime departureTime, LocalDate departureDate,Long chattingRoomId) {
     return MatchingRoom.builder()
             .capacity(4)
             .roomMaster(roomMaster)
