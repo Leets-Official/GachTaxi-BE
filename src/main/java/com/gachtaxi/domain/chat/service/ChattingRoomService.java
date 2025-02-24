@@ -2,6 +2,7 @@ package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
+import com.gachtaxi.domain.chat.dto.response.ReadMessageRange;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
@@ -16,7 +17,7 @@ import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.util.Pair;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,9 +97,9 @@ public class ChattingRoomService {
 
         chattingParticipantService.delete(chattingParticipant);
 
-        chattingMessageMongoRepository.decreaseUnreadCount(roomId, senderId, chattingParticipant.getLastReadAt());
+        Pair<String, String> pair = chattingMessageMongoRepository.updateUnreadCount(chattingRoom.getId(), chattingParticipant.getLastReadAt(), members.getId());
 
-        publishMessage(roomId, senderId, members.getNickname(), EXIT_MESSAGE, MessageType.EXIT);
+        publishMessage(roomId, senderId, members.getNickname(), EXIT_MESSAGE, MessageType.EXIT, ReadMessageRange.from(pair));
     }
 
     public ChattingRoom find(long chattingRoomId) {
@@ -109,11 +110,16 @@ public class ChattingRoomService {
 
     private void publishMessage(long roomId, long senderId, String senderName, String message, MessageType messageType) {
         ChattingMessage chattingMessage = ChattingMessage.of(roomId, senderId, senderName, senderName + message, messageType);
-
         chattingMessageRepository.save(chattingMessage);
-
-        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.from(chattingMessage);
+
+        kafkaChatPublisher.publish(chatMessage);
+    }
+
+    private void publishMessage(long roomId, long senderId, String senderName, String message, MessageType messageType, ReadMessageRange range) {
+        ChattingMessage chattingMessage = ChattingMessage.of(roomId, senderId, senderName, senderName + message, messageType);
+        chattingMessageRepository.save(chattingMessage);
+        ChatMessage chatMessage = ChatMessage.of(roomId, senderId, senderName, range, messageType);
 
         kafkaChatPublisher.publish(chatMessage);
     }
