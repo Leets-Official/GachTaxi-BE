@@ -35,6 +35,8 @@ public class Friends extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FriendStatus status = PENDING;
 
+    private Long chatRoomId;
+
     public static Friends of(Members sender, Members receiver) {
         return Friends.builder()
                 .sender(sender)
@@ -44,5 +46,9 @@ public class Friends extends BaseEntity {
 
     public void updateStatus(){
         this.status = ACCEPTED;
+    }
+
+    public void updateRoomId(Long roomId){
+        this.chatRoomId = roomId;
     }
 }
