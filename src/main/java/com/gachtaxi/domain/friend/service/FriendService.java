@@ -1,5 +1,7 @@
 package com.gachtaxi.domain.friend.service;
 
+import com.gachtaxi.domain.chat.entity.ChattingRoom;
+import com.gachtaxi.domain.chat.service.ChattingRoomService;
 import com.gachtaxi.domain.friend.dto.request.FriendRequestDto;
 import com.gachtaxi.domain.friend.dto.request.FriendUpdateDto;
 import com.gachtaxi.domain.friend.dto.response.FriendsPageableResponse;
@@ -38,6 +40,8 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final NotificationService notificationService;
     private final MemberService memberService;
+
+    private final ChattingRoomService chattingRoomService;
 
     public static final String FRIEND_REQUEST_CONTENT = "%s 님이 친구 요청을 보냈어요.";
     public static final String FRIEND_REQUEST_TITLE = "친구 요청";
@@ -81,6 +85,9 @@ public class FriendService {
             friendRepository.delete(friendShip);
         }else{
             friendShip.updateStatus();
+            ChattingRoom chattingRoom = chattingRoomService.create();
+
+            friendShip.updateRoomId(chattingRoom.getId());
         }
     }
 
@@ -88,6 +95,7 @@ public class FriendService {
     public void deleteFriend(Long currentId, Long memberId) {
         Friends friendShip = getFriendShip(currentId, memberId);
         friendRepository.delete(friendShip);
+        chattingRoomService.delete(friendShip.getChatRoomId());
     }
 
     /*
