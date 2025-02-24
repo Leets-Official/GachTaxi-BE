@@ -44,13 +44,6 @@ public class ChattingMessageMongoRepository {
         mongoTemplate.updateMulti(query, update, ChattingMessage.class);
     }
 
-    public void decreaseUnreadCount(Long roomId, Long senderId, LocalDateTime lastReadAt) {
-        Query query = new Query().addCriteria(buildCommonCriteria(roomId, lastReadAt, senderId));
-        Update update = new Update().inc("unreadCount", -1);
-
-        mongoTemplate.updateMulti(query, update, ChattingMessage.class);
-    }
-
     private Pair<String, String> getUpdatedMessageRange(Long roomId, LocalDateTime lastReadAt, Long senderId) {
         Query minQuery = new Query().addCriteria(buildCommonCriteria(roomId, lastReadAt, senderId))
                 .with(Sort.by(Sort.Direction.ASC, "_id")).limit(1);
