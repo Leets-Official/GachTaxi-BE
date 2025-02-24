@@ -9,6 +9,7 @@ import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.exception.WebSocketSessionException;
+import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.members.entity.Members;
@@ -38,6 +39,7 @@ public class ChattingService {
 
     private final ChattingMessageRepository chattingMessageRepository;
     private final RedisChatPublisher redisChatPublisher;
+    private final KafkaChatPublisher kafkaChatPublisher;
     private final ChattingRoomService chattingRoomService;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
@@ -62,7 +64,7 @@ public class ChattingService {
         ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.from(chattingMessage);
 
-        redisChatPublisher.publish(topic, chatMessage);
+        kafkaChatPublisher.publish(chatMessage);
         /*
         todo 채팅에 알림이 도입되면 redis에 참여하지 않은 사람 리스트를 가져와서 푸시알림 보내기. 참여하고 있다면 X
          */

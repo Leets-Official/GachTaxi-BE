@@ -7,6 +7,7 @@ import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingParticipantNotFoundException;
 import com.gachtaxi.domain.chat.exception.DuplicateSubscribeException;
+import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
 import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
@@ -27,6 +28,7 @@ public class ChattingParticipantService {
     private final ChattingMessageMongoRepository chattingMessageMongoRepository;
     private final ChattingRedisService chattingRedisService;
     private final RedisChatPublisher redisChatPublisher;
+    private final KafkaChatPublisher kafkaChatPublisher;
 
     @Value("${chat.topic}")
     public String chatTopic;
@@ -83,6 +85,6 @@ public class ChattingParticipantService {
         ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.of(roomId, senderId, senderName, range, MessageType.READ);
 
-        redisChatPublisher.publish(topic, chatMessage);
+        kafkaChatPublisher.publish(chatMessage);
     }
 }

@@ -1,33 +1,35 @@
-package com.gachtaxi.domain.chat.redis;
+package com.gachtaxi.domain.chat.kafka;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import com.gachtaxi.domain.chat.exception.CustomMessagingException;
 import com.gachtaxi.domain.chat.exception.CustomSerializationException;
 import com.gachtaxi.domain.chat.exception.RedisSubscribeException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.serializer.SerializationException;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.MessagingException;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
+import static com.gachtaxi.domain.chat.redis.RedisChatSubscriber.CHAT_ROOM_PREFIX;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class RedisChatSubscriber implements MessageListener {
+public class KafkaChatSubscriber {
 
-    public static final String CHAT_ROOM_PREFIX = "/sub/chat/room/";
-
-    private final RedisTemplate<String, ChatMessage> chatRedisTemplate;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
 
-    @Override
-    public void onMessage(Message message, byte[] pattern) {
+    @KafkaListener(topics = "${gachtaxi.kafka.topics.chat-room}", groupId = "${spring.kafka.consumer.chat-group-id}", containerFactory = "chatMessageListenerFactory")
+    public void consumeChatMessage(@Payload ChatMessage chatMessage, Acknowledgment acknowledgment) {
         try {
-            ChatMessage chatMessage = (ChatMessage) chatRedisTemplate.getValueSerializer().deserialize(message.getBody());
+            log.info("📤 Kafka 채팅 메시지 읽기 성공: {}", chatMessage);
 
             simpMessageSendingOperations.convertAndSend(CHAT_ROOM_PREFIX + chatMessage.roomId(), chatMessage);
+            acknowledgment.acknowledge();
         } catch (MessagingException e) {
             throw new CustomMessagingException(e.getMessage());
         } catch (SerializationException e) {

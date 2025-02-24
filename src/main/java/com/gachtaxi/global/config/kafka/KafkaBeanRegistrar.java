@@ -1,13 +1,6 @@
 package com.gachtaxi.global.config.kafka;
 
-import static com.gachtaxi.global.auth.jwt.util.kafka.KafkaBeanSuffix.KAFKA_TEMPLATE_SUFFIX;
-import static com.gachtaxi.global.auth.jwt.util.kafka.KafkaBeanSuffix.NEW_TOPIC_SUFFIX;
-import static com.gachtaxi.global.auth.jwt.util.kafka.KafkaBeanSuffix.PRODUCER_FACTORY_SUFFIX;
-
 import com.gachtaxi.global.auth.jwt.util.KafkaBeanUtils;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -24,6 +17,12 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.gachtaxi.global.auth.jwt.util.kafka.KafkaBeanSuffix.*;
 
 @Component
 public class KafkaBeanRegistrar implements BeanDefinitionRegistryPostProcessor, EnvironmentAware {
