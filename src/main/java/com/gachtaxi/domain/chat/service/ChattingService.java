@@ -10,7 +10,6 @@ import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.exception.WebSocketSessionException;
 import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
-import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -38,7 +37,6 @@ import static com.gachtaxi.domain.chat.stomp.strategy.StompSubscribeStrategy.CHA
 public class ChattingService {
 
     private final ChattingMessageRepository chattingMessageRepository;
-    private final RedisChatPublisher redisChatPublisher;
     private final KafkaChatPublisher kafkaChatPublisher;
     private final ChattingRoomService chattingRoomService;
     private final ChattingParticipantService chattingParticipantService;
