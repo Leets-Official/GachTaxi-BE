@@ -14,12 +14,10 @@ import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +41,6 @@ public class ChattingService {
     private final MemberService memberService;
     private final ChattingRedisService chattingRedisService;
 
-    @Value("${chat.topic}")
-    public String chatTopic;
-
     @Transactional
     public void chat(ChatMessageRequest request, SimpMessageHeaderAccessor accessor) {
         long roomId = getSessionAttribute(accessor, CHAT_ROOM_ID, Long.class);
@@ -59,7 +54,6 @@ public class ChattingService {
 
         chattingMessageRepository.save(chattingMessage);
 
-        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.from(chattingMessage);
 
         kafkaChatPublisher.publish(chatMessage);
