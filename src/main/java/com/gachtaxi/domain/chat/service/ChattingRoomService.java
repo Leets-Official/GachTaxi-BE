@@ -2,7 +2,6 @@ package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
 import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
-import com.gachtaxi.domain.chat.dto.response.ChattingRoomResponse;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
@@ -10,7 +9,7 @@ import com.gachtaxi.domain.chat.entity.enums.ChatStatus;
 import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingRoomNotFoundException;
 import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
-import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
+import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
@@ -35,9 +34,9 @@ public class ChattingRoomService {
 
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingMessageRepository chattingMessageRepository;
+    private final ChattingMessageMongoRepository chattingMessageMongoRepository;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
-    private final RedisChatPublisher redisChatPublisher;
     private final KafkaChatPublisher kafkaChatPublisher;
     private final ChattingRedisService chattingRedisService;
 
@@ -97,7 +96,9 @@ public class ChattingRoomService {
 
         chattingParticipantService.delete(chattingParticipant);
 
-        publishMessage(roomId, senderId, members.getNickname(),  EXIT_MESSAGE, MessageType.EXIT);
+        chattingMessageMongoRepository.decreaseUnreadCount(roomId, senderId, chattingParticipant.getLastReadAt());
+
+        publishMessage(roomId, senderId, members.getNickname(), EXIT_MESSAGE, MessageType.EXIT);
     }
 
     public ChattingRoom find(long chattingRoomId) {
