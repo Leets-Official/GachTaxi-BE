@@ -13,6 +13,8 @@ import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingJoinRequest
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomListResponse;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
+import com.gachtaxi.domain.matching.common.dto.response.MyRoomResponse;
+import com.gachtaxi.domain.matching.common.dto.response.MyRoomsListResponse;
 import com.gachtaxi.domain.matching.common.service.ManualMatchingService;
 import com.gachtaxi.domain.matching.common.service.MatchingInvitationService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -76,8 +78,8 @@ public class ManualMatchingController {
 
     @Operation(summary = "나의 매칭(수동) 조회")
     @GetMapping("/my-list")
-    public ApiResponse<MatchingRoomListResponse> getMyMatchingList(@CurrentMemberId Long userId, int pageNumber, int pageSize) {
-        Slice<MatchingRoomResponse> rooms = manualMatchingService.getMyMatchingList(userId, pageNumber, pageSize);
-        return ApiResponse.response(OK, GET_MY_MATCHING_LIST_SUCCESS.getMessage(), MatchingRoomListResponse.of(rooms));
+    public ApiResponse<MyRoomsListResponse> getMyMatchingList(@CurrentMemberId Long userId, int pageNumber, int pageSize) {
+        Slice<MyRoomResponse> rooms = manualMatchingService.getMyMatchingList(userId, pageNumber, pageSize);
+        return ApiResponse.response(OK, GET_MY_MATCHING_LIST_SUCCESS.getMessage(), MyRoomsListResponse.of(rooms));
     }
 }
