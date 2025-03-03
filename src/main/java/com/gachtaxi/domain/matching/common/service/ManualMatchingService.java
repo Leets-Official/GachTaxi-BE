@@ -2,7 +2,7 @@ package com.gachtaxi.domain.matching.common.service;
 
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
-import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
+import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingCreateRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
@@ -10,6 +10,7 @@ import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.exception.NotEqualStartAndDestinationException;
+import com.gachtaxi.domain.matching.common.exception.NotRoomMasterException;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
 import com.gachtaxi.domain.matching.common.exception.MemberAlreadyJoinedException;
@@ -51,7 +52,7 @@ public class ManualMatchingService {
       수동 매칭 방 생성
     */
     @Transactional
-    public Long createManualMatchingRoom(Long userId, ManualMatchingRequest request) {
+    public Long createManualMatchingRoom(Long userId, ManualMatchingCreateRequest request) {
         Members roomMaster = memberService.findById(userId);
 
         if (request.departure().equals(request.destination())) {
@@ -177,6 +178,27 @@ public class ManualMatchingService {
                  this.matchingRoomRepository.save(matchingRoom);
              }
          }
+    }
+    /*
+        수동 매칭 방장 마감
+    */
+    @Transactional
+    public void completeManualMatchingRoom(Long userId, Long roomId) {
+        Members user = memberService.findById(userId);
+
+        MatchingRoom matchingRoom = matchingRoomRepository.findById(roomId)
+                .orElseThrow(NoSuchMatchingRoomException::new);
+
+        if (!matchingRoom.isActive()) {
+            throw new NotActiveMatchingRoomException();
+        }
+
+        if (!user.isRoomMaster(matchingRoom)) {
+            throw new NotRoomMasterException();
+        }
+
+        matchingRoom.completeMatchingRoom();
+        matchingRoomRepository.save(matchingRoom);
     }
     /*
        수동 매칭 방 리스트 조회
