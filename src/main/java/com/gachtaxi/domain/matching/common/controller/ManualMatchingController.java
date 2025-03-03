@@ -1,6 +1,7 @@
 package com.gachtaxi.domain.matching.common.controller;
 
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.ACCEPT_MATCHING_INVITE_SUCCESS;
+import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.CREATE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.GET_MANUAL_MATCHING_LIST_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.GET_MY_MATCHING_LIST_SUCCESS;
@@ -9,8 +10,8 @@ import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.LEA
 import static org.springframework.http.HttpStatus.OK;
 
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingInviteReplyRequest;
-import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingJoinRequest;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
+import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingCreateRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomListResponse;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.service.ManualMatchingService;
@@ -41,14 +42,14 @@ public class ManualMatchingController {
 
     @Operation(summary = "수동 매칭방 생성")
     @PostMapping("/creation")
-    public ApiResponse<Long> createManualMatchingRoom(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingRequest request) {
+    public ApiResponse<Long> createManualMatchingRoom(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingCreateRequest request) {
         Long roomId = manualMatchingService.createManualMatchingRoom(userId, request);
         return ApiResponse.response(OK, CREATE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage(), roomId);
     }
 
     @Operation(summary = "수동 매칭방 참여")
     @PostMapping("/join")
-    public ApiResponse<Void> joinManualMatchingRoom(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingJoinRequest request) {
+    public ApiResponse<Void> joinManualMatchingRoom(@CurrentMemberId Long userId, @Valid @RequestBody ManualMatchingRequest request) {
         manualMatchingService.joinManualMatchingRoom(userId, request.roomId());
         return ApiResponse.response(OK, JOIN_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
     }
@@ -65,6 +66,14 @@ public class ManualMatchingController {
     public ApiResponse<Void> leaveManualMatchingRoom(@CurrentMemberId Long userId, @PathVariable Long roomId) {
         manualMatchingService.leaveManualMatchingRoom(userId, roomId);
         return ApiResponse.response(OK, LEAVE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
+    }
+
+    @Operation(summary = "방장 매칭 마감")
+    @PostMapping("/complete")
+    public ApiResponse<Void> completeManualMatchingRoom(@CurrentMemberId Long userId,
+                                                     @RequestBody ManualMatchingRequest request) {
+        manualMatchingService.completeManualMatchingRoom(userId, request.roomId());
+        return ApiResponse.response(OK, COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
     }
 
     @Operation(summary = "수동 매칭방 조회")
