@@ -82,15 +82,13 @@ public class AuthController {
 
     @PostMapping("/refresh")
     @Operation(summary = "RefreshToken으로 AccessToken과 RefreshToken을 재발급 하는 API 입니다.")
-    public ApiResponse<Void> reissueRefreshToken(
-            @CookieValue(value = REFRESH_TOKEN_SUBJECT) String refreshToken,
-            HttpServletResponse response
+    public ApiResponse<JwtTokenDto> reissueRefreshToken(
+            @RequestBody @Valid RefreshTokenDto refreshTokenDto
     ) {
 
-        JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(refreshToken);
-        responseToken(jwtTokenDto, response);
+        JwtTokenDto jwtTokenDto = jwtService.reissueJwtToken(refreshTokenDto.refreshToken());
 
-        return ApiResponse.response(OK, REFRESH_TOKEN_REISSUE.getMessage());
+        return ApiResponse.response(OK, REFRESH_TOKEN_REISSUE.getMessage(), jwtTokenDto);
     }
 
     @PostMapping("/code/mail")
