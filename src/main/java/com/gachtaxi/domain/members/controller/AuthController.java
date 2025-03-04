@@ -12,6 +12,7 @@ import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.google.dto.GoogleAuthCode;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
+import com.gachtaxi.global.auth.jwt.dto.RefreshTokenDto;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
 import com.gachtaxi.global.auth.jwt.util.CookieUtil;
 import com.gachtaxi.global.common.mail.dto.request.EmailAddressDto;
@@ -46,20 +47,18 @@ public class AuthController {
     @Operation(summary = "인가 코드를 전달받아, 카카오 소셜 로그인을 진행합니다.")
     public ApiResponse<MemberLoginResponseDto> kakaoLogin(
             @RequestBody @Valid KakaoAuthCode kakaoAuthCode
-            , HttpServletResponse response)
+    )
     {
         LoginDto loginDto = authService.kakaoLogin(kakaoAuthCode.authCode());
-        response.setHeader(ACCESS_TOKEN_SUBJECT, loginDto.jwtTokenDto().accessToken());
 
         if (loginDto.isTemporaryUser()) { // 임시 유저
             return ApiResponse.response(OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
         }
 
-        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, loginDto.jwtTokenDto().refreshToken(), response);
         return ApiResponse.response(
                 OK,
                 LOGIN_SUCCESS.getMessage(),
-                MemberLoginResponseDto.from(loginDto.memberResponseDto())
+                MemberLoginResponseDto.from(loginDto.memberResponseDto(), loginDto.jwtTokenDto())
         );
     }
 
@@ -67,20 +66,18 @@ public class AuthController {
     @Operation(summary = "인가 코드를 전달받아, 구글 소셜 로그인을 진행합니다.")
     public ApiResponse<MemberLoginResponseDto> googleLogin(
             @RequestBody @Valid GoogleAuthCode googleAuthCode
-            , HttpServletResponse response)
+    )
     {
         LoginDto loginDto = authService.googleLogin(googleAuthCode.authCode());
-        response.setHeader(ACCESS_TOKEN_SUBJECT, loginDto.jwtTokenDto().accessToken());
 
         if (loginDto.isTemporaryUser()) { // 임시 유저
             return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
         }
 
-        cookieUtil.setCookie(REFRESH_TOKEN_SUBJECT, loginDto.jwtTokenDto().refreshToken(), response);
         return ApiResponse.response(
                 OK,
                 LOGIN_SUCCESS.getMessage(),
-                MemberLoginResponseDto.from(loginDto.memberResponseDto())
+                MemberLoginResponseDto.from(loginDto.memberResponseDto(), loginDto.jwtTokenDto())
         );    }
 
     @PostMapping("/refresh")
@@ -135,18 +132,16 @@ public class AuthController {
     @Operation(summary = "사용자 추가 정보 업데이트하는 API 입니다. (프로필, 닉네임, 실명, 학번, 성별,)")
     public ApiResponse<MemberLoginResponseDto> updateMemberSupplement(
             @RequestBody MemberSupplmentRequestDto dto,
-            @CurrentMemberId Long userId,
-            HttpServletResponse response
+            @CurrentMemberId Long userId
     ){
         MemberResponseDto memberDto = memberService.updateMemberSupplement(dto, userId);
         JwtTokenDto jwtTokenDto = jwtService
                 .generateJwtToken(MemberTokenDto.from(memberDto));
-        responseToken(jwtTokenDto, response);
 
         return ApiResponse.response(
                 OK,
                 SUPPLEMENT_UPDATE_SUCCESS.getMessage(),
-                MemberLoginResponseDto.from(memberDto)
+                MemberLoginResponseDto.from(memberDto, jwtTokenDto)
         );
     }
 
