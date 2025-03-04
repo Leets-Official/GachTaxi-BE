@@ -4,7 +4,6 @@ import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
-import com.gachtaxi.domain.matching.common.dto.response.MyRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
@@ -198,7 +197,7 @@ public class ManualMatchingService {
        나의 매칭방 리스트 조회
      */
     @Transactional
-    public Page<MyRoomResponse> getMyMatchingList(Long userId, int pageNumber, int pageSize) {
+    public Page<MatchingRoomResponse> getMyMatchingList(Long userId, int pageNumber, int pageSize) {
         if (pageNumber < 0) {
             throw new PageNotFoundException();
         }
@@ -207,7 +206,7 @@ public class ManualMatchingService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Page<MatchingRoom> rooms = matchingRoomRepository.findByMemberInMatchingRoom(user, pageable);
 
-        return rooms.map(MyRoomResponse::from);
+        return rooms.map(MatchingRoomResponse::from);
     }
 }
 
