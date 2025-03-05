@@ -92,8 +92,7 @@ public class ManualMatchingService {
     public void joinManualMatchingRoom(Long userId, Long roomId) {
         Members user = memberService.findById(userId);
 
-        MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
-                .orElseThrow(NoSuchMatchingRoomException::new);
+        MatchingRoom matchingRoom = findMatchingRoomById(roomId);
 
         if (!matchingRoom.isActive()) {
             throw new NotActiveMatchingRoomException();
@@ -152,32 +151,32 @@ public class ManualMatchingService {
     @Transactional
     public void leaveManualMatchingRoom(Long userId, Long roomId) {
         Members user = this.memberService.findById(userId);
-         MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
-                 .orElseThrow(NoSuchMatchingRoomException::new);
 
-         MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo =
+        MatchingRoom matchingRoom = findMatchingRoomById(roomId);
+
+        MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo =
                  this.memberMatchingRoomChargingInfoRepository.findByMembersAndMatchingRoom(user, matchingRoom)
                          .orElseThrow(MemberNotInMatchingRoomException::new);
 
-         if (memberMatchingRoomChargingInfo.isAlreadyLeft()) {
-              throw new MemberAlreadyLeftMatchingRoomException();
-         }
+        if (memberMatchingRoomChargingInfo.isAlreadyLeft()) {
+            throw new MemberAlreadyLeftMatchingRoomException();
+        }
 
-         memberMatchingRoomChargingInfo.leftMatchingRoom();
-         this.memberMatchingRoomChargingInfoRepository.save(memberMatchingRoomChargingInfo);
+        memberMatchingRoomChargingInfo.leftMatchingRoom();
+        this.memberMatchingRoomChargingInfoRepository.save(memberMatchingRoomChargingInfo);
 
-         if (user.isRoomMaster(matchingRoom)) {
-             List<MemberMatchingRoomChargingInfo> remainingMembers =
-                     this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
+        if (user.isRoomMaster(matchingRoom)) {
+            List<MemberMatchingRoomChargingInfo> remainingMembers =
+                    this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
-             if (remainingMembers.isEmpty()) {
-                 matchingRoom.cancelMatchingRoom();
-                 this.matchingRoomRepository.save(matchingRoom);
-             } else {
-                 Members newRoomMaster = remainingMembers.get(0).getMembers();
-                 matchingRoom.changeRoomMaster(newRoomMaster);
-                 this.matchingRoomRepository.save(matchingRoom);
-             }
+            if (remainingMembers.isEmpty()) {
+                matchingRoom.cancelMatchingRoom();
+                this.matchingRoomRepository.save(matchingRoom);
+            } else {
+                Members newRoomMaster = remainingMembers.get(0).getMembers();
+                matchingRoom.changeRoomMaster(newRoomMaster);
+                this.matchingRoomRepository.save(matchingRoom);
+            }
          }
     }
 
@@ -188,8 +187,7 @@ public class ManualMatchingService {
     public void completeManualMatchingRoom(Long userId, Long roomId) {
         Members user = memberService.findById(userId);
 
-        MatchingRoom matchingRoom = matchingRoomRepository.findById(roomId)
-                .orElseThrow(NoSuchMatchingRoomException::new);
+        MatchingRoom matchingRoom = findMatchingRoomById(roomId);
 
         if (!matchingRoom.isActive()) {
             throw new NotActiveMatchingRoomException();
@@ -233,6 +231,11 @@ public class ManualMatchingService {
         Page<MatchingRoom> rooms = matchingRoomRepository.findByMemberInMatchingRoom(user, pageable);
 
         return rooms.map(MatchingRoomResponse::from);
+    }
+
+    private MatchingRoom findMatchingRoomById(Long roomId) {
+        return matchingRoomRepository.findById(roomId)
+                .orElseThrow(NoSuchMatchingRoomException::new);
     }
 }
 
