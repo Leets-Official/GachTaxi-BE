@@ -138,6 +138,7 @@ public class ManualMatchingService {
             this.matchingRoomRepository.save(matchingRoom);
         }
     }
+
     /*
       todo 수동 매칭 → 자동 매칭 전환 : 추후 고도화시, 10분전에 유저에게 알림을 주고 자동 매칭으로 전환
     */
@@ -179,6 +180,7 @@ public class ManualMatchingService {
              }
          }
     }
+
     /*
         수동 매칭 방장 마감
     */
@@ -200,6 +202,7 @@ public class ManualMatchingService {
         matchingRoom.completeMatchingRoom();
         matchingRoomRepository.save(matchingRoom);
     }
+
     /*
        수동 매칭 방 리스트 조회
     */
@@ -215,6 +218,7 @@ public class ManualMatchingService {
 
         return rooms.map(MatchingRoomResponse::from);
     }
+
     /*
        나의 매칭방 리스트 조회
      */
