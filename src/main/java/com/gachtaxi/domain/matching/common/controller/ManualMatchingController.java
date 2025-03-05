@@ -69,10 +69,10 @@ public class ManualMatchingController {
     }
 
     @Operation(summary = "방장 매칭 마감")
-    @PostMapping("/complete")
+    @PatchMapping("/{roomId}/complete")
     public ApiResponse<Void> completeManualMatchingRoom(@CurrentMemberId Long userId,
-                                                     @RequestBody ManualMatchingRequest request) {
-        manualMatchingService.completeManualMatchingRoom(userId, request.roomId());
+                                                     @PathVariable Long roomId) {
+        manualMatchingService.completeManualMatchingRoom(userId, roomId);
         return ApiResponse.response(OK, COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
     }
 
