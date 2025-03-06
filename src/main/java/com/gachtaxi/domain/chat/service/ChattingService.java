@@ -10,17 +10,14 @@ import com.gachtaxi.domain.chat.entity.ChattingParticipant;
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.exception.WebSocketSessionException;
 import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
-import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,15 +35,11 @@ import static com.gachtaxi.domain.chat.stomp.strategy.StompSubscribeStrategy.CHA
 public class ChattingService {
 
     private final ChattingMessageRepository chattingMessageRepository;
-    private final RedisChatPublisher redisChatPublisher;
     private final KafkaChatPublisher kafkaChatPublisher;
     private final ChattingRoomService chattingRoomService;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
     private final ChattingRedisService chattingRedisService;
-
-    @Value("${chat.topic}")
-    public String chatTopic;
 
     @Transactional
     public void chat(ChatMessageRequest request, SimpMessageHeaderAccessor accessor) {
@@ -61,7 +54,6 @@ public class ChattingService {
 
         chattingMessageRepository.save(chattingMessage);
 
-        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.from(chattingMessage);
 
         kafkaChatPublisher.publish(chatMessage);
