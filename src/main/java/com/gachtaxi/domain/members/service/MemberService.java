@@ -6,6 +6,7 @@ import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
+import com.gachtaxi.domain.members.exception.InvalidNicknameLengthException;
 import com.gachtaxi.domain.members.exception.MemberNotFoundException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,7 @@ public class MemberService {
 
     @Transactional
     public MemberResponseDto updateMemberSupplement(MemberSupplmentRequestDto dto, Long userId) {
+        checkInvalidLengthNickName(dto.nickname());
         checkDuplicatedNickName(dto.nickname());
         checkDuplicatedStudentNumber(dto.studentNumber());
 
@@ -130,6 +132,12 @@ public class MemberService {
                 throw new DuplicatedNickNameException();
             }
         });
+    }
+
+    private void checkInvalidLengthNickName(String nickName) {
+        if (nickName.length() > 10) {
+            throw new InvalidNicknameLengthException();
+        }
     }
 
 }
