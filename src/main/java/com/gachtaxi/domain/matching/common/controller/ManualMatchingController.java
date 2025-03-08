@@ -1,7 +1,6 @@
 package com.gachtaxi.domain.matching.common.controller;
 
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.ACCEPT_MATCHING_INVITE_SUCCESS;
-import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.CREATE_MANUAL_MATCHING_ROOM_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.GET_MANUAL_MATCHING_LIST_SUCCESS;
 import static com.gachtaxi.domain.matching.common.controller.ResponseMessage.GET_MY_MATCHING_LIST_SUCCESS;
@@ -14,6 +13,7 @@ import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingCreateRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomListResponse;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
+import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.service.ManualMatchingService;
 import com.gachtaxi.domain.matching.common.service.MatchingInvitationService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -72,8 +72,11 @@ public class ManualMatchingController {
     @PatchMapping("/{roomId}/complete")
     public ApiResponse<Void> completeManualMatchingRoom(@CurrentMemberId Long userId,
                                                      @PathVariable Long roomId) {
-        manualMatchingService.completeManualMatchingRoom(userId, roomId);
-        return ApiResponse.response(OK, COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS.getMessage());
+        MatchingRoomStatus status = manualMatchingService.completeManualMatchingRoom(userId, roomId);
+        ResponseMessage responseMessage = (status == MatchingRoomStatus.CANCELLED)
+                ? ResponseMessage.COMPLETE_MANUAL_MATCHING_ROOM_CANCELLED
+                : ResponseMessage.COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS;
+        return ApiResponse.response(OK, responseMessage.getMessage());
     }
 
     @Operation(summary = "수동 매칭방 조회")
