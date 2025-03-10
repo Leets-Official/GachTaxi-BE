@@ -8,16 +8,12 @@ import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
 @Builder
 public record MemberLoginResponseDto(
         String status,
-        MemberResponseDto memberResponseDto,
-        String authorization,
-        String refreshToken
+        MemberResponseDto memberResponseDto
 ) {
-    public static MemberLoginResponseDto from(MemberResponseDto memberResponseDto, JwtTokenDto jwtTokenDto) {
+    public static MemberLoginResponseDto from(MemberResponseDto memberResponseDto) {
         return MemberLoginResponseDto.builder()
                 .status(LOGIN_SUCCESS.name())
                 .memberResponseDto(memberResponseDto)
-                .authorization(jwtTokenDto.accessToken())
-                .refreshToken(jwtTokenDto.refreshToken())
                 .build();
     }
 
