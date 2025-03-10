@@ -184,7 +184,7 @@ public class ManualMatchingService {
         수동 매칭 방장 마감
     */
     @Transactional
-    public void completeManualMatchingRoom(Long userId, Long roomId) {
+    public MatchingRoomStatus completeManualMatchingRoom(Long userId, Long roomId) {
         Members user = memberService.findById(userId);
 
         MatchingRoom matchingRoom = findMatchingRoomById(roomId);
@@ -197,8 +197,17 @@ public class ManualMatchingService {
             throw new NotRoomMasterException();
         }
 
+        int currentMemberCount = matchingRoom.getCurrentMemberCount();
+
+        if (currentMemberCount <= 1) {
+            matchingRoom.cancelMatchingRoom();
+            matchingRoomRepository.save(matchingRoom);
+            return MatchingRoomStatus.CANCELLED;
+        }
+
         matchingRoom.completeMatchingRoom();
         matchingRoomRepository.save(matchingRoom);
+        return MatchingRoomStatus.COMPLETE;
     }
 
     /*

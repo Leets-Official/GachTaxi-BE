@@ -23,7 +23,8 @@ public enum ResponseMessage {
   GET_MANUAL_MATCHING_LIST_SUCCESS("수동 매칭방 조회에 성공했습니다."),
   GET_MY_MATCHING_LIST_SUCCESS("내 매칭방 조회에 성공했습니다."),
   ACCEPT_MATCHING_INVITE_SUCCESS("매칭방 초대를 수락/거절이 완료되었습니다"),
-  COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS("매칭이 성공적으로 마감되었습니다.");
+  COMPLETE_MANUAL_MATCHING_ROOM_SUCCESS("매칭이 성공적으로 마감되었습니다."),
+  COMPLETE_MANUAL_MATCHING_ROOM_CANCELLED("혼자서 매칭 마감시 매칭이 취소됩니다.");
 
   private final String message;
 }
