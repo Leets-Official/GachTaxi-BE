@@ -8,13 +8,10 @@ import com.gachtaxi.domain.chat.entity.enums.MessageType;
 import com.gachtaxi.domain.chat.exception.ChattingParticipantNotFoundException;
 import com.gachtaxi.domain.chat.exception.DuplicateSubscribeException;
 import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
-import com.gachtaxi.domain.chat.redis.RedisChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.chat.repository.ChattingParticipantRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +24,7 @@ public class ChattingParticipantService {
     private final ChattingParticipantRepository chattingParticipantRepository;
     private final ChattingMessageMongoRepository chattingMessageMongoRepository;
     private final ChattingRedisService chattingRedisService;
-    private final RedisChatPublisher redisChatPublisher;
     private final KafkaChatPublisher kafkaChatPublisher;
-
-    @Value("${chat.topic}")
-    public String chatTopic;
 
     public void save(ChattingParticipant chattingParticipant) {
         chattingParticipantRepository.save(chattingParticipant);
@@ -82,7 +75,6 @@ public class ChattingParticipantService {
     }
 
     private void reEnterEvent(long roomId, long senderId, String senderName, ReadMessageRange range) {
-        ChannelTopic topic = new ChannelTopic(chatTopic + roomId);
         ChatMessage chatMessage = ChatMessage.of(roomId, senderId, senderName, range, MessageType.READ);
 
         kafkaChatPublisher.publish(chatMessage);

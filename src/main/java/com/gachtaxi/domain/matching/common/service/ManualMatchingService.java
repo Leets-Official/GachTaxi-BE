@@ -2,7 +2,7 @@ package com.gachtaxi.domain.matching.common.service;
 
 import com.gachtaxi.domain.chat.entity.ChattingRoom;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
-import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingRequest;
+import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingCreateRequest;
 import com.gachtaxi.domain.matching.common.dto.response.MatchingRoomResponse;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
@@ -10,6 +10,7 @@ import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
 import com.gachtaxi.domain.matching.common.exception.NotEqualStartAndDestinationException;
+import com.gachtaxi.domain.matching.common.exception.NotRoomMasterException;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
 import com.gachtaxi.domain.matching.common.exception.MemberAlreadyJoinedException;
@@ -51,7 +52,7 @@ public class ManualMatchingService {
       수동 매칭 방 생성
     */
     @Transactional
-    public Long createManualMatchingRoom(Long userId, ManualMatchingRequest request) {
+    public Long createManualMatchingRoom(Long userId, ManualMatchingCreateRequest request) {
         Members roomMaster = memberService.findById(userId);
 
         if (request.departure().equals(request.destination())) {
@@ -91,8 +92,7 @@ public class ManualMatchingService {
     public void joinManualMatchingRoom(Long userId, Long roomId) {
         Members user = memberService.findById(userId);
 
-        MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
-                .orElseThrow(NoSuchMatchingRoomException::new);
+        MatchingRoom matchingRoom = findMatchingRoomById(roomId);
 
         if (!matchingRoom.isActive()) {
             throw new NotActiveMatchingRoomException();
@@ -137,6 +137,7 @@ public class ManualMatchingService {
             this.matchingRoomRepository.save(matchingRoom);
         }
     }
+
     /*
       todo 수동 매칭 → 자동 매칭 전환 : 추후 고도화시, 10분전에 유저에게 알림을 주고 자동 매칭으로 전환
     */
@@ -150,34 +151,65 @@ public class ManualMatchingService {
     @Transactional
     public void leaveManualMatchingRoom(Long userId, Long roomId) {
         Members user = this.memberService.findById(userId);
-         MatchingRoom matchingRoom = this.matchingRoomRepository.findById(roomId)
-                 .orElseThrow(NoSuchMatchingRoomException::new);
 
-         MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo =
+        MatchingRoom matchingRoom = findMatchingRoomById(roomId);
+
+        MemberMatchingRoomChargingInfo memberMatchingRoomChargingInfo =
                  this.memberMatchingRoomChargingInfoRepository.findByMembersAndMatchingRoom(user, matchingRoom)
                          .orElseThrow(MemberNotInMatchingRoomException::new);
 
-         if (memberMatchingRoomChargingInfo.isAlreadyLeft()) {
-              throw new MemberAlreadyLeftMatchingRoomException();
-         }
+        if (memberMatchingRoomChargingInfo.isAlreadyLeft()) {
+            throw new MemberAlreadyLeftMatchingRoomException();
+        }
 
-         memberMatchingRoomChargingInfo.leftMatchingRoom();
-         this.memberMatchingRoomChargingInfoRepository.save(memberMatchingRoomChargingInfo);
+        memberMatchingRoomChargingInfo.leftMatchingRoom();
+        this.memberMatchingRoomChargingInfoRepository.save(memberMatchingRoomChargingInfo);
 
-         if (user.isRoomMaster(matchingRoom)) {
-             List<MemberMatchingRoomChargingInfo> remainingMembers =
-                     this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
+        if (user.isRoomMaster(matchingRoom)) {
+            List<MemberMatchingRoomChargingInfo> remainingMembers =
+                    this.memberMatchingRoomChargingInfoRepository.findByMatchingRoomAndPaymentStatus(matchingRoom, PaymentStatus.NOT_PAYED);
 
-             if (remainingMembers.isEmpty()) {
-                 matchingRoom.cancelMatchingRoom();
-                 this.matchingRoomRepository.save(matchingRoom);
-             } else {
-                 Members newRoomMaster = remainingMembers.get(0).getMembers();
-                 matchingRoom.changeRoomMaster(newRoomMaster);
-                 this.matchingRoomRepository.save(matchingRoom);
-             }
+            if (remainingMembers.isEmpty()) {
+                matchingRoom.cancelMatchingRoom();
+                this.matchingRoomRepository.save(matchingRoom);
+            } else {
+                Members newRoomMaster = remainingMembers.get(0).getMembers();
+                matchingRoom.changeRoomMaster(newRoomMaster);
+                this.matchingRoomRepository.save(matchingRoom);
+            }
          }
     }
+
+    /*
+        수동 매칭 방장 마감
+    */
+    @Transactional
+    public MatchingRoomStatus completeManualMatchingRoom(Long userId, Long roomId) {
+        Members user = memberService.findById(userId);
+
+        MatchingRoom matchingRoom = findMatchingRoomById(roomId);
+
+        if (!matchingRoom.isActive()) {
+            throw new NotActiveMatchingRoomException();
+        }
+
+        if (!user.isRoomMaster(matchingRoom)) {
+            throw new NotRoomMasterException();
+        }
+
+        int currentMemberCount = matchingRoom.getCurrentMemberCount();
+
+        if (currentMemberCount <= 1) {
+            matchingRoom.cancelMatchingRoom();
+            matchingRoomRepository.save(matchingRoom);
+            return MatchingRoomStatus.CANCELLED;
+        }
+
+        matchingRoom.completeMatchingRoom();
+        matchingRoomRepository.save(matchingRoom);
+        return MatchingRoomStatus.COMPLETE;
+    }
+
     /*
        수동 매칭 방 리스트 조회
     */
@@ -193,6 +225,7 @@ public class ManualMatchingService {
 
         return rooms.map(MatchingRoomResponse::from);
     }
+
     /*
        나의 매칭방 리스트 조회
      */
@@ -207,6 +240,11 @@ public class ManualMatchingService {
         Page<MatchingRoom> rooms = matchingRoomRepository.findByMemberInMatchingRoom(user, pageable);
 
         return rooms.map(MatchingRoomResponse::from);
+    }
+
+    private MatchingRoom findMatchingRoomById(Long roomId) {
+        return matchingRoomRepository.findById(roomId)
+                .orElseThrow(NoSuchMatchingRoomException::new);
     }
 }
 
