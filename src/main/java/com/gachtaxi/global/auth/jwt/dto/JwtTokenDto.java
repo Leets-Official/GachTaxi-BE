@@ -18,8 +18,4 @@ public record JwtTokenDto(
                 .accessToken(accessToken)
                 .build();
     }
-
-    public boolean isTemporaryUser(){
-        return this.refreshToken == null || this.refreshToken.isEmpty();
-    }
 }
