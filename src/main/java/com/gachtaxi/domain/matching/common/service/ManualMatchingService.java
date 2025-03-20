@@ -9,7 +9,9 @@ import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomStatus;
 import com.gachtaxi.domain.matching.common.entity.enums.MatchingRoomType;
 import com.gachtaxi.domain.matching.common.entity.enums.PaymentStatus;
+import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.matching.common.exception.NotEqualStartAndDestinationException;
+import com.gachtaxi.domain.matching.common.exception.NotMatchingGenderException;
 import com.gachtaxi.domain.matching.common.exception.NotRoomMasterException;
 import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.matching.common.exception.RoomMasterCantJoinException;
@@ -21,6 +23,7 @@ import com.gachtaxi.domain.matching.common.exception.NotActiveMatchingRoomExcept
 import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.matching.common.repository.MemberMatchingRoomChargingInfoRepository;
 import com.gachtaxi.domain.members.entity.Members;
+import com.gachtaxi.domain.members.entity.enums.Gender;
 import com.gachtaxi.domain.members.exception.BlacklistedUserCannotJoinException;
 import com.gachtaxi.domain.members.service.BlacklistService;
 import com.gachtaxi.domain.members.service.MemberService;
@@ -57,6 +60,12 @@ public class ManualMatchingService {
 
         if (request.departure().equals(request.destination())) {
             throw new NotEqualStartAndDestinationException();
+        }
+
+        List<Tags> criteria = request.getCriteria();
+        if ((criteria.contains(Tags.ONLY_MALE) && roomMaster.getGender() != Gender.MALE)
+                || (criteria.contains(Tags.ONLY_FEMALE) && roomMaster.getGender() != Gender.FEMALE)) {
+            throw new NotMatchingGenderException();
         }
 
         ChattingRoom chattingRoom = ChattingRoom.builder()
