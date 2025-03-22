@@ -2,7 +2,10 @@ package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.members.dto.request.*;
+import com.gachtaxi.domain.members.dto.response.MemberPageableResponse;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
+import com.gachtaxi.domain.members.dto.response.MemberSliceResponse;
+import com.gachtaxi.domain.members.dto.response.MemberSummaryResponse;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
@@ -10,9 +13,13 @@ import com.gachtaxi.domain.members.exception.InvalidNicknameLengthException;
 import com.gachtaxi.domain.members.exception.MemberNotFoundException;
 import com.gachtaxi.domain.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.gachtaxi.domain.members.entity.enums.UserStatus.ACTIVE;
@@ -34,6 +41,15 @@ public class MemberService {
     public MemberResponseDto getMember(Long currentId){
         Members members = findById(currentId);
         return MemberResponseDto.from(members);
+    }
+
+    public MemberSliceResponse getMemberListByNickName(String nickName, int pageNum, int pageSize){
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+
+        Slice<Members> memberSlice = memberRepository.findByNicknameContaining(nickName, pageable);
+        List<MemberSummaryResponse> memberList = memberSlice.stream().map(MemberSummaryResponse::from).toList();
+
+        return MemberSliceResponse.of(memberList, MemberPageableResponse.from(memberSlice));
     }
 
     @Transactional
