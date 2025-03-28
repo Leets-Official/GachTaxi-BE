@@ -1,10 +1,10 @@
 package com.gachtaxi.domain.members.dto.response;
 
 import com.gachtaxi.domain.members.entity.Blacklists;
-import java.util.List;
 import lombok.Builder;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
+
+import java.util.List;
 
 @Builder
 public record BlacklistGetResponse(
@@ -42,7 +42,7 @@ public record BlacklistGetResponse(
       Integer pageNumber,
       Integer pageSize,
       Integer numberOfElements,
-      Boolean last
+      Boolean isLast
   ) {
 
     public static BlacklistPageable of (Slice<Blacklists> blacklistsPage) {

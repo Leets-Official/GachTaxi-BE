@@ -9,14 +9,14 @@ public record FriendsPageableResponse(
         int pageNumber,
         int pageSize,
         int numberOfElements,
-        boolean last
+        boolean isLast
 ) {
     public static FriendsPageableResponse from(Slice<Friends> slice) {
         return FriendsPageableResponse.builder()
                 .pageNumber(slice.getNumber())
                 .pageSize(slice.getSize())
                 .numberOfElements(slice.getNumberOfElements())
-                .last(slice.isLast())
+                .isLast(slice.isLast())
                 .build();
     }
 }
