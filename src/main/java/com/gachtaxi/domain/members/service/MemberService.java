@@ -49,7 +49,10 @@ public class MemberService {
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, SORT_BY_NICKNAME));
 
         Slice<Members> memberSlice = memberRepository.findByNicknameContaining(nickName, pageable);
-        List<MemberSummaryResponse> memberList = memberSlice.stream().map(MemberSummaryResponse::from).toList();
+        List<MemberSummaryResponse> memberList = memberSlice
+                .stream()
+                .map(MemberSummaryResponse::from)
+                .toList();
 
         return MemberSliceResponse.of(memberList, MemberPageableResponse.from(memberSlice));
     }
