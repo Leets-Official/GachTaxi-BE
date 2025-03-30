@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ChattingMessageMongoRepository chattingMessageMongoRepository;
+    public static final String SORT_BY_NICKNAME = "nickname";
 
     @Transactional
     public InactiveMemberDto saveTmpKakaoMember(Long kakaoId){
@@ -44,7 +46,7 @@ public class MemberService {
     }
 
     public MemberSliceResponse getMemberListByNickName(String nickName, int pageNum, int pageSize){
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, SORT_BY_NICKNAME));
 
         Slice<Members> memberSlice = memberRepository.findByNicknameContaining(nickName, pageable);
         List<MemberSummaryResponse> memberList = memberSlice.stream().map(MemberSummaryResponse::from).toList();
