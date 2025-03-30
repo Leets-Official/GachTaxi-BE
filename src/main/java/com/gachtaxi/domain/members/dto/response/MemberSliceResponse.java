@@ -10,6 +10,9 @@ public record MemberSliceResponse(
         MemberPageableResponse pageable
 ) {
     public static MemberSliceResponse of(List<MemberSummaryResponse> memberList, MemberPageableResponse pageable) {
-        return MemberSliceResponse.builder().memberList(memberList).pageable(pageable).build();
+        return MemberSliceResponse.builder()
+                .memberList(memberList)
+                .pageable(pageable)
+                .build();
     }
 }
