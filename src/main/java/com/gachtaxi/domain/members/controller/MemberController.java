@@ -68,6 +68,6 @@ public class MemberController {
 
         MemberSliceResponse response = memberService.getMemberListByNickName(nickname, pageNum, pageSize);
 
-        return ApiResponse.response(OK, "", response);
+        return ApiResponse.response(OK, MEMBER_LIST_RESPONSE.getMessage(), response);
     }
 }
