@@ -1,7 +1,8 @@
 package com.gachtaxi.domain.chat.service;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessage;
-import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
+import com.gachtaxi.domain.chat.dto.response.ChatMemberResponse;
+import com.gachtaxi.domain.chat.dto.response.ChatMemberInfoResponse;
 import com.gachtaxi.domain.chat.dto.response.ReadMessageRange;
 import com.gachtaxi.domain.chat.entity.ChattingMessage;
 import com.gachtaxi.domain.chat.entity.ChattingParticipant;
@@ -13,6 +14,10 @@ import com.gachtaxi.domain.chat.kafka.KafkaChatPublisher;
 import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
 import com.gachtaxi.domain.chat.repository.ChattingMessageRepository;
 import com.gachtaxi.domain.chat.repository.ChattingRoomRepository;
+import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
+import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
+import com.gachtaxi.domain.matching.common.exception.NoSuchMatchingRoomException;
+import com.gachtaxi.domain.matching.common.repository.MatchingRoomRepository;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +26,8 @@ import org.springframework.data.util.Pair;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.gachtaxi.domain.chat.stomp.strategy.StompConnectStrategy.CHAT_USER_ID;
 import static com.gachtaxi.domain.chat.stomp.strategy.StompSubscribeStrategy.CHAT_ROOM_ID;
@@ -35,6 +42,7 @@ public class ChattingRoomService {
 
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingMessageRepository chattingMessageRepository;
+    private final MatchingRoomRepository matchingRoomRepository;
     private final ChattingMessageMongoRepository chattingMessageMongoRepository;
     private final ChattingParticipantService chattingParticipantService;
     private final MemberService memberService;
@@ -58,11 +66,23 @@ public class ChattingRoomService {
         chattingRoom.delete();
     }
 
-    public ChattingRoomCountResponse getCount(Long memberId, Long roomId) {
+    public ChatMemberInfoResponse getCount(Long memberId, Long roomId) {
         chattingParticipantService.find(roomId, memberId);
+
+        MatchingRoom matchingRoom = matchingRoomRepository.findByChattingRoomId(roomId)
+                .orElseThrow(NoSuchMatchingRoomException::new);
+
+        ChatMemberResponse roomMaster = ChatMemberResponse.from(matchingRoom.getRoomMaster());
+
+        List<ChatMemberResponse> participants = matchingRoom.getMemberMatchingRoomChargingInfo()
+                .stream()
+                .map(MemberMatchingRoomChargingInfo::getMembers)
+                .map(ChatMemberResponse::from)
+                .toList();
+
         Long count = chattingParticipantService.getParticipantCount(roomId);
 
-        return ChattingRoomCountResponse.of(roomId, count);
+        return ChatMemberInfoResponse.of(roomId, count, roomMaster, participants);
     }
 
     @Transactional
