@@ -54,7 +54,7 @@ public class MatchingInvitationService {
                     MATCH_INVITE,
                     MATCHING_INVITE_TITLE,
                     String.format(MATCHING_INVITE_CONTENT, sender.getNickname()),
-                    MatchingInvitePayload.from(sender.getNickname(), matchingRoomId)
+                    MatchingInvitePayload.from(sender.getNickname(),sender.getProfilePicture(), matchingRoomId)
             );
         }
     }

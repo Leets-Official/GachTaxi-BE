@@ -1,5 +1,6 @@
 package com.gachtaxi.domain.members.dto.response;
 
+import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
 import lombok.Builder;
 
 import static com.gachtaxi.domain.members.controller.ResponseMessage.*;

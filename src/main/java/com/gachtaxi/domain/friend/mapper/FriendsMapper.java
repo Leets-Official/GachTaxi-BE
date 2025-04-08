@@ -7,9 +7,9 @@ public class FriendsMapper {
 
     public static FriendsResponseDto toResponseDto(Friends friends, Long memberId) {
         if(friends.getSender().getId().equals(memberId)) {
-            return FriendsResponseDto.from(friends.getReceiver());
+            return FriendsResponseDto.of(friends.getReceiver(), friends.getChatRoomId());
         }else{
-            return FriendsResponseDto.from(friends.getSender());
+            return FriendsResponseDto.of(friends.getSender(), friends.getChatRoomId());
         }
     }
 }

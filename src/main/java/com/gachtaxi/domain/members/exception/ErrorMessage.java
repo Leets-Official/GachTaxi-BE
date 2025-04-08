@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ErrorMessage {
     // Member
     DUPLICATED_NICKNAME("중복되는 닉네임입니다."),
+    INVALID_NICKNAME_LENGTH("닉네임은 10자 이하여야 합니다."),
     DUPLICATED_STUDENT_NUMBER("이미 가입된 학번입니다."),
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다."),
     DUPLICATED_EMAIL("이미 가입된 이메일이에요!"),
