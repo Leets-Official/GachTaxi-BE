@@ -28,7 +28,7 @@ public class NoticeService {
         }
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Notice> noticeSlice = noticeFindService.findAllByNotices(pageable);
+        Slice<Notice> noticeSlice = noticeFindService.findAllNotices(pageable);
 
         return noticeSlice.map(NoticeDTO.NoticeResponse::from);
     }

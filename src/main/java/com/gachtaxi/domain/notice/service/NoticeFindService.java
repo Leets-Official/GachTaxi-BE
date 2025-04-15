@@ -20,7 +20,7 @@ public class NoticeFindService {
                 .orElseThrow(NoticeNotFoundException::new);
     }
 
-    public Slice<Notice> findAllByNotices(Pageable pageable) {
+    public Slice<Notice> findAllNotices(Pageable pageable) {
         return noticeRepository.findAllBy(pageable);
     }
 
