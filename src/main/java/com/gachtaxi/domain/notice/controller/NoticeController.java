@@ -9,6 +9,7 @@ import com.gachtaxi.domain.notice.service.NoticeService;
 import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +39,7 @@ public class NoticeController {
 
     @Operation(summary = "공지사항 목록 조회")
     @GetMapping("/list")
-    public ApiResponse<NoticeListResponse> getNoticeList(@RequestParam int pageNumber, @RequestParam int pageSize) {
+    public ApiResponse<NoticeListResponse> getNoticeList(@RequestParam @Min(0) int pageNumber, @RequestParam @Min(0) int pageSize) {
         NoticeListResponse response = noticeService.getNoticeListResponse(pageNumber, pageSize);
 
         return ApiResponse.response(OK, GET_NOTICE_ALL_SUCCESS.getMessage(), response);
