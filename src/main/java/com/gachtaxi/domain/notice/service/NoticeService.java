@@ -1,6 +1,5 @@
 package com.gachtaxi.domain.notice.service;
 
-import com.gachtaxi.domain.matching.common.exception.PageNotFoundException;
 import com.gachtaxi.domain.notice.dto.response.NoticeDTO;
 import com.gachtaxi.domain.notice.dto.response.NoticeDTO.NoticeResponse;
 import com.gachtaxi.domain.notice.dto.response.NoticeListResponse;
@@ -22,18 +21,6 @@ public class NoticeService {
     private final NoticeFindService noticeFindService;
 
     @Transactional(readOnly = true)
-    public Slice<NoticeDTO.NoticeResponse> getNoticeList(int pageNumber, int pageSize) {
-        if (pageNumber < 0) {
-            throw new PageNotFoundException();
-        }
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<Notice> noticeSlice = noticeFindService.findAllNotices(pageable);
-
-        return noticeSlice.map(NoticeDTO.NoticeResponse::from);
-    }
-
-    @Transactional(readOnly = true)
     public NoticeDTO.NoticeResponse getNoticeDetail(Long noticeId) {
         Notice notice = noticeFindService.findByNoticeId(noticeId);
 
@@ -47,6 +34,13 @@ public class NoticeService {
         NoticePageableResponse pageableResponse = NoticePageableResponse.of(noticeSlice);
 
         return NoticeListResponse.of(noticeList, pageableResponse);
+    }
+
+    private Slice<NoticeDTO.NoticeResponse> getNoticeList(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<Notice> noticeSlice = noticeFindService.findAllNotices(pageable);
+
+        return noticeSlice.map(NoticeDTO.NoticeResponse::from);
     }
 
 }
