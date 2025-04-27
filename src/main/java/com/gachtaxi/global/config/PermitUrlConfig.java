@@ -29,8 +29,8 @@ public class PermitUrlConfig {
     public String[] getAdminUrl(){
         return new String[]{
                 "/api/admin/email/template",
+                "/api/admin/notices/**"
         };
     }
-
 
 }
