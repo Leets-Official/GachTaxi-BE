@@ -1,6 +1,9 @@
 package com.gachtaxi.domain.notice.controller;
 
 
+import static com.gachtaxi.domain.notice.controller.ResponseMessage.NOTICE_GET_ALL_SUCCESS;
+import static com.gachtaxi.domain.notice.controller.ResponseMessage.NOTICE_GET_SUCCESS;
+import static org.springframework.http.HttpStatus.OK;
 
 import com.gachtaxi.domain.notice.dto.response.NoticeDTO;
 import com.gachtaxi.domain.notice.dto.response.NoticeDTO.NoticeResponse;
@@ -17,10 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.gachtaxi.domain.notice.controller.ResponseMessage.GET_NOTICE_ALL_SUCCESS;
-import static com.gachtaxi.domain.notice.controller.ResponseMessage.GET_NOTICE_SUCCESS;
-import static org.springframework.http.HttpStatus.OK;
-
 @Tag(name = "NOTICE", description = "공지사항")
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class NoticeController {
     public ApiResponse<NoticeResponse> getNoticeDetail(@PathVariable Long noticeId) {
         NoticeDTO.NoticeResponse response = noticeService.getNoticeDetail(noticeId);
 
-        return ApiResponse.response(OK, GET_NOTICE_SUCCESS.getMessage(), response);
+        return ApiResponse.response(OK, NOTICE_GET_SUCCESS.getMessage(), response);
     }
 
     @Operation(summary = "공지사항 목록 조회")
@@ -42,7 +41,8 @@ public class NoticeController {
     public ApiResponse<NoticeListResponse> getNoticeList(@RequestParam @Min(0) int pageNumber, @RequestParam @Min(0) int pageSize) {
         NoticeListResponse response = noticeService.getNoticeListResponse(pageNumber, pageSize);
 
-        return ApiResponse.response(OK, GET_NOTICE_ALL_SUCCESS.getMessage(), response);
+        return ApiResponse.response(OK, NOTICE_GET_ALL_SUCCESS.getMessage(), response);
     }
 
 }
+
