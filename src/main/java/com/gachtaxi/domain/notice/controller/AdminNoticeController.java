@@ -29,16 +29,14 @@ public class AdminNoticeController {
     private final NoticeAdminService noticeAdminService;
 
     @PostMapping("/notices")
-    public ApiResponse<NoticeResponse> create(@RequestBody @Validated NoticeCreateRequest dto)
-    {
+    public ApiResponse<NoticeResponse> create(@RequestBody @Validated NoticeCreateRequest dto) {
         NoticeDTO.NoticeResponse response = noticeAdminService.createNotice(dto);
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.NOTICE_CREATE_SUCCESS.getMessage(), response);
     }
 
     @PatchMapping("/notices/{id}")
-    public ApiResponse<NoticeDTO.NoticeResponse> update(@PathVariable Long id, @RequestBody @Validated NoticeUpdateRequest dto)
-    {
+    public ApiResponse<NoticeDTO.NoticeResponse> update(@PathVariable Long id, @RequestBody @Validated NoticeUpdateRequest dto) {
         NoticeDTO.NoticeResponse response = noticeAdminService.updateNotice(id, dto);
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.NOTICE_UPDATE_SUCCESS.getMessage(), response);
