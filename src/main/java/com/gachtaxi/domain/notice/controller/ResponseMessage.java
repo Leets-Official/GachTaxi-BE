@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseMessage {
 
-    NOTICE_GET_SUCCESS("채팅방 상세 조회에 성공했습니다."),
+    NOTICE_GET_SUCCESS("공지사항 상세 조회에 성공했습니다."),
     NOTICE_GET_ALL_SUCCESS("공지사항 전체조회에 성공했습니다."),
 
     // 어드민 관련
