@@ -2,6 +2,8 @@ package com.gachtaxi.domain.members.repository;
 
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.entity.enums.UserStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -28,4 +30,6 @@ public interface MemberRepository extends JpaRepository<Members, Long> {
     Optional<Members> findByEmailAndStatus(String email, UserStatus status);
 
     List<Members> findByIdIn(List<Long> ids);
+
+    Slice<Members> findByNicknameContaining(String nickname, Pageable pageable);
 }

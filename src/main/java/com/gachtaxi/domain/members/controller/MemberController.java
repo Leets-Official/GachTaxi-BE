@@ -3,6 +3,7 @@ package com.gachtaxi.domain.members.controller;
 import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
 import com.gachtaxi.domain.members.dto.request.MemberInfoRequestDto;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
+import com.gachtaxi.domain.members.dto.response.MemberSliceResponse;
 import com.gachtaxi.domain.members.service.MemberDeleteService;
 import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -55,5 +56,18 @@ public class MemberController {
         memberDeleteService.softDelete(currentId);
 
         return ApiResponse.response(OK, MEMBER_DELETE_SUCCESS.getMessage());
+    }
+
+    @GetMapping("/nickname")
+    public ApiResponse<MemberSliceResponse> getMemberList(
+            @RequestParam String nickname,
+            @RequestParam int pageNum,
+            @RequestParam int pageSize
+    )
+    {
+
+        MemberSliceResponse response = memberService.getMemberListByNickName(nickname, pageNum, pageSize);
+
+        return ApiResponse.response(OK, MEMBER_LIST_RESPONSE.getMessage(), response);
     }
 }
