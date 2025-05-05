@@ -2,8 +2,7 @@ package com.gachtaxi.domain.chat.controller;
 
 import com.gachtaxi.domain.chat.dto.request.ChatMessageRequest;
 import com.gachtaxi.domain.chat.dto.response.ChatResponse;
-import com.gachtaxi.domain.chat.dto.response.ChattingRoomCountResponse;
-import com.gachtaxi.domain.chat.dto.response.ChattingRoomResponse;
+import com.gachtaxi.domain.chat.dto.response.ChatMemberInfoResponse;
 import com.gachtaxi.domain.chat.service.ChattingRoomService;
 import com.gachtaxi.domain.chat.service.ChattingService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -42,10 +41,10 @@ public class ChattingController {
     }
 
     @GetMapping("/api/chat/count/{roomId}")
-    @Operation(summary = "채팅방의 총 참여자 수를 조회하기 위한 API입니다.")
-    public ApiResponse<ChattingRoomCountResponse> getChattingMessageCount(@CurrentMemberId Long memberId,
-                                                                          @PathVariable Long roomId) {
-        ChattingRoomCountResponse response = chattingRoomService.getCount(memberId, roomId);
+    @Operation(summary = "채팅방의 총 참여자 수와 참여 멤버를 조회하기 위한 API입니다.")
+    public ApiResponse<ChatMemberInfoResponse> getChattingMessageCount(@CurrentMemberId Long memberId,
+                                                                       @PathVariable Long roomId) {
+        ChatMemberInfoResponse response = chattingRoomService.getCount(memberId, roomId);
 
         return ApiResponse.response(OK, GET_CHATTING_PARTICIPANT_COUNT_SUCCESS.getMessage(), response);
     }

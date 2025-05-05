@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long> {
@@ -58,4 +59,6 @@ public interface MatchingRoomRepository extends JpaRepository<MatchingRoom, Long
             "AND m.paymentStatus != 'LEFT'" +
             "ORDER BY m.matchingRoom.id DESC")
     Page<MatchingRoom> findByMemberInMatchingRoom(@Param("user") Members user, Pageable pageable);
+
+    Optional<MatchingRoom> findByChattingRoomId(Long chattingRoomId);
 }
