@@ -1,9 +1,6 @@
 package com.gachtaxi.domain.members.controller;
 
-import com.gachtaxi.domain.members.dto.request.InactiveMemberAuthCodeRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberAgreementRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberSupplmentRequestDto;
-import com.gachtaxi.domain.members.dto.request.MemberTokenDto;
+import com.gachtaxi.domain.members.dto.request.*;
 import com.gachtaxi.domain.members.dto.response.LoginDto;
 import com.gachtaxi.domain.members.dto.response.MemberLoginResponseDto;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
@@ -12,9 +9,7 @@ import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.google.dto.GoogleAuthCode;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.auth.jwt.dto.JwtTokenDto;
-import com.gachtaxi.global.auth.jwt.dto.RefreshTokenDto;
 import com.gachtaxi.global.auth.jwt.service.JwtService;
-import com.gachtaxi.global.auth.jwt.util.CookieUtil;
 import com.gachtaxi.global.common.mail.dto.request.EmailAddressDto;
 import com.gachtaxi.global.common.mail.service.EmailService;
 import com.gachtaxi.global.common.response.ApiResponse;
@@ -38,19 +33,38 @@ import static org.springframework.http.HttpStatus.OK;
 public class AuthController {
 
     private final EmailService emailService;
-    private final CookieUtil cookieUtil;
     private final AuthService authService;
     private final JwtService jwtService;
     private final MemberService memberService;
 
     @PostMapping("/login/kakao")
     @Operation(summary = "인가 코드를 전달받아, 카카오 소셜 로그인을 진행합니다.")
-    public ApiResponse<MemberLoginResponseDto> kakaoLogin(
+    public ApiResponse<MemberLoginResponseDto> kakaoWebLogin(
             @RequestBody @Valid KakaoAuthCode kakaoAuthCode,
             HttpServletResponse response
     )
     {
-        LoginDto loginDto = authService.kakaoLogin(kakaoAuthCode.authCode());
+        LoginDto loginDto = authService.kakaoWebLogin(kakaoAuthCode.authCode());
+
+        if (loginDto.isTemporaryUser()) { // 임시 유저
+            return ApiResponse.response(OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
+        }
+
+        responseToken(loginDto.jwtTokenDto(), response);
+        return ApiResponse.response(
+                OK,
+                LOGIN_SUCCESS.getMessage(),
+                MemberLoginResponseDto.from(loginDto.memberResponseDto())
+        );
+    }
+
+    @PostMapping("/login/mobile/kakao")
+    @Operation(summary = "카카오 액세스 토큰을 전달받아, 카카오 모바일 소셜 로그인을 진행합니다.")
+    public ApiResponse<MemberLoginResponseDto> loginMobileKakao(
+            @RequestBody KaKaoLoginAccessToken kaKaoLoginAccessToken,
+            HttpServletResponse response
+    ) {
+        LoginDto loginDto = authService.kakaoMobileLogin(kaKaoLoginAccessToken.accessToken());
 
         if (loginDto.isTemporaryUser()) { // 임시 유저
             return ApiResponse.response(OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
@@ -66,7 +80,7 @@ public class AuthController {
 
     @PostMapping("/login/google")
     @Operation(summary = "인가 코드를 전달받아, 구글 소셜 로그인을 진행합니다.")
-    public ApiResponse<MemberLoginResponseDto> googleLogin(
+    public ApiResponse<MemberLoginResponseDto> googleWebLogin(
             @RequestBody @Valid GoogleAuthCode googleAuthCode,
             HttpServletResponse response
     )
