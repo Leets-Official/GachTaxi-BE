@@ -28,8 +28,32 @@ public class AuthService {
     private final JwtService jwtService;
     private final MemberService memberService;
 
-    public LoginDto kakaoLogin(String authCode) {
-        KakaoUserInfoResponse userInfo = getKakaoUserInfoResponse(authCode);
+    public LoginDto kakaoWebLogin(String authCode) {
+        KakaoUserInfoResponse userInfo = getKakaoUserInfoByAuthCode(authCode);
+        Long kakaoId = userInfo.id();
+
+        Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
+        if(optionalMember.isEmpty()) {
+            return LoginDto.from(
+                    jwtService.generateTmpAccessToken(memberService.saveTmpKakaoMember(kakaoId))
+            );
+        }
+
+        Members members = optionalMember.get();
+        if(members.getStatus() == INACTIVE){
+            return LoginDto.from(
+                    jwtService.generateTmpAccessToken(InactiveMemberDto.of(optionalMember.get()))
+            );
+        }
+
+        return LoginDto.of(
+                jwtService.generateJwtToken(MemberTokenDto.from(members)),
+                MemberResponseDto.from(members)
+        );
+    }
+
+    public LoginDto kakaoMobileLogin(String token) {
+        KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(token);
         Long kakaoId = userInfo.id();
 
         Optional<Members> optionalMember = memberService.findByKakaoId(kakaoId);
@@ -53,7 +77,7 @@ public class AuthService {
     }
 
     public LoginDto googleLogin(String authCode) {
-        GoogleUserInfoResponse userInfo = getGoogleUserInfoResponse(authCode);
+        GoogleUserInfoResponse userInfo = getGoogleUserInfoByAuthCode(authCode);
         String googleId = userInfo.id();
 
         Optional<Members> optionalMember = memberService.findByGoogleId(googleId);
@@ -76,18 +100,17 @@ public class AuthService {
         );
     }
 
-
     /*
     * refactoring
     * */
 
-    private KakaoUserInfoResponse getKakaoUserInfoResponse(String authCode) {
+    private KakaoUserInfoResponse getKakaoUserInfoByAuthCode(String authCode) {
         KakaoAccessToken kakaoAccessToken = kakaoUtil.reqeustKakaoToken(authCode);
         KakaoUserInfoResponse userInfo = kakaoUtil.requestKakaoProfile(kakaoAccessToken.access_token());
         return userInfo;
     }
 
-    private GoogleUserInfoResponse getGoogleUserInfoResponse(String authCode) {
+    private GoogleUserInfoResponse getGoogleUserInfoByAuthCode(String authCode) {
         GoogleTokenResponse googleAccessToken = googleUtils.reqeustGoogleToken(authCode);
         GoogleUserInfoResponse userInfo = googleUtils.requestGoogleProfile(googleAccessToken.access_token());
         return userInfo;
