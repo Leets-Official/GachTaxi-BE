@@ -61,7 +61,7 @@ public class AuthController {
     @PostMapping("/login/mobile/kakao")
     @Operation(summary = "카카오 액세스 토큰을 전달받아, 카카오 모바일 소셜 로그인을 진행합니다.")
     public ApiResponse<MemberLoginResponseDto> loginMobileKakao(
-            @RequestBody KaKaoLoginAccessToken kaKaoLoginAccessToken,
+            @RequestBody @Valid KaKaoLoginAccessToken kaKaoLoginAccessToken,
             HttpServletResponse response
     ) {
         LoginDto loginDto = authService.kakaoMobileLogin(kaKaoLoginAccessToken.accessToken());
