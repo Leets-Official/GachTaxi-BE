@@ -7,8 +7,7 @@ public class PermitUrlConfig {
 
     public String[] getPublicUrl(){
         return new String[]{
-                "/auth/login/kakao",
-                "/auth/login/google",
+                "/auth/login/**",
                 "/auth/refresh",
                 "/api/members",
 
