@@ -47,6 +47,7 @@ public class AuthController {
         LoginDto loginDto = authService.kakaoWebLogin(kakaoAuthCode.authCode());
 
         if (loginDto.isTemporaryUser()) { // 임시 유저
+            responseToken(loginDto.jwtTokenDto(), response);
             return ApiResponse.response(OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
         }
 
@@ -67,6 +68,7 @@ public class AuthController {
         LoginDto loginDto = authService.kakaoMobileLogin(kaKaoLoginAccessToken.accessToken());
 
         if (loginDto.isTemporaryUser()) { // 임시 유저
+            responseToken(loginDto.jwtTokenDto(), response);
             return ApiResponse.response(OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
         }
 
@@ -88,6 +90,7 @@ public class AuthController {
         LoginDto loginDto = authService.googleLogin(googleAuthCode.authCode());
 
         if (loginDto.isTemporaryUser()) { // 임시 유저
+            responseToken(loginDto.jwtTokenDto(), response);
             return ApiResponse.response(HttpStatus.OK, UN_REGISTER.getMessage(), MemberLoginResponseDto.from());
         }
 
