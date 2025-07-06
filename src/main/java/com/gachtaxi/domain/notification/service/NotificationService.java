@@ -66,7 +66,15 @@ public class NotificationService {
 
         notificationRepository.save(notification);
         // todo : 앱으로 마이그레이션 후 주석 해제
-//        fcmService.sendNotification(receiver.getFcmToken(), title, notification.getContent());
+        String fcmToken = null;
+
+        try {
+            fcmToken = receiver.getFcmToken();
+        } catch (NullPointerException e) {
+            log.error("fcmToken is null");
+        }
+
+        fcmService.sendNotification(fcmToken, title, notification.getContent());
     }
 
     public void sendWithOutPush(Members receiver, NotificationType type, String content, NotificationPayload payload) {
