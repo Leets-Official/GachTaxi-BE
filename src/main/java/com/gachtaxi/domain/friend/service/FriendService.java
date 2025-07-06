@@ -59,7 +59,7 @@ public class FriendService {
                 FRIEND_REQUEST,
                 FRIEND_REQUEST_TITLE,
                 String.format(FRIEND_REQUEST_CONTENT, sender.getNickname()),
-                FriendRequestPayload.from(senderId));
+                FriendRequestPayload.from(senderId, sender.getProfilePicture()));
     }
 
     public FriendsSliceResponse findFriendsListByMemberId(Long memberId, int pageNum, int pageSize) {
