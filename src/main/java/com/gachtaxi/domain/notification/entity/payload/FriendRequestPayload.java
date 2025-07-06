@@ -15,9 +15,14 @@ public class FriendRequestPayload extends NotificationPayload {
     @Builder.Default
     private FriendStatus status = FriendStatus.PENDING;
 
+    private String profilePicture;
+
     private Long senderId;
 
-    public static FriendRequestPayload from(Long senderId) {
-        return FriendRequestPayload.builder().senderId(senderId).build();
+    public static FriendRequestPayload from(Long senderId, String profilePicture) {
+        return FriendRequestPayload.builder()
+                .senderId(senderId)
+                .profilePicture(profilePicture)
+                .build();
     }
 }
