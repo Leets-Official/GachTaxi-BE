@@ -13,6 +13,7 @@ public enum ResponseMessage {
     FCM_TOKEN_UPDATE_SUCCESS("FCM 토큰 업데이트에 성공했습니다."),
     MEMBER_DELETE_SUCCESS("회원 탈퇴에 성공했습니다."),
     MEMBER_LIST_RESPONSE("멤버 목록를 반환합니다"),
+    MEMBER_SEARCH_WITH_FRIENDSHIP_SUCCESS("친구 여부가 포함된 멤버 목록을 반환합니다."),
 
     // AuthController
     ALREADY_SIGN_UP("이미 가입된 이메일 입니다!"),

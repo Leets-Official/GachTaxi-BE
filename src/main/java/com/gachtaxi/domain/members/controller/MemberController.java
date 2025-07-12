@@ -4,6 +4,7 @@ import com.gachtaxi.domain.members.dto.request.FcmTokenRequest;
 import com.gachtaxi.domain.members.dto.request.MemberInfoRequestDto;
 import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
 import com.gachtaxi.domain.members.dto.response.MemberSliceResponse;
+import com.gachtaxi.domain.members.dto.response.MemberWithFriendStatusSlice;
 import com.gachtaxi.domain.members.service.MemberDeleteService;
 import com.gachtaxi.domain.members.service.MemberService;
 import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
@@ -69,5 +70,19 @@ public class MemberController {
         MemberSliceResponse response = memberService.getMemberListByNickName(nickname, pageNum, pageSize);
 
         return ApiResponse.response(OK, MEMBER_LIST_RESPONSE.getMessage(), response);
+    }
+
+    @Operation(summary = "친구 여부를 포함한 [Member] 목록 조회 API")
+    @GetMapping("/search")
+    public ApiResponse<MemberWithFriendStatusSlice> getMemberListWithFriendStatus(
+            @RequestParam String keyword,
+            @CurrentMemberId Long currentId,
+            @RequestParam int pageNum,
+            @RequestParam int pageSize
+    ) {
+
+        MemberWithFriendStatusSlice response = memberService.getMemberListValidateFriendShip(keyword, currentId, pageNum, pageSize);
+
+        return ApiResponse.response(OK, MEMBER_SEARCH_WITH_FRIENDSHIP_SUCCESS.getMessage(), response);
     }
 }
