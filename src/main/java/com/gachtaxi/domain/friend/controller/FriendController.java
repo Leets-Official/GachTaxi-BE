@@ -8,6 +8,7 @@ import com.gachtaxi.global.auth.jwt.annotation.CurrentMemberId;
 import com.gachtaxi.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import static com.gachtaxi.domain.friend.controller.ResponseMessage.*;
@@ -17,6 +18,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
+@Slf4j
 public class FriendController {
 
     private final FriendService friendService;
@@ -26,7 +28,7 @@ public class FriendController {
     public ApiResponse<Void> sendFriendRequest(
             @CurrentMemberId Long senderId,
             @RequestBody FriendRequestDto dto
-    ){
+    ) {
         friendService.sendFriendRequest(senderId, dto);
         return ApiResponse.response(OK, FRIEND_REQUEST_SUCCESS.getMessage());
     }
@@ -38,7 +40,7 @@ public class FriendController {
             @CurrentMemberId Long memberId,
             @RequestParam int pageNum,
             @RequestParam int pageSize
-    ){
+    ) {
         FriendsSliceResponse response = friendService.findFriendsListByMemberId(memberId, pageNum, pageSize);
         return ApiResponse.response(OK, FRIEND_LIST_SUCCESS.getMessage(), response);
     }
@@ -48,9 +50,9 @@ public class FriendController {
     public ApiResponse<Void> updateFriendRequest(
             @CurrentMemberId Long currentId,
             @RequestBody FriendUpdateDto dto
-    ){
+    ) {
         friendService.updateFriendRequest(dto, currentId); // 친구 요청 보낸 사람(dto), 받은 사람(토큰 추출)
-        if(dto.status() == REJECTED){
+        if (dto.status() == REJECTED) {
             return ApiResponse.response(OK, FRIEND_STATUS_REJECTED.getMessage());
         }
 
@@ -67,4 +69,16 @@ public class FriendController {
         return ApiResponse.response(OK, FRIEND_DELETE.getMessage());
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "나의 친구 목록에서 유저 검색 API")
+    public ApiResponse<FriendsSliceResponse> searchMyFriend(
+            @CurrentMemberId Long currentId, @RequestParam String keyword,
+            @RequestParam int pageNum, @RequestParam int pageSize
+    ) {
+        log.info("현재 요청자 ID {} ", currentId);
+        log.info("keyword {} ", keyword);
+        FriendsSliceResponse response = friendService.searchMyFriends(currentId, keyword, pageNum, pageSize);
+
+        return ApiResponse.response(OK, FRIEND_SEARCH_SUCCESS.getMessage(), response);
+    }
 }

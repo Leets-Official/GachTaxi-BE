@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseMessage {
 
+    FRIEND_SEARCH_SUCCESS("친구 목록에서 친구를 조회합니다."),
     FRIEND_REQUEST_SUCCESS("친구 요청을 보냈습니다."),
     FRIEND_STATUS_ACCEPTED("친구 요청을 수락했습니다"),
     FRIEND_STATUS_REJECTED("친구 요청을 거절했습니다"),
