@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,8 @@ import java.util.List;
 public class MatchingRoom extends BaseEntity {
 
   @OneToMany(mappedBy = "matchingRoom")
-  private List<MatchingRoomTagInfo> matchingRoomTagInfo;
+  @Builder.Default
+  private List<MatchingRoomTagInfo> matchingRoomTagInfo = new ArrayList<>();
 
   @Column(name = "capacity", nullable = false, columnDefinition = "INT CHECK (capacity BETWEEN 1 AND 4)")
   @Getter
@@ -32,7 +34,8 @@ public class MatchingRoom extends BaseEntity {
   // 팀원들 정보
   @OneToMany(mappedBy = "matchingRoom", fetch = FetchType.LAZY)
   @Getter
-  private List<MemberMatchingRoomChargingInfo> memberMatchingRoomChargingInfo;
+  @Builder.Default
+  private List<MemberMatchingRoomChargingInfo> memberMatchingRoomChargingInfo = new ArrayList<>();
 
   @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
   @Getter
@@ -159,5 +162,9 @@ public class MatchingRoom extends BaseEntity {
     return this.matchingRoomTagInfo.stream()
             .map(tagInfo -> tagInfo.getTags().name())
             .toList();
+  }
+
+  public boolean isAutoMatchingRoom() {
+    return this.matchingRoomType == MatchingRoomType.AUTO;
   }
 }
