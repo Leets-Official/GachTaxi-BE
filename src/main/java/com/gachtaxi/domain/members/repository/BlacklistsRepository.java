@@ -20,14 +20,15 @@ public interface BlacklistsRepository extends JpaRepository<Blacklists, Long> {
   Slice<Blacklists> findAllByRequester(Members requester, Pageable pageable);
 
   @Query("""
-    SELECT b
-    FROM Blacklists b
-    JOIN FETCH b.receiver r
-    WHERE b.requester.id = :requesterId
-      AND LOWER(r.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      SELECT b
+      FROM Blacklists b
+      JOIN FETCH b.receiver r
+      WHERE b.requester = :requester
+        AND LOWER(r.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      ORDER BY r.nickname ASC
   """)
   Slice<Blacklists> searchMyBlackLists(
-          @Param("requesterId") Long requesterId,
+          @Param("requester") Members requester,
           @Param("keyword")     String keyword,
           Pageable pageable
   );
