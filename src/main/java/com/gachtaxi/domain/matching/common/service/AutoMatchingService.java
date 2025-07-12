@@ -6,34 +6,26 @@ import com.gachtaxi.domain.matching.common.dto.enums.AutoMatchingStatus;
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingCancelledRequest;
 import com.gachtaxi.domain.matching.common.dto.request.AutoMatchingPostRequest;
 import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingPostResponse;
+import com.gachtaxi.domain.matching.common.dto.response.AutoMatchingStatusGetResponse;
+import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.enums.Tags;
 import com.gachtaxi.domain.matching.event.MatchingEventFactory;
 import com.gachtaxi.domain.matching.event.service.kafka.AutoMatchingProducer;
-import com.gachtaxi.domain.matching.event.service.sse.SseService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AutoMatchingService {
 
-  private final SseService sseService;
   private final MatchingAlgorithmService matchingAlgorithmService;
   private final MatchingEventFactory matchingEventFactory;
   private final AutoMatchingProducer autoMatchingProducer;
-
-  public SseEmitter handleSubscribe(Long userId) {
-    return this.sseService.subscribe(userId);
-  }
-
-  public boolean isSseSubscribed(Long memberId) {
-    return this.sseService.isSubscribed(memberId);
-  }
+  private final MatchingRoomService matchingRoomService;
 
   public AutoMatchingPostResponse handlerAutoRequestMatching(
       Long memberId,
@@ -88,5 +80,16 @@ public class AutoMatchingService {
     this.autoMatchingProducer.sendEvent(this.matchingEventFactory.createMatchMemberCancelledEvent(autoMatchingCancelledRequest.roomId(), memberId));
 
     return AutoMatchingPostResponse.of(AutoMatchingStatus.CANCELLED);
+  }
+
+  public AutoMatchingStatusGetResponse getMatchingStatus(Long memberId) {
+    Optional<MatchingRoom> foundMatchingRoom = this.matchingRoomService.getAutoMatchingRoomByParticipantId(
+        memberId);
+    if (foundMatchingRoom.isPresent()) {
+      return AutoMatchingStatusGetResponse.of(
+          foundMatchingRoom.get()
+      );
+    }
+    return AutoMatchingStatusGetResponse.none();
   }
 }

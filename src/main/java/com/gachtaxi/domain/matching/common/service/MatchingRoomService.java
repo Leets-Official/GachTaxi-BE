@@ -52,7 +52,7 @@ public class MatchingRoomService {
   // event factory
   private final MatchingEventFactory matchingEventFactory;
 
-  public MatchRoomCreatedEvent createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
+  public void createMatchingRoom(MatchRoomCreatedEvent matchRoomCreatedEvent) {
     Members members = this.memberService.findById(matchRoomCreatedEvent.roomMasterId());
 
 //    Route route = this.saveRoute(matchRoomCreatedEvent);
@@ -63,10 +63,7 @@ public class MatchingRoomService {
 
     this.saveMatchingRoomTagInfo(matchingRoom, matchRoomCreatedEvent.criteria());
     this.saveRoomMasterChargingInfo(matchingRoom, members);
-
-    MatchingRoom savedMatchingRoom = this.matchingRoomRepository.save(matchingRoom);
-
-    return MatchRoomCreatedEvent.of(matchRoomCreatedEvent, savedMatchingRoom.getId(), savedMatchingRoom.getChattingRoomId());
+    this.matchingRoomRepository.save(matchingRoom);
   }
 
 //  private Route saveRoute(MatchRoomCreatedEvent matchRoomCreatedEvent) {
@@ -208,5 +205,11 @@ public class MatchingRoomService {
 
   private MatchingRoom getMatchingRoomById(Long roomId) {
     return this.matchingRoomRepository.findById(roomId).orElseThrow(NoSuchMatchingRoomException::new);
+  }
+
+  public Optional<MatchingRoom> getAutoMatchingRoomByParticipantId(Long participantId) {
+    List<MatchingRoom> matchingRooms = this.matchingRoomRepository.findByMemberInMatchingRoom(
+        this.memberService.findById(participantId));
+    return matchingRooms.stream().filter(matchingRoom -> matchingRoom.isAutoMatchingRoom()).findFirst();
   }
 }
