@@ -64,6 +64,16 @@ public class BlacklistService {
     return BlacklistGetResponse.of(blacklistsPage);
   }
 
+  public BlacklistGetResponse searchMyBlackList(Long requesterId, String keyword, int pageNum, int pageSize) {
+    Members requester = this.memberService.findById(requesterId);
+
+    Pageable pageRequest = PageRequest.of(pageNum, pageSize, Sort.by(Direction.ASC, "receiver.nickname"));
+
+    Slice<Blacklists> myBlackLists = this.blacklistsRepository.searchMyBlackLists(requester, keyword, pageRequest);
+
+    return BlacklistGetResponse.of(myBlackLists);
+  }
+
   public boolean isBlacklistInMatchingRoom(Members requester, MatchingRoom matchingRoom) {
     boolean existBlacklist = matchingRoom.getMemberMatchingRoomChargingInfo().stream()
         .anyMatch(memberMatchingRoomChargingInfo -> this.blacklistsRepository.existsByRequesterAndReceiver(
