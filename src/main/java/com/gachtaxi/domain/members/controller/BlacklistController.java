@@ -61,7 +61,7 @@ public class BlacklistController {
     return ApiResponse.response(OK, BLACKLIST_FIND_ALL_SUCCESS.getMessage(), blacklistPage);
   }
 
-  @Operation(summary = "내 블랙리스트 검색")
+  @Operation(summary = "내 블랙리스트 검색 API")
   @GetMapping("/search")
   public ApiResponse<BlacklistGetResponse> searchBlacklist(
           @CurrentMemberId Long requesterId,
