@@ -1,6 +1,5 @@
 package com.gachtaxi.domain.matching.common.service;
 
-import static com.gachtaxi.domain.notification.entity.enums.NotificationType.MATCH_INVITE;
 import com.gachtaxi.domain.matching.common.dto.request.ManualMatchingInviteReplyRequest;
 import com.gachtaxi.domain.matching.common.entity.MatchingRoom;
 import com.gachtaxi.domain.matching.common.entity.MemberMatchingRoomChargingInfo;
@@ -20,9 +19,12 @@ import com.gachtaxi.domain.notification.entity.payload.MatchingInvitePayload;
 import com.gachtaxi.domain.notification.repository.NotificationRepository;
 import com.gachtaxi.domain.notification.service.NotificationService;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static com.gachtaxi.domain.notification.entity.enums.NotificationType.MATCH_INVITE;
 
 @Service
 @RequiredArgsConstructor
@@ -38,15 +40,15 @@ public class MatchingInvitationService {
     /*
       수동 매칭시 친구 초대
     */
-    public static final String MATCHING_INVITE_TITLE = "수동 매칭 초대";
-    public static final String MATCHING_INVITE_CONTENT = "%s 님이 수동 매칭 초대를 보냈습니다.";
+    public static final String MATCHING_INVITE_TITLE = "매칭 초대";
+    public static final String MATCHING_INVITE_CONTENT = "%s 님이 매칭 초대를 보냈어요.";
 
     public void sendMatchingInvitation(Members sender, List<Long> friendIds, Long matchingRoomId) {
         if (friendIds == null || friendIds.isEmpty()) {
             return;
         }
 
-        List<Members> friends = memberRepository.findByIdIn(friendIds);
+        List<Members> friends = memberRepository.findByIdIn(friendIds); // 친구 중에 찾게 수정
 
         for (Members friend : friends) {
             notificationService.sendWithPush(

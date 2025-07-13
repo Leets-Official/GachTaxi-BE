@@ -1,14 +1,14 @@
 package com.gachtaxi.domain.notification.service;
 
-import com.gachtaxi.domain.notification.exception.FcmTokenNotFoundException;
-import com.gachtaxi.domain.notification.exception.InvalidFcmTokenException;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FcmService {
@@ -26,6 +26,8 @@ public class FcmService {
             String response = FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
             handleException(e);
+        } catch (Exception e) {
+            log.error("푸시 알림 전송 중 문제 발생: {}", e.getMessage());
         }
     }
 
@@ -34,9 +36,11 @@ public class FcmService {
         String errorCode = exception.getErrorCode().toString();
 
         if (statusCode == 404) {
-            throw new FcmTokenNotFoundException(statusCode, errorCode);
+//            throw new FcmTokenNotFoundException(statusCode, errorCode);
+            log.error("푸시 알림 전송 중 문제 발생: fcmToken is null");
         } else if (statusCode == 400) {
-            throw new InvalidFcmTokenException(statusCode, errorCode);
+//            throw new InvalidFcmTokenException(statusCode, errorCode);
+            log.error("푸시 알림 전송 중 문제 발생: fcmToken is invalid");
         }
     }
 }
