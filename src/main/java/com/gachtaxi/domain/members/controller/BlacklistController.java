@@ -1,8 +1,6 @@
 package com.gachtaxi.domain.members.controller;
 
-import static com.gachtaxi.domain.members.controller.ResponseMessage.BLACKLIST_DELETE_SUCCESS;
-import static com.gachtaxi.domain.members.controller.ResponseMessage.BLACKLIST_FIND_ALL_SUCCESS;
-import static com.gachtaxi.domain.members.controller.ResponseMessage.BLACKLIST_SAVE_SUCCESS;
+import static com.gachtaxi.domain.members.controller.ResponseMessage.*;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -61,5 +59,19 @@ public class BlacklistController {
         pageNum, pageSize);
 
     return ApiResponse.response(OK, BLACKLIST_FIND_ALL_SUCCESS.getMessage(), blacklistPage);
+  }
+
+  @Operation(summary = "내 블랙리스트 검색 API")
+  @GetMapping("/search")
+  public ApiResponse<BlacklistGetResponse> searchBlacklist(
+          @CurrentMemberId Long requesterId,
+          @RequestParam String keyword,
+          @RequestParam int pageNum,
+          @RequestParam int pageSize
+  ) {
+
+    BlacklistGetResponse myBlackListPage = this.blacklistService.searchMyBlackList(requesterId, keyword, pageNum, pageSize);
+
+    return ApiResponse.response(OK, MY_BLACKLIST_SEARCH.getMessage(), myBlackListPage);
   }
 }
