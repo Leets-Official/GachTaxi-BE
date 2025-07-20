@@ -18,7 +18,6 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
-@Slf4j
 public class FriendController {
 
     private final FriendService friendService;
@@ -75,8 +74,6 @@ public class FriendController {
             @CurrentMemberId Long currentId, @RequestParam String keyword,
             @RequestParam int pageNum, @RequestParam int pageSize
     ) {
-        log.info("현재 요청자 ID {} ", currentId);
-        log.info("keyword {} ", keyword);
         FriendsSliceResponse response = friendService.searchMyFriends(currentId, keyword, pageNum, pageSize);
 
         return ApiResponse.response(OK, FRIEND_SEARCH_SUCCESS.getMessage(), response);
