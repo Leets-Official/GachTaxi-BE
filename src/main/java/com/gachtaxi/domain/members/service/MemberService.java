@@ -1,11 +1,9 @@
 package com.gachtaxi.domain.members.service;
 
 import com.gachtaxi.domain.chat.repository.ChattingMessageMongoRepository;
+import com.gachtaxi.domain.friend.entity.enums.FriendStatus;
 import com.gachtaxi.domain.members.dto.request.*;
-import com.gachtaxi.domain.members.dto.response.MemberPageableResponse;
-import com.gachtaxi.domain.members.dto.response.MemberResponseDto;
-import com.gachtaxi.domain.members.dto.response.MemberSliceResponse;
-import com.gachtaxi.domain.members.dto.response.MemberSummaryResponse;
+import com.gachtaxi.domain.members.dto.response.*;
 import com.gachtaxi.domain.members.entity.Members;
 import com.gachtaxi.domain.members.exception.DuplicatedNickNameException;
 import com.gachtaxi.domain.members.exception.DuplicatedStudentNumberException;
@@ -55,6 +53,19 @@ public class MemberService {
                 .toList();
 
         return MemberSliceResponse.of(memberList, MemberPageableResponse.from(memberSlice));
+    }
+
+    public MemberWithFriendStatusSlice getMemberListValidateFriendShip(String keyword, Long requesterId ,int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, SORT_BY_NICKNAME));
+
+        Slice<MemberWithFriendRequestProjection> projectionList
+                = memberRepository.findMembersWithFriendRequestStatus(keyword, requesterId, pageable);
+
+        List<MemberWithFriendStatusDetailResponse> memberList = projectionList.stream()
+                .map(MemberWithFriendStatusDetailResponse::of)
+                .toList();
+
+        return MemberWithFriendStatusSlice.of(memberList, MemberPageableResponse.fromProjection(projectionList));
     }
 
     @Transactional

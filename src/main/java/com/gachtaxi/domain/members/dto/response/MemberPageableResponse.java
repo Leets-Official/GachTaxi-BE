@@ -20,4 +20,13 @@ public record MemberPageableResponse(
                 .build();
     }
 
+    public static MemberPageableResponse fromProjection(Slice<MemberWithFriendRequestProjection> slice) {
+        return MemberPageableResponse.builder()
+                .pageNumber(slice.getNumber())
+                .pageSize(slice.getSize())
+                .numberOfElements(slice.getNumberOfElements())
+                .isLast(slice.isLast())
+                .build();
+    }
+
 }

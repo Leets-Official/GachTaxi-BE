@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static com.gachtaxi.domain.friend.entity.enums.FriendStatus.REJECTED;
@@ -72,6 +73,24 @@ public class FriendService {
                 .toList();
 
         FriendsPageableResponse pageableResponse = FriendsPageableResponse.from(friendsList);
+
+        return FriendsSliceResponse.of(friendsListDto, pageableResponse);
+    }
+
+    // 친구 목록에서 친구 검색 비지니스 로직
+    public FriendsSliceResponse searchMyFriends(Long memberId, String keyword, int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+
+        Slice<Friends> myFriendsList = friendRepository.findMyFriendsByNickname(memberId, keyword, pageable);
+
+        List<FriendsResponseDto> friendsListDto = myFriendsList
+                .getContent()
+                .stream()
+                .map(f -> FriendsMapper.toResponseDto(f, memberId))
+                .sorted(nicknameComparator(keyword))
+                .toList();
+
+        FriendsPageableResponse pageableResponse = FriendsPageableResponse.from(myFriendsList);
 
         return FriendsSliceResponse.of(friendsListDto, pageableResponse);
     }
@@ -128,5 +147,18 @@ public class FriendService {
     public Friends getFriendShip(Long senderId, Long receiverId) {
         return friendRepository.findFriendShip(senderId, receiverId)
                 .orElseThrow(FriendNotExistsException::new);
+    }
+
+    /*
+    * 1. Nickname이 Keyword로 시작 하는 지
+    * 2. 문자열 길이가 짧은 지
+    * 기준으로 정렬하는 Comparator
+    * */
+    private Comparator<FriendsResponseDto> nicknameComparator(String keyword) {
+        return Comparator
+                .comparingInt((FriendsResponseDto dto) ->
+                        dto.friendsNickName().startsWith(keyword) ? 0 : 1
+                )
+                .thenComparingInt(dto -> dto.friendsNickName().length());
     }
 }
