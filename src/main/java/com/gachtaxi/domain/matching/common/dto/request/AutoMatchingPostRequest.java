@@ -7,9 +7,7 @@ import java.util.List;
 
 public record AutoMatchingPostRequest(
     String startPoint,
-//    String startName,
     String destinationPoint,
-//    String destinationName,
 
     // 현재 사용하는 필드
     @NotNull

@@ -14,6 +14,7 @@ public enum ResponseMessage {
   AUTO_MATCHING_REQUEST_ACCEPTED("자동 매칭 요청 전송에 성공했습니다."),
   NOT_SUBSCRIBED_SSE("SSE 구독 후 자동 매칭을 요청할 수 있습니다."),
   AUTO_MATCHING_REQUEST_CANCELLED("자동 매칭 취소 요청 전송에 성공했습니다."),
+  AUTO_MATCHING_INQUIRE_STATUS_SUCCESS("자동 매칭 상태 조회 요청에 성공했습니다."),
 
   // manual matching
   CREATE_MANUAL_MATCHING_ROOM_SUCCESS("수동 매칭방 생성에 성공했습니다."),

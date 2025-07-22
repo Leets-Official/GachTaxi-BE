@@ -6,7 +6,6 @@ import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchMemberJoinedEvent
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCancelledEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCompletedEvent;
 import com.gachtaxi.domain.matching.event.dto.kafka_topic.MatchRoomCreatedEvent;
-import com.gachtaxi.domain.matching.event.service.sse.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AutoMatchingConsumer {
 
-  private final SseService sseService;
   private final MatchingRoomService matchingRoomService;
 
   /**
@@ -32,18 +30,11 @@ public class AutoMatchingConsumer {
       try {
         log.info("[KAFKA CONSUMER] Received MatchRoomCreatedEvent: {}", event);
 
-        MatchRoomCreatedEvent createdEvent = this.matchingRoomService.createMatchingRoom(event);
-
-        this.sseService.sendToClient(
-            event.roomMasterId(),
-            "MATCH_ROOM_CREATED",
-            createdEvent
-        );
+        this.matchingRoomService.createMatchingRoom(event);
 
         ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchRoomCreatedEvent", e);
-      this.sseService.sendToClient(event.roomMasterId(), "MATCH_ROOM_CREATED", e.getMessage());
     }
   }
 
@@ -60,12 +51,9 @@ public class AutoMatchingConsumer {
 
       this.matchingRoomService.joinMemberToMatchingRoom(event);
 
-      this.sseService.broadcast("MATCH_MEMBER_JOINED", event);
-
       ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchMemberJoinedEvent", e);
-      this.sseService.sendToClient(event.memberId(), "MATCH_MEMBER_JOINED", e.getMessage());
     }
   }
 
@@ -82,12 +70,9 @@ public class AutoMatchingConsumer {
 
       this.matchingRoomService.leaveMemberFromMatchingRoom(event);
 
-      this.sseService.broadcast("MATCH_MEMBER_LEFT", event);
-
       ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchMemberLeftEvent", e);
-      this.sseService.sendToClient(event.memberId(), "MATCH_MEMBER_LEFT", e.getMessage());
     }
   }
 
@@ -104,12 +89,9 @@ public class AutoMatchingConsumer {
 
       this.matchingRoomService.cancelMatchingRoom(event);
 
-      this.sseService.broadcast("MATCH_ROOM_CANCELLED", event);
-
       ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchRoomCancelledEvent", e);
-      this.sseService.sendToClient(event.roomId(), "MATCH_ROOM_CANCELLED", e.getMessage());
     }
   }
 
@@ -126,12 +108,9 @@ public class AutoMatchingConsumer {
 
       this.matchingRoomService.completeMatchingRoom(event);
 
-      this.sseService.broadcast("MATCH_ROOM_COMPLETED", event);
-
       ack.acknowledge();
     } catch (Exception e) {
       log.error("[KAFKA CONSUMER] Error processing MatchingRoomCompletedEvent", e);
-      this.sseService.sendToClient(event.roomId(), "MATCH_ROOM_COMPLETED", e.getMessage());
     }
   }
 }
